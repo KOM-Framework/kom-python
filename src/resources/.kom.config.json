@@ -1,0 +1,18 @@
+{
+  "browser_name": "Chrome",
+  "headless_mode": "False",
+  "element_load_time": 5,
+  "iframe_load_time": 10,
+  "http_request_wait_time": 60,
+  "page_load_time": 60,
+
+  "remote_execution": "False",
+  "hub_ip": "35.202.136.79",
+  "hub_port": 5555,
+
+  "video_recording": "False",
+  "use_proxy": "False",
+  "proxy_port": 8088,
+
+  "retry_failed": 1
+}

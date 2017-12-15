@@ -1,36 +1,29 @@
-import time
-
 from selenium.webdriver.common.by import By
 
-from kom_framework.src.web.data_types.element import Input
+from kom_framework.src.web.data_types.element_types import Input
+from kom_framework.src.web.support.page_factory import locator
 from kom_framework.src.web.web_page import WebPage
-from src.integrations.standalone.page_objects import LoginPage
 
 
+@locator(By.ID, 'viewport')
 class TestPage(WebPage):
 
-    def __init__(self):
-        self.user = Input(By.XPATH, "sdasd")
+    def __init__(self, module_name=None):
+        self._set_module(module_name)
+        self.user = Input(By.ID, "lst-ib")
 
-    def invoke_actions(self):
-        pass
+    def open_actions(self):
+        self.browser_session.open("http://www.google.com")
 
 
 class TestFramework:
 
     def test_01(self):
-        page1 = LoginPage("asasd").invoke()
-        page3 = LoginPage("assaaaasd").invoke()
-        page2 = LoginPage("asdasdaaadaasd").invoke()
-        page1.login()
-        page2.login()
-        page3.login()
+        TestPage("module_1").open()
+        TestPage("module_2").open()
         assert True
 
     def test_02(self):
-        start = int(round(time.time() * 1000))
         page = TestPage()
         age2 = TestPage()
-        end = int(round(time.time() * 1000))
-        print(end-start)
         assert True

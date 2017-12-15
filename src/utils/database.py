@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from pymysql import connect
 
-from kom_framework.src.general import Log
+from ..general import Log
 
 
 class MySql:

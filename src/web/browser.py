@@ -8,10 +8,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-from kom_framework.src.general import Log
-from kom_framework.src.web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
+from ..general import Log
+from ..web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
     page_load_time
-from kom_framework.src.web.drivers import browser, driver
+from ..web.drivers import browser, driver
 from src.utilities import find_between
 
 
@@ -19,7 +19,6 @@ class Browser:
     def __init__(self, module_name=None):
         self._active = False
         self._driver = None
-        self.hub_link = 'http://%s:%s/wd/hub' % (hub_ip, hub_port)
         self.test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
         self.loaded_extension = None
         self.module_name = module_name
@@ -56,6 +55,18 @@ class Browser:
         self.quit()
         return node_id
 
+    def open(self, url, open_url=True, extension=None):
+        Log.info("Opening %s url" % url)
+        if not self.driver:
+            Log.info("Creating an instance of a Browser: %s." % browser)
+            self.driver = driver.create_session()
+        elif extension and (not self.loaded_extension or self.loaded_extension != extension):
+            self.quit()
+            self.open(url, open_url=False, extension=extension)
+            self.loaded_extension = extension
+        if open_url:
+            self.driver.get(url)
+
     def switch_to_frame(self, frame_locator):
         WebDriverWait(self.driver,
                       iframe_load_time).until(
@@ -67,23 +78,11 @@ class Browser:
     def wait_until_http_requests_are_finished(self, wait_time=http_request_wait_time):
         try:
             WebDriverWait(self.driver, wait_time).until(
-                self.driver.execute_script("return window.openHTTPs")
+                lambda web_driver: self.driver.execute_script("return window.openHTTPs")
             )
         except TimeoutException:
             Log.error('HTTP request execution time is more than %s seconds' % wait_time)
             self.driver.execute_script("window.openHTTPs=0")
-
-    def open(self, url, open_url=True, extension=None):
-        Log.info("Opening %s url" % url)
-        if not self.driver:
-            Log.info("Creating an instance of a Browser: %s." % browser)
-            self.driver = driver.get()
-        elif extension and (not self.loaded_extension or self.loaded_extension != extension):
-            self.quit()
-            self.open(url, open_url=False, extension=extension)
-            self.loaded_extension = extension
-        if open_url:
-            self.driver.get(url)
 
     def refresh(self):
         Log.info("Refreshing the browser")
@@ -133,7 +132,7 @@ class Browser:
     def wait_for_page_to_load(self, wait_time=page_load_time):
         try:
             WebDriverWait(self.driver, wait_time).until(
-                lambda web_driver: driver.execute_script('return document.readyState') == 'complete'
+                lambda web_driver: self.driver.execute_script('return document.readyState') == 'complete'
             )
         except TimeoutException:
             Log.info("Page was not loaded in %s seconds" % wait_time)

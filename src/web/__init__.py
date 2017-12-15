@@ -1,4 +1,4 @@
-from kom_framework import env_file_content
+from ... import env_file_content
 
 # Selenium web driver configuration
 headless_mode = env_file_content['headless_mode'] == 'True'
@@ -12,3 +12,6 @@ page_load_time = env_file_content['page_load_time']
 remote_execution = env_file_content['remote_execution'] == "True"
 hub_ip = env_file_content['hub_ip']
 hub_port = env_file_content['hub_port']
+
+# Execution configurations
+multi_application_mode = env_file_content['multi_application_mode'] == "True"

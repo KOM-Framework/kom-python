@@ -1,6 +1,6 @@
 import requests
 
-from kom_framework.src.general import Log
+from ..general import Log
 
 
 class HTTP:

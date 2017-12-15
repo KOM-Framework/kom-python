@@ -4,12 +4,14 @@ from abc import ABCMeta, abstractmethod
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import Options as ChromeOptions
 
-from kom_framework.src.utils import use_proxy
-from kom_framework.src.utils.proxy import Proxy
-from kom_framework.src.web import hub_ip, remote_execution, headless_mode
+from ...utils import use_proxy
+from ...utils.proxy import Proxy
+from ...web import hub_ip, remote_execution, headless_mode, hub_port
 
 
 class Driver:
+
+    hub_link = 'http://%s:%s/wd/hub' % (hub_ip, hub_port)
 
     __metaclass__ = ABCMeta
 
@@ -23,15 +25,17 @@ class Driver:
     def get_capabilities(cls, extension=None):
         pass
 
-    def get_remove_session(self, extension=None):
+    @classmethod
+    def get_remove_session(cls, extension=None):
         driver = webdriver.Remote(
-            command_executor=hub_ip,
-            desired_capabilities=self.get_capabilities(extension)
-        ).maximize_window()
+            command_executor=cls.hub_link,
+            desired_capabilities=cls.get_capabilities(extension)
+        )
+        driver.maximize_window()
         return driver
 
     @classmethod
-    def get(cls, extension=None):
+    def create_session(cls, extension=None):
         if remote_execution:
             return cls.get_remove_session(extension)
         else:

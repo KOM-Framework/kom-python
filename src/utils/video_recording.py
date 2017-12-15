@@ -1,6 +1,6 @@
-from kom_framework.src.general import Log
-from kom_framework.src.web.browser import Browser
-from kom_framework.utils.remoteexecuter.echo_client import send_command
+from ...utils.remoteexecuter.echo_client import send_command
+from ..general import Log
+from ..web.browser import Browser
 
 
 class VideoRecording:

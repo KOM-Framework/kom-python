@@ -4,9 +4,9 @@ from selenium.common.exceptions import WebDriverException, NoSuchElementExceptio
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
-from kom_framework.src.general import Log
-from kom_framework.src.web import page_load_time
-from kom_framework.src.web.support.session_factory import WebSessionsFactory
+from ..general import Log
+from ..web import page_load_time
+from ..web.support.session_factory import WebSessionsFactory
 from selenium.webdriver.support import expected_conditions
 
 
@@ -32,17 +32,17 @@ class WebPage:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def invoke_actions(self):
+    def open_actions(self):
         pass
 
     def setup_page(self):
         pass
 
-    def invoke(self):
+    def open(self):
         try:
             if not self.exists():
                 Log.info("Invoking %s web page" % self.page_name)
-                self.invoke_actions()
+                self.open_actions()
                 assert self.exists(page_load_time), "Page %s cannot be found" % self.page_name
             else:
                 if "setup_page" in dir(self):
@@ -54,14 +54,14 @@ class WebPage:
                     self._retry_count += 1
                     self.browser_session.driver = None
                     Log.error('Something went wrong. Retrying to open the page')
-                    self.invoke()
+                    self.open()
                 else:
                     self._retry_count = 0
             raise e
 
-    def forced_invoke(self):
+    def forced_open(self):
         self.browser_session.quit()
-        return self.invoke()
+        return self.open()
 
     def exists(self, wait_time=0):
         Log.info("Page '%s' existence verification. Wait time = %s" % (self.page_name, str(wait_time)))

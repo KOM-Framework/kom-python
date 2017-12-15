@@ -1,8 +1,8 @@
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
-from kom_framework.src.general import Log
-from kom_framework.src.web.support.session_factory import WebSessionsFactory
+from ..general import Log
+from ..web.support.session_factory import WebSessionsFactory
 from selenium.webdriver.support import expected_conditions
 
 

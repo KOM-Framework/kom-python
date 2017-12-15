@@ -3,7 +3,7 @@
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
 
-# if user has not explicitly set a command to use to invoke java, use 'java' and assume it is on the path
+# if user has not explicitly set a command to use to open java, use 'java' and assume it is on the path
 if [ -z "$JAVACMD" ]
 then
     JAVACMD="java"

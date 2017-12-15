@@ -4,9 +4,9 @@ from urllib.parse import urlparse
 
 from browsermobproxy import Server
 
-from kom_framework.src.general import Log
-from kom_framework.src.utils import proxy_port
-from kom_framework.src.web import remote_execution, hub_ip
+from ..general import Log
+from ..utils import proxy_port
+from ..web import remote_execution, hub_ip
 
 
 class Proxy:
@@ -14,7 +14,7 @@ class Proxy:
     proxy = None
     server = None
     port = proxy_port
-    path = 'browsermob-proxy/bin/browsermob-proxy'
+    path = '../../utils/browsermob-proxy/bin/browsermob-proxy'
     url = None
 
     @classmethod

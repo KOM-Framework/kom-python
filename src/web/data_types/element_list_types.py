@@ -1,78 +1,21 @@
-from abc import ABCMeta
+import time
 
-from copy import copy
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.general import Log
 from kom_framework.src.web import element_load_time
-from kom_framework.src.web.data_types.element import KOMElement, Input
-
-
-class Structure(dict):
-
-    __getattr__, __setattr__ = dict.get, dict.__setitem__
-
-    def get_copy(self):
-        keys = self.keys()
-        out = dict()
-        for key in keys:
-            out[key] = copy(self[key])
-        return Structure(out)
-
-
-class KOMElementList(KOMElement):
-    __metaclass__ = ABCMeta
-
-    def get_elements(self, by=None, value=None):
-        if by and value:
-            self._locator = (by, value)
-        driver = self.browser_session.driver
-        if self._base_element:
-            driver = WebDriverWait(driver, element_load_time).until(
-                expected_conditions.presence_of_element_located(self._base_element._locator))
-        return WebDriverWait(driver, element_load_time).until(
-            expected_conditions.presence_of_all_elements_located(self._locator)
-        )
-
-    def exists(self, wait_time=0, **kwargs):
-        Log.info("List '%s' existence verification. Wait time = %s" % (self._name, str(wait_time)))
-        try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
-                lambda driver: driver.find_elements(self._locator[0], self._locator[1])
-            )
-            return True
-        except (NoSuchElementException, TimeoutException):
-            return False
-
-    def select_first_enabled(self):
-        Log.info("Selecting first enabled item in the list '%s'" % self._name)
-        elements = self.get_elements()
-        for item in elements:
-            if item.is_enabled():
-                item.click()
-                break
-
-
-class Menu(KOMElementList):
-
-    def select_menu_section_by_name(self, section_name):
-        Log.info("Selecting '%s' section in '%s' menu" % (section_name, self._name))
-        sections = self.get_elements()
-        for section in sections:
-            if section.text == section_name:
-                section.click()
-                break
+from kom_framework.src.web.data_types.element_types import Input
+from kom_framework.src.web.data_types.kom_element_list import KOMElementList
 
 
 class GridView(KOMElementList):
 
     def __init__(self, by, value, table_structure):
-        super().__init__(by, value)
+        KOMElementList.__init__(self, by, value)
         self.table_structure = table_structure
 
     def get_content(self, specific_index=None, wait_time=0):
@@ -176,7 +119,7 @@ class WebGroup(GridView):
 class SelectList(KOMElementList):
 
     def __init__(self, link_by, link_value, list_by=None, list_value=None):
-        super().__init__(link_by, link_value)
+        KOMElementList.__init__(self, link_by, link_value)
         if list_by is not None:
             self.list_by = list_by
             self.list_value = list_value
@@ -208,7 +151,7 @@ class SelectList(KOMElementList):
 class SelectMenu(KOMElementList):
 
     def __init__(self, field_by, value_by, list_by=None, list_value=None):
-        super().__init__(field_by, value_by)
+        KOMElementList.__init__(self, field_by, value_by)
         if list_by is not None:
             self.list_by = list_by
             self.list_value = list_value
@@ -223,4 +166,15 @@ class SelectMenu(KOMElementList):
         for option in options:
             if text in option.get_attribute('title'):
                 option.click()
+                break
+
+
+class Menu(KOMElementList):
+
+    def select_menu_section_by_name(self, section_name):
+        Log.info("Selecting '%s' section in '%s' menu" % (section_name, self._name))
+        sections = self.get_elements()
+        for section in sections:
+            if section.text == section_name:
+                section.click()
                 break

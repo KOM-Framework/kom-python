@@ -76,23 +76,25 @@ class JSONReader:
         return None
 
 
-@singleton
 class Vars:
     # Dynamic variables storage
-    def __init__(self):
-        object.__setattr__(self, "variables", {})
 
-    def __setattr__(self, attr, value):
-        self.variables[attr] = value
+    variables = dict()
 
-    def __getattr__(self, attr):
-        if attr not in self.variables:
+    @classmethod
+    def __setattr__(cls, attr, value):
+        cls.variables[attr] = value
+
+    @classmethod
+    def __getattr__(cls, attr):
+        if attr not in cls.variables:
             raise AttributeError
-        out = self.variables[attr]
+        out = cls.variables[attr]
         return out
 
-    def exists(self, var_name):
-        keys = self.variables.keys()
+    @classmethod
+    def exists(cls, var_name):
+        keys = cls.variables.keys()
         return var_name in keys
 
 

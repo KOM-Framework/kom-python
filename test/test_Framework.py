@@ -6,7 +6,9 @@ from kom_framework.src.web.web_page import WebPage
 
 
 @locator(By.ID, 'viewport')
-class TestPage(WebPage):
+class PageTest(WebPage):
+
+    some_variable = 'SOMETHING NEW'
 
     def __init__(self, module_name=None):
         self._set_module(module_name)
@@ -16,14 +18,19 @@ class TestPage(WebPage):
         self.browser_session.open("http://www.google.com")
 
 
-class TestFramework:
+class TestSomething:
 
-    def test_01(self):
-        TestPage("module_1").open()
-        TestPage("module_2").open()
+    def test_decorator(self):
+        print(PageTest.some_variable)
+        obj_1 = PageTest('asdasd')
+        obj_2 = PageTest('asdasdass')
+        obj_3 = PageTest('asdasd')
         assert True
 
-    def test_02(self):
-        page = TestPage()
-        age2 = TestPage()
+    def test_session_factory_close(self):
+        from kom_framework.src.web.support.session_factory import WebSessionsFactory
+        obj_1 = PageTest('asdasd').open()
+        obj_2 = PageTest('asdasda2ss').open()
+        WebSessionsFactory.close_sessions()
         assert True
+

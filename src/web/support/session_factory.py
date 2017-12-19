@@ -24,7 +24,7 @@ class WebSessionsFactory:
     def close_sessions(cls):
         for session in cls.sessions.keys():
             cls.sessions[session].quit()
-            cls.sessions.pop(session)
+        cls.sessions.clear()
 
     @classmethod
     def refresh_browsers(cls):

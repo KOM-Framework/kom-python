@@ -8,11 +8,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-from ..general import Log
+from ..general import Log, find_between
 from ..web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
     page_load_time
 from ..web.drivers import browser, driver
-from src.utilities import find_between
 
 
 class Browser:

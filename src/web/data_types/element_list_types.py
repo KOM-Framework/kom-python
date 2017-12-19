@@ -121,8 +121,7 @@ class SelectList(KOMElementList):
     def __init__(self, link_by, link_value, list_by=None, list_value=None):
         KOMElementList.__init__(self, link_by, link_value)
         if list_by is not None:
-            self.list_by = list_by
-            self.list_value = list_value
+            self.options_list = KOMElementList(list_by, list_value)
 
     def select_item_by_value(self, value):
         Log.info('Selecting %s value in the %s select list' % (value, self._name))
@@ -139,7 +138,7 @@ class SelectList(KOMElementList):
     def select_item_by_text(self, text, hide_list_by_click_on_field=False):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
         self.execute_action("click")
-        options = KOMElementList(self.list_by, self.list_value).get_elements()
+        options = self.options_list.get_elements()
         for option in options:
             if option.text == text:
                 option.click()

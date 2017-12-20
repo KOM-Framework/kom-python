@@ -2,7 +2,11 @@ def locator(by, value):
     instances = {}
 
     def real_decorator(class_):
-        class Wrapper(class_):
+        class WrapperMeta(type):
+            def __getattr__(self, attr):
+                return getattr(class_, attr)
+
+        class Wrapper(metaclass=WrapperMeta):
             def __new__(cls, *args, **kwargs):
                 key = (class_, args, str(kwargs))
                 if key not in instances:
@@ -12,4 +16,3 @@ def locator(by, value):
                 return instances[key]
         return Wrapper
     return real_decorator
-

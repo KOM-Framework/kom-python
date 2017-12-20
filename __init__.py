@@ -8,3 +8,4 @@ else:
     env_file_content = json.load(open(os.path.abspath(config_file)))
 
 retry_failed = env_file_content['retry_failed']
+js_waiter_file = 'kom_framework/src/resources/.http.waiter.js'

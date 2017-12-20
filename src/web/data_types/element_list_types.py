@@ -6,10 +6,11 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from kom_framework.src.general import Log
-from kom_framework.src.web import element_load_time
-from kom_framework.src.web.data_types.element_types import Input
-from kom_framework.src.web.data_types.kom_element_list import KOMElementList
+from ...general import Log
+from ...web import element_load_time
+from ...web.data_types.actions import Action
+from ...web.data_types.element_types import Input
+from ...web.data_types.kom_element_list import KOMElementList
 
 
 class GridView(KOMElementList):
@@ -137,14 +138,14 @@ class SelectList(KOMElementList):
 
     def select_item_by_text(self, text, hide_list_by_click_on_field=False):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
-        self.execute_action("click")
+        self.execute_action(Action.CLICK)
         options = self.options_list.get_elements()
         for option in options:
             if option.text == text:
                 option.click()
                 break
         if hide_list_by_click_on_field:
-            self.execute_action("click")
+            self.execute_action(Action.CLICK)
 
 
 class SelectMenu(KOMElementList):

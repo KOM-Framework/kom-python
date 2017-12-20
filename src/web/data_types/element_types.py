@@ -6,14 +6,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from kom_framework.src.general import Log
-from kom_framework.src.web.data_types.kom_element import KOMElement
+from ...general import Log
+from ...web.data_types.actions import Action
+from ...web.data_types.kom_element import KOMElement
 
 
 class Input(KOMElement):
     def send_keys(self, value):
         Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
-        self.execute_action('send_keys', 'element_to_be_clickable', str(value))
+        self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def clear_and_send_keys(self, value, use_action_chain=False):
         Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self._name))
@@ -22,34 +23,34 @@ class Input(KOMElement):
                 .send_keys(Keys.DELETE) \
                 .send_keys(Keys.BACKSPACE) \
                 .perform()
-            self.execute_action('send_keys', 'element_to_be_clickable', str(value))
+            self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
         else:
-            self.execute_action('clear', 'element_to_be_clickable')
-            self.execute_action('send_keys', 'element_to_be_clickable', str(value))
+            self.execute_action(Action.CLEAR, expected_conditions.element_to_be_clickable)
+            self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def clear(self):
         Log.info("Clearing %s input field" % self._name)
-        self.execute_action('clear')
+        self.execute_action(Action.CLEAR)
 
     def type_keys(self, value):
         Log.info("Typing %s keys to the '%s' input field" % (value, self._name))
-        element = self.get_element('element_to_be_clickable')
+        element = self.get_element(expected_conditions.element_to_be_clickable)
         for ch in str(value):
             element.send_keys(ch)
             time.sleep(0.1)
 
     def send_keys_to_invisible_field(self, value):
         Log.info("Sending %s keys '%s' to the invisible text field" % (value, self._name))
-        self.execute_action('send_keys',  arg=str(value))
+        self.execute_action(Action.SEND_KEYS,  arg=str(value))
 
     def get_content(self):
-        return self.execute_action("get_attribute", arg="value")
+        return self.execute_action(Action.GET_ATTRIBUTE, arg="value")
 
 
 class FRInput(Input):
 
     def get_content(self):
-        return self.execute_action("text")
+        return self.execute_action(Action.TEXT)
 
 
 class TextBlock(KOMElement):

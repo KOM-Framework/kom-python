@@ -1,4 +1,4 @@
-from kom_framework.src.web import multi_application_mode
+from ...web import multi_application_mode
 from ...web.browser import Browser
 
 

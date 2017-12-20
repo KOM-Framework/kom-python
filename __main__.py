@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from kom_framework.src.general import Log
+from .src.general import Log
 
 
 def main():

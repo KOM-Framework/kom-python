@@ -8,31 +8,15 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+from ...web.data_types.actions import Action
+from ...web.data_types import js_waiter
 from ...general import Log
-from ...web import element_load_time
+from ...web import element_load_time, retry_delay
 from ...web.support.session_factory import WebSessionsFactory
 
 
 class KOMElement:
     __metaclass__ = ABCMeta
-
-    js_http_requests_listener = "(function() {" \
-                                "if (window.httpRequestsListenerStarted) return;" \
-                                "window.httpRequestsListenerStarted = true;" \
-                                "var oldOpen = XMLHttpRequest.prototype.open;" \
-                                "window.openHTTPs = 0;" \
-                                "var listener = function(){" \
-                                "if (this.readyState == 4) {" \
-                                "window.openHTTPs--;" \
-                                "this.removeEventListener('readystatechange', listener);" \
-                                "}" \
-                                "};" \
-                                "XMLHttpRequest.prototype.open = function(method, url, async, user, pass){" \
-                                "window.openHTTPs++;" \
-                                "this.addEventListener('readystatechange', listener);" \
-                                "oldOpen.call(this, method, url, async, user, pass);" \
-                                "};" \
-                                "})();"
 
     def __new__(cls, *args, **kwargs):
         obj = super(KOMElement, cls).__new__(cls)
@@ -48,7 +32,7 @@ class KOMElement:
         self._name = str(self._locator)
         self._action_element = action_element
 
-    def exists(self, wait_time=0, condition='presence_of_element_located'):
+    def exists(self, wait_time=0, condition=expected_conditions.presence_of_all_elements_located):
         try:
             self.get_element(condition=condition, wait_time=wait_time)
             return True
@@ -56,26 +40,26 @@ class KOMElement:
             return False
 
     def inject_js_waiter(self):
-        self.browser_session.execute_script(KOMElement.js_http_requests_listener)
+        self.browser_session.execute_script(js_waiter)
 
     def wait_for_all_http_requests_to_be_completed(self):
         self.browser_session.wait_until_http_requests_are_finished()
 
-    def get_element(self, condition='presence_of_element_located', wait_time=element_load_time):
+    def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
         driver = self.browser_session.driver
         if self.base_element_list:
             driver = self.base_element_list.get_elements()[self.base_element_index]
         elif self._base_element:
             driver = WebDriverWait(driver, wait_time).until(
-                expected_conditions.presence_of_element_located(self._base_element._locator))
+                expected_conditions.presence_of_element_located(getattr(self._base_element, '_locator')))
         element = WebDriverWait(driver, wait_time).until(
-            getattr(expected_conditions, condition)(self._locator)
+            condition(self._locator)
         )
         return element
 
     def execute_action(self, action, element_condition=None, arg=None):
         if not element_condition:
-            element_condition = 'presence_of_element_located'
+            element_condition = expected_conditions.presence_of_element_located
         try:
             obj = getattr(self.get_element(element_condition), action)
             value_type = type(obj).__name__
@@ -97,7 +81,7 @@ class KOMElement:
                 self.__retry_count += 1
                 Log.error('Error on performing \'%s\' action. Retrying...' % action)
                 Log.error(e.msg)
-                time.sleep(0.5)
+                time.sleep(retry_delay)
                 if 'is not clickable at point' in e.msg:
                     self.scroll_to_element()
                 return self.execute_action(action, element_condition, arg)
@@ -105,14 +89,14 @@ class KOMElement:
                 self.browser_session.refresh()
                 raise e
 
-    def click(self, expected_element_condition='element_to_be_clickable'):
-        self.execute_action('click', expected_element_condition)
+    def click(self, expected_element_condition=expected_conditions.element_to_be_clickable):
+        self.execute_action(Action.CLICK, expected_element_condition)
 
     def get_attribute(self, name):
-        return self.execute_action('get_attribute', None, name)
+        return self.execute_action(Action.GET_ATTRIBUTE, None, name)
 
     def text(self):
-        return self.execute_action("text")
+        return self.execute_action(Action.TEXT)
 
     def move_to(self):
         Log.info("Moving to %s" % self._name)
@@ -124,11 +108,11 @@ class KOMElement:
         ActionChains(self.browser_session.driver).move_to_element(element).click(element).perform()
 
     def is_displayed(self):
-        return self.execute_action('is_displayed')
+        return self.execute_action(Action.IS_DISPLAYED)
 
     def type_keys(self, key):
         Log.info("Typing keys into %s" % self._name)
-        self.execute_action('send_keys', None, key)
+        self.execute_action(Action.SEND_KEYS, None, key)
 
     def wait_while_exists(self, wait_time=10):
         Log.info('Waiting for the text %s to disappear' % self._name)

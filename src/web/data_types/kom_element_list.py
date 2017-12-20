@@ -6,7 +6,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from kom_framework.src.web.data_types.kom_element import KOMElement
+from ...web.data_types.kom_element import KOMElement
 from ...general import Log
 from ...web import element_load_time
 

@@ -97,9 +97,9 @@ class APIError(Exception):
 
 class TestRail:
     def __init__(self):
-        self.client = APIClient('https://thirdshelf.testrail.com')
-        self.client.user = 'oleh@thirdshelf.com'
-        self.client.password = 'z3Y5L28n5gI6WgOMEyFo'
+        self.client = APIClient('url')
+        self.client.user = 'user'
+        self.client.password = 'password'
 
     STATUSES = {
         "passed": 1,

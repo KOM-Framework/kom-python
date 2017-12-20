@@ -1,7 +1,7 @@
-import os
 from abc import ABCMeta, abstractmethod
 
 from selenium import webdriver
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.chrome.webdriver import Options as ChromeOptions
 
 from ...utils import use_proxy
@@ -79,3 +79,28 @@ class Chrome(Driver):
             }
         capabilities['loggingPrefs'] = {'browser': 'ALL'}
         return capabilities
+
+
+class FireFox(Driver):
+
+    @classmethod
+    def get_session(cls, extension=None):
+        from webdriver_manager.firefox import GeckoDriverManager
+        driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
+                                   capabilities=cls.get_capabilities(extension))
+        return driver
+
+    @classmethod
+    def get_capabilities(cls, extension=None):
+        firefox_profile = DesiredCapabilities.FIREFOX
+        firefox_profile['acceptInsecureCerts'] = True
+        if use_proxy:
+            proxy_url = Proxy.get_url()
+            firefox_profile['proxy'] = {
+                "httpProxy": proxy_url,
+                "ftpProxy": proxy_url,
+                "sslProxy": proxy_url,
+                "noProxy": None,
+                "proxyType": "manual"
+            }
+        return firefox_profile

@@ -36,16 +36,17 @@ class KOMElement:
 
     def __new__(cls, *args, **kwargs):
         obj = super(KOMElement, cls).__new__(cls)
-        obj.__retry_count = 0
         obj.browser_session = WebSessionsFactory.active_page.browser_session
         obj._base_element = WebSessionsFactory.active_frame
         obj.base_element_list = None
         obj.base_element_index = None
         return obj
 
-    def __init__(self, by, value):
+    def __init__(self, by, value, action_element=False):
+        self.__retry_count = 0
         self._locator = (by, value)
         self._name = str(self._locator)
+        self._action_element = action_element
 
     def exists(self, wait_time=0, condition='presence_of_element_located'):
         try:
@@ -53,6 +54,12 @@ class KOMElement:
             return True
         except (NoSuchElementException, TimeoutException):
             return False
+
+    def inject_js_waiter(self):
+        self.browser_session.execute_script(KOMElement.js_http_requests_listener)
+
+    def wait_for_all_http_requests_to_be_completed(self):
+        self.browser_session.wait_until_http_requests_are_finished()
 
     def get_element(self, condition='presence_of_element_located', wait_time=element_load_time):
         driver = self.browser_session.driver
@@ -69,39 +76,37 @@ class KOMElement:
     def execute_action(self, action, element_condition=None, arg=None):
         if not element_condition:
             element_condition = 'presence_of_element_located'
-        try:
-            obj = getattr(self.get_element(element_condition), action)
-            value_type = type(obj).__name__
-            if 'str' == value_type:
-                self.__retry_count = 0
-                return obj
-            else:
+        obj = getattr(self.get_element(element_condition), action)
+        value_type = type(obj).__name__
+        if 'str' == value_type:
+            self.__retry_count = 0
+            return obj
+        else:
+            try:
+                if self._action_element:
+                    self.inject_js_waiter()
                 if arg is not None:
                     value = obj(arg)
                 else:
                     value = obj()
-                self.__retry_count = 0
+                if self._action_element:
+                    self.wait_for_all_http_requests_to_be_completed()
                 return value
-        except (StaleElementReferenceException, WebDriverException) as e:
-            if self.__retry_count <= 2:
-                self.__retry_count += 1
-                Log.error('Error on performing \'%s\' action. Retrying...' % action)
-                Log.error(e.msg)
-                time.sleep(0.5)
-                if 'is not clickable at point' in e.msg:
-                    self.scroll_to_element()
-                return self.execute_action(action, element_condition, arg)
-            else:
-                self.browser_session.refresh()
-                raise e
+            except (StaleElementReferenceException, WebDriverException) as e:
+                if self.__retry_count <= 2:
+                    self.__retry_count += 1
+                    Log.error('Error on performing \'%s\' action. Retrying...' % action)
+                    Log.error(e.msg)
+                    time.sleep(0.5)
+                    if 'is not clickable at point' in e.msg:
+                        self.scroll_to_element()
+                    return self.execute_action(action, element_condition, arg)
+                else:
+                    self.browser_session.refresh()
+                    raise e
 
     def click(self, expected_element_condition='element_to_be_clickable'):
         self.execute_action('click', expected_element_condition)
-
-    def click_and_wait_for_http_request(self, expected_element_condition='element_to_be_clickable'):
-        self.browser_session.execute_script(KOMElement.js_http_requests_listener)
-        self.execute_action('click', expected_element_condition)
-        self.browser_session.wait_until_http_requests_are_finished()
 
     def get_attribute(self, name):
         return self.execute_action('get_attribute', None, name)

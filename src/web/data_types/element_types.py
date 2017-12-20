@@ -15,12 +15,6 @@ class Input(KOMElement):
         Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
         self.execute_action('send_keys', 'element_to_be_clickable', str(value))
 
-    def send_keys_and_wait_for_http_request(self, value):
-        Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
-        self.browser_session.execute_script(KOMElement.js_http_requests_listener)
-        self.execute_action('send_keys', 'element_to_be_clickable', str(value))
-        self.browser_session.wait_until_http_requests_are_finished()
-
     def clear_and_send_keys(self, value, use_action_chain=False):
         Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self._name))
         if use_action_chain:
@@ -47,12 +41,6 @@ class Input(KOMElement):
     def send_keys_to_invisible_field(self, value):
         Log.info("Sending %s keys '%s' to the invisible text field" % (value, self._name))
         self.execute_action('send_keys',  arg=str(value))
-
-    def send_keys_to_invisible_field_and_wait_for_http_request(self, value):
-        Log.info("Sending %s keys '%s' to the invisible text field" % (value, self._name))
-        self.browser_session.execute_script(KOMElement.js_http_requests_listener)
-        self.execute_action('send_keys',  arg=str(value))
-        self.browser_session.wait_until_http_requests_are_finished()
 
     def get_content(self):
         return self.execute_action("get_attribute", arg="value")

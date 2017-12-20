@@ -61,9 +61,7 @@ class Chrome(Driver):
             }
         })
         if extension:
-            root = os.path.dirname(__file__)
-            extension_path = os.path.abspath(os.path.join(root, extension))
-            chrome_options.add_extension(extension_path)
+            chrome_options.add_extension(extension)
         if headless_mode:
             chrome_options.add_argument('headless')
             chrome_options.add_argument('--no-sandbox')

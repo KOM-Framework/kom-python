@@ -19,7 +19,6 @@ class Browser:
         self._active = False
         self._driver = None
         self.test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
-        self.loaded_extension = None
         self.module_name = module_name
 
     def __set_focus(self):
@@ -58,11 +57,7 @@ class Browser:
         Log.info("Opening %s url" % url)
         if not self.driver:
             Log.info("Creating an instance of a Browser: %s." % browser)
-            self.driver = driver.create_session()
-        elif extension and (not self.loaded_extension or self.loaded_extension != extension):
-            self.quit()
-            self.open(url, open_url=False, extension=extension)
-            self.loaded_extension = extension
+            self.driver = driver.create_session(extension)
         if open_url:
             self.driver.get(url)
 

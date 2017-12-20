@@ -76,13 +76,13 @@ class KOMElement:
     def execute_action(self, action, element_condition=None, arg=None):
         if not element_condition:
             element_condition = 'presence_of_element_located'
-        obj = getattr(self.get_element(element_condition), action)
-        value_type = type(obj).__name__
-        if 'str' == value_type:
-            self.__retry_count = 0
-            return obj
-        else:
-            try:
+        try:
+            obj = getattr(self.get_element(element_condition), action)
+            value_type = type(obj).__name__
+            if 'str' == value_type:
+                self.__retry_count = 0
+                return obj
+            else:
                 if self._action_element:
                     self.inject_js_waiter()
                 if arg is not None:
@@ -92,18 +92,18 @@ class KOMElement:
                 if self._action_element:
                     self.wait_for_all_http_requests_to_be_completed()
                 return value
-            except (StaleElementReferenceException, WebDriverException) as e:
-                if self.__retry_count <= 2:
-                    self.__retry_count += 1
-                    Log.error('Error on performing \'%s\' action. Retrying...' % action)
-                    Log.error(e.msg)
-                    time.sleep(0.5)
-                    if 'is not clickable at point' in e.msg:
-                        self.scroll_to_element()
-                    return self.execute_action(action, element_condition, arg)
-                else:
-                    self.browser_session.refresh()
-                    raise e
+        except (StaleElementReferenceException, WebDriverException) as e:
+            if self.__retry_count <= 2:
+                self.__retry_count += 1
+                Log.error('Error on performing \'%s\' action. Retrying...' % action)
+                Log.error(e.msg)
+                time.sleep(0.5)
+                if 'is not clickable at point' in e.msg:
+                    self.scroll_to_element()
+                return self.execute_action(action, element_condition, arg)
+            else:
+                self.browser_session.refresh()
+                raise e
 
     def click(self, expected_element_condition='element_to_be_clickable'):
         self.execute_action('click', expected_element_condition)

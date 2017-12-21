@@ -1,3 +1,4 @@
+
 from selenium.webdriver.common.by import By
 
 from kom_framework.src.web.data_types.element_types import Input
@@ -5,15 +6,21 @@ from kom_framework.src.web.support.page_factory import locator
 from kom_framework.src.web.web_page import WebPage
 
 
+class Frame:
+
+    def __init__(self):
+        self.lucky = Input(By.NAME, "btnI", action_element=True)
+
+
 @locator(By.ID, 'viewport')
-class PageTest(WebPage):
+class PageTest(WebPage, Frame):
 
     some_variable = 'SOMETHING NEW'
 
     def __init__(self, module_name=None):
+        Frame.__init__(self)
         self._set_module(module_name)
         self.user = Input(By.ID, "lst-ib")
-        self.lucky = Input(By.NAME, "btnI", action_element=True)
 
     def open_actions(self):
         self.browser_session.open("http://www.google.com")
@@ -38,6 +45,9 @@ class TestSomething:
     def test_action_element(self):
         page = PageTest().open()
         page.lucky.click()
-        assert page
+        assert page.exists()
 
-
+    def test_web_frame(self):
+        page = PageTest()
+        page.open().lucky.click()
+        assert True

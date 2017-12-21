@@ -1,4 +1,4 @@
-from kom_framework.src.utils.testrail import APIClient
+from kom_framework.utils.testrail import APIClient
 from kom_framework.src.general import Log
 import pytest
 

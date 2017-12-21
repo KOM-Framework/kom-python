@@ -4,6 +4,7 @@ import os
 import random
 import string
 import json
+import time
 
 from datetime import datetime
 from subprocess import check_call
@@ -22,6 +23,14 @@ def singleton(class_):
 class Log:
 
     log_entries = list()
+
+    def __init__(self, folder=None):
+        if folder:
+            datetime_format="%Y%m%d-%H%M%S"
+            filename=os.path.join(folder, datetime.fromtimestamp(time.time()).strftime(datetime_format) + '.log')
+            fileHandler = logging.FileHandler(filename)
+            fileHandler.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
+            logging.getLogger().addHandler(fileHandler)
 
     @classmethod
     def append_log(cls, message):

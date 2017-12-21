@@ -17,5 +17,5 @@
 
   "retry_failed": 1,
 
-  "multi_application_mode": "True"
+  "multi_application_mode": "False"
 }

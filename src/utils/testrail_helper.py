@@ -2,15 +2,15 @@ from kom_framework.utils.testrail import APIClient
 from kom_framework.src.general import Log
 import pytest
 
-CONST_EXTERNAL_DEFAULT_USER_EMAIL = "sergii.khomenko@x2omedia.com"
-CONST_EXTERNAL_DEFAULT_PASSWORD = "X2Omedia"
+CONST_EXTERNAL_DEFAULT_USER_EMAIL = ""
+CONST_EXTERNAL_DEFAULT_PASSWORD = ""
 
-CONST_TESTRAIL_URL = "https://x2o.testrail.net/"
-CONST_TESTRAIL_FIELD_STEP = "custom_steps"
-CONST_TESTRAIL_FIELD_TITLE = "title"
-CONST_TESTRAIL_FIELD_EXPECTRESULT = "custom_expected"
-CONST_TESTRAIL_FIELD_PREREQUISITE = "custom_preconds"
-CONST_TESTRAIL_FIELD_PRIORITY = "priority_id"
+CONST_TESTRAIL_URL = ""
+CONST_TESTRAIL_FIELD_STEP = ""
+CONST_TESTRAIL_FIELD_TITLE = ""
+CONST_TESTRAIL_FIELD_EXPECTRESULT = ""
+CONST_TESTRAIL_FIELD_PREREQUISITE = ""
+CONST_TESTRAIL_FIELD_PRIORITY = ""
 
 severity = {
     0: pytest.allure.severity_level.TRIVIAL,

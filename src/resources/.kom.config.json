@@ -1,15 +1,30 @@
 {
-  "browser_name": "Chrome",
-  "headless_mode": "False",
   "element_load_time": 5,
   "iframe_load_time": 10,
   "http_request_wait_time": 60,
   "page_load_time": 60,
   "retry_delay": 0.5,
 
+  "driver_configurations": {
+    "browserName": "chrome",
+    "platform": "ANY",
+    "version": "",
+    "goog:chromeOptions": {
+      "prefs": {
+        "credentials_enable_service": "False",
+        "profile": {
+          "password_manager_enabled": "False"
+        }
+      },
+      "loggingPrefs": {
+        "browser": "ALL"
+      }
+    }
+  },
+
   "remote_execution": "False",
-  "hub_ip": "35.202.136.79",
-  "hub_port": 5555,
+  "hub_ip": "localhost",
+  "hub_port": 4444,
 
   "video_recording": "False",
   "use_proxy": "False",

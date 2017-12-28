@@ -8,10 +8,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
+from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log, find_between
 from ..web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
     page_load_time
-from ..web.drivers import browser, driver
+from ..web.drivers import capabilities
 
 
 class Browser:
@@ -53,11 +54,11 @@ class Browser:
         self.quit()
         return node_id
 
-    def open(self, url, open_url=True, extension=None):
+    def open(self, url, open_url=True):
         Log.info("Opening %s url" % url)
         if not self.driver:
-            Log.info("Creating an instance of a Browser: %s." % browser)
-            self.driver = driver.create_session(extension)
+            Log.info("Creating an instance of a Browser.")
+            self.driver = Driver().create_session(capabilities)
         if open_url:
             self.driver.get(url)
 

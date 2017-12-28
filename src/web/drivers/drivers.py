@@ -1,106 +1,45 @@
-from abc import ABCMeta, abstractmethod
-
 from selenium import webdriver
-from selenium.webdriver import DesiredCapabilities
-from selenium.webdriver.chrome.webdriver import Options as ChromeOptions
-
-from ...utils import use_proxy
-from ...utils.proxy import Proxy
-from ...web import hub_ip, remote_execution, headless_mode, hub_port
+from ...web import hub_ip, remote_execution, hub_port
 
 
 class Driver:
 
     hub_link = 'http://%s:%s/wd/hub' % (hub_ip, hub_port)
 
-    __metaclass__ = ABCMeta
-
-    @classmethod
-    @abstractmethod
-    def get_session(cls):
-        pass
-
-    @classmethod
-    @abstractmethod
-    def get_capabilities(cls, extension=None):
-        pass
-
-    @classmethod
-    def get_remove_session(cls, extension=None):
+    def get_remove_session(self, desired_capabilities):
         driver = webdriver.Remote(
-            command_executor=cls.hub_link,
-            desired_capabilities=cls.get_capabilities(extension)
-        )
-        driver.maximize_window()
+            command_executor=self.hub_link,
+            desired_capabilities=desired_capabilities)
+        driver.set_window_size(1920, 1080)
         return driver
 
-    @classmethod
-    def create_session(cls, extension=None):
+    def create_session(self, desired_capabilities):
         if remote_execution:
-            return cls.get_remove_session(extension)
+            driver = self.get_remove_session(desired_capabilities)
         else:
-            return cls.get_session(extension)
+            from webdriver_manager.chrome import ChromeDriverManager
+            driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+                                      desired_capabilities=desired_capabilities)
+        driver.set_window_size(1920, 1080)
+        return driver
 
 
 class Chrome(Driver):
 
     @classmethod
-    def get_session(cls, extension=None):
+    def get_session(cls, desired_capabilities):
         from webdriver_manager.chrome import ChromeDriverManager
         driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
-                                  desired_capabilities=cls.get_capabilities(extension))
-        return driver
+                                  desired_capabilities=desired_capabilities)
 
-    @classmethod
-    def get_capabilities(cls, extension=None):
-        chrome_options = ChromeOptions()
-        chrome_options.add_experimental_option('prefs', {
-            'credentials_enable_service': False,
-            'profile': {
-                'password_manager_enabled': False
-            }
-        })
-        if extension:
-            chrome_options.add_extension(extension)
-        if headless_mode:
-            chrome_options.add_argument('headless')
-            chrome_options.add_argument('--no-sandbox')
-        capabilities = chrome_options.to_capabilities()
-        if use_proxy:
-            proxy_url = Proxy.get_url()
-            capabilities['proxy'] = {
-                "httpProxy": proxy_url,
-                "ftpProxy": proxy_url,
-                "sslProxy": proxy_url,
-                "noProxy": None,
-                "proxyType": "MANUAL",
-                "class": "org.openqa.selenium.Proxy",
-                "autodetect": False
-            }
-        capabilities['loggingPrefs'] = {'browser': 'ALL'}
-        return capabilities
+        return driver
 
 
 class FireFox(Driver):
 
     @classmethod
-    def get_session(cls, extension=None):
+    def get_session(cls, desired_capabilities):
         from webdriver_manager.firefox import GeckoDriverManager
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
-                                   capabilities=cls.get_capabilities(extension))
+                                   capabilities=desired_capabilities)
         return driver
-
-    @classmethod
-    def get_capabilities(cls, extension=None):
-        firefox_profile = DesiredCapabilities.FIREFOX
-        firefox_profile['acceptInsecureCerts'] = True
-        if use_proxy:
-            proxy_url = Proxy.get_url()
-            firefox_profile['proxy'] = {
-                "httpProxy": proxy_url,
-                "ftpProxy": proxy_url,
-                "sslProxy": proxy_url,
-                "noProxy": None,
-                "proxyType": "manual"
-            }
-        return firefox_profile

@@ -1,6 +1,6 @@
 import time
 
-from selenium.common.exceptions import NoSuchFrameException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -147,10 +147,9 @@ class IFrame(KOMElement):
         try:
             WebDriverWait(self.browser_session.driver,
                           wait_time).until(
-                expected_conditions.frame_to_be_available_and_switch_to_it(self._locator))
-            self.browser_session.switch_to_default_content()
+                expected_conditions.presence_of_element_located(self._locator))
             return True
-        except NoSuchFrameException:
+        except TimeoutException:
             return False
 
 

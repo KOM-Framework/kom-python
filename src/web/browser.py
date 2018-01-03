@@ -62,9 +62,10 @@ class Browser:
             self.driver.get(url)
 
     def switch_to_frame(self, frame_locator):
-        WebDriverWait(self.driver,
+        out = WebDriverWait(self.driver,
                       iframe_load_time).until(
             expected_conditions.frame_to_be_available_and_switch_to_it(frame_locator))
+        return out
 
     def switch_to_default_content(self):
         self.driver.switch_to.default_content()

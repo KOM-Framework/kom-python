@@ -122,7 +122,7 @@ class KOMElement:
 
     def wait_for_visibility(self, wait_time=10):
         Log.info('Waiting for the text %s to be visible' % self._name)
-        WebDriverWait(self.browser_session.driver, wait_time).until(
+        return WebDriverWait(self.browser_session.driver, wait_time).until(
             expected_conditions.visibility_of_element_located(self._locator)
         )
 

@@ -1,3 +1,6 @@
+from kom_framework.src.web.support.session_factory import WebSessionsFactory
+
+
 class PageFactory:
 
     instances = {}
@@ -23,6 +26,7 @@ def locator(by, value):
                 if key not in PageFactory.instances:
                     page_object = class_(*args, **kwargs)
                     page_object._locator = (by, value)
+                    WebSessionsFactory.active_frame = None
                     PageFactory.set_instance(key, page_object)
                 return PageFactory.get_instance(key)
         return Wrapper

@@ -21,7 +21,6 @@ class WebPage:
         obj.module_name = obj.__class__.__module__
         obj.browser_session = WebSessionsFactory.browser(obj.module_name)
         WebSessionsFactory.active_page = obj
-        WebSessionsFactory.active_frame = None
         return obj
 
     def _set_module(self, module_name):

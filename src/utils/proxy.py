@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 from browsermobproxy import Server
 
 from ..general import Log
-from ..utils import proxy_port
-from ..web import remote_execution, hub_ip
+from ..utils import proxy_port, proxy_ip
+from ..web import remote_execution
 
 
 class Proxy:
@@ -40,7 +40,7 @@ class Proxy:
                 cls.start()
             cls.url = urlparse(cls.proxy.proxy).path
             if remote_execution:
-                cls.url = cls.url.replace('localhost', hub_ip)
+                cls.url = cls.url.replace('localhost', proxy_ip)
         return cls.url
 
     @classmethod

@@ -1,13 +1,15 @@
 from kom_framework import env_file_content
-from ...utils import proxy_ip, proxy_port
+from ...utils.proxy import Proxy
+from ...utils import proxy_ip
 
 capabilities = env_file_content['driver_configurations']
 
 if proxy_ip:
+    proxy_url = Proxy.get_url()
     capabilities['proxy'] = {
-        "ftpProxy": "%s:%s" % (proxy_ip, proxy_port),
-        "sslProxy": "%s:%s" % (proxy_ip, proxy_port),
-        "httpProxy": "%s:%s" % (proxy_ip, proxy_port),
+        "ftpProxy": proxy_url,
+        "sslProxy": proxy_url,
+        "httpProxy": proxy_url,
         "class": "org.openqa.selenium.Proxy",
         "autodetect": "False",
         "noProxy": "None",

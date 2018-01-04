@@ -51,3 +51,7 @@ class TestSomething:
         page = PageTest()
         page.open().lucky.click()
         assert True
+
+    def test_proxy_get_url(self):
+        from kom_framework.src.utils.proxy import Proxy
+        print(Proxy.get_url())

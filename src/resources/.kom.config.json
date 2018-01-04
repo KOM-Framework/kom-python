@@ -15,22 +15,22 @@
         "profile": {
           "password_manager_enabled": "False"
         }
-      },
-      "loggingPrefs": {
-        "browser": "ALL"
       }
+    },
+    "loggingPrefs": {
+      "browser": "ALL"
     }
   },
 
   "remote_execution": "False",
-  "hub_ip": "localhost",
-  "hub_port": 4444,
+  "hub_ip": "35.202.136.79",
+  "hub_port": 5555,
 
   "video_recording": "False",
-  "use_proxy": "False",
+  "proxy_ip": "",
   "proxy_port": 8088,
 
   "retry_failed": 1,
 
-  "multi_application_mode": "False"
+  "multi_application_mode": "True"
 }

@@ -1,3 +1,4 @@
+import base64
 import time
 from urllib.request import urlopen
 
@@ -12,7 +13,6 @@ from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log, find_between
 from ..web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
     page_load_time
-from ..web.drivers import capabilities
 
 
 class Browser:
@@ -54,17 +54,17 @@ class Browser:
         self.quit()
         return node_id
 
-    def open(self, url, open_url=True):
+    def open(self, url, extensions=None, open_url=True):
         Log.info("Opening %s url" % url)
         if not self.driver:
             Log.info("Creating an instance of a Browser.")
-            self.driver = Driver().create_session(capabilities)
+            self.driver = Driver(extensions).create_session()
         if open_url:
             self.driver.get(url)
 
     def switch_to_frame(self, frame_locator):
         out = WebDriverWait(self.driver,
-                      iframe_load_time).until(
+                            iframe_load_time).until(
             expected_conditions.frame_to_be_available_and_switch_to_it(frame_locator))
         return out
 

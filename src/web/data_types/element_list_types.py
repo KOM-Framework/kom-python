@@ -52,10 +52,10 @@ class GridView(KOMElementList):
                         return row
             if datetime.now() - start_time > timedelta(seconds=wait_time):
                 if len(content) > 0:
-                    Log.error('Unable to find item by "%s" text' % value)
+                    Log.info('Unable to find item by "%s" text' % value)
                     for row in content:
                         row_value = getattr(row, column_name).text()
-                        Log.error('Existing item: %s' % row_value)
+                        Log.info('Existing item: %s' % row_value)
                 break
         return None
 
@@ -177,4 +177,7 @@ class Menu(KOMElementList):
         for section in sections:
             if section.text == section_name:
                 section.click()
-                break
+                Log.info("Selected '%s' section in '%s' menu" % (section_name, self._name))
+                return True
+        Log.info("Selecting '%s' section in '%s' menu failed" % (section_name, self._name))
+        return False

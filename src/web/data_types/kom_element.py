@@ -126,6 +126,13 @@ class KOMElement:
             expected_conditions.visibility_of_element_located(self._locator)
         )
 
+    def wait_for_text_to_be_present_in_element(self, wait_time=10, text=""):
+        Log.info('Waiting for the text %s to be present' % self._name)
+        x = WebDriverWait(self.browser_session.driver, wait_time).until(
+            expected_conditions.text_to_be_present_in_element(self._locator, text)
+        )
+        return x
+
     def scroll_to_element(self):
         Log.info("Scrolling to %s element" % self._name)
         self.browser_session.driver.execute_script("return arguments[0].scrollIntoView();", self.get_element())

@@ -40,7 +40,7 @@ class WebPage:
     def open(self):
         try:
             if not self.exists():
-                Log.info("Invoking %s web page" % self.page_name)
+                Log.info("Open %s web page" % self.page_name)
                 self.open_actions()
                 assert self.exists(page_load_time), "Page %s cannot be found" % self.page_name
             else:

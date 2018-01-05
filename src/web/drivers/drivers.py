@@ -26,6 +26,8 @@ class Driver:
     def get_local_session(self):
         if capabilities['browserName'] == 'firefox':
             driver_type = FireFox
+        elif capabilities['browserName'] == 'ie':
+            driver_type = InternetExplorer
         else:
             driver_type = Chrome
         if self.extensions:
@@ -85,4 +87,13 @@ class FireFox(Driver):
         from webdriver_manager.firefox import GeckoDriverManager
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
                                    capabilities=capabilities)
+        return driver
+
+
+class InternetExplorer(Driver):
+
+    @classmethod
+    def get_session(cls):
+        from webdriver_manager.microsoft import IEDriverManager
+        driver = webdriver.Ie(executable_path=IEDriverManager().install(), capabilities=capabilities)
         return driver

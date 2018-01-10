@@ -30,7 +30,5 @@
   "proxy_ip": "",
   "proxy_port": 8088,
 
-  "retry_failed": 1,
-
   "multi_application_mode": "True"
 }

@@ -140,6 +140,6 @@ class TestRail:
     def delete_run(self, run_id):
         return self.client.send_post("delete_run/%s" % run_id, data={})
 
-    def get_user_by_email(self, email='oleh@thirdshelf.com'):
+    def get_user_by_email(self, email):
         response = self.client.send_get("get_user_by_email&email=%s" % email)
         return response['id']

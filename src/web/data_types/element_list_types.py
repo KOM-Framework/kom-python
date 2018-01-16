@@ -13,7 +13,10 @@ from ...web.data_types.element_types import Input
 from ...web.data_types.kom_element_list import KOMElementList
 
 
-class GridView(KOMElementList):
+class Table(KOMElementList):
+    """
+        Prefix it with tbl_
+    """
 
     def __init__(self, by, value, table_structure):
         KOMElementList.__init__(self, by, value)
@@ -106,7 +109,7 @@ class GridView(KOMElementList):
         return out
 
 
-class WebGroup(GridView):
+class WebGroup(Table):
 
     def select_by_text(self, text):
         Log.info("Selecting %s text in the %s group" % (text, self._name))
@@ -117,7 +120,17 @@ class WebGroup(GridView):
                 break
 
 
+class Charts(Table):
+    """
+        Prefix it with chr_
+    """
+    pass
+
+
 class SelectList(KOMElementList):
+    """
+     Prefix it with slc_
+    """
 
     def __init__(self, link_by, link_value, list_by=None, list_value=None):
         KOMElementList.__init__(self, link_by, link_value)

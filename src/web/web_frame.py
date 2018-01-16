@@ -13,6 +13,7 @@ class WebFrame:
         obj.frame_name = obj.__class__.__name__
         obj.module_name = obj.__class__.__module__
         obj.browser_session = WebSessionsFactory.browser(obj.module_name)
+        obj.parent_page = WebSessionsFactory.active_page
         WebSessionsFactory.active_frame = obj
         return obj
 

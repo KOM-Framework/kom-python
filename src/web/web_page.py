@@ -46,7 +46,6 @@ class WebPage:
             else:
                 if "setup_page" in dir(self):
                     self.setup_page()
-            return self
         except WebDriverException as e:
             if "terminated due to SO_TIMEOUT" in e.msg:
                 if self._retry_count <= 1:
@@ -57,6 +56,7 @@ class WebPage:
                 else:
                     self._retry_count = 0
             raise e
+        return self
 
     def forced_open(self):
         self.browser_session.quit()

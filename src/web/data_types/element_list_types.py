@@ -18,15 +18,27 @@ class Table(KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, by, value, table_structure):
+    def __init__(self, by, value, table_structure, next_page_button=None):
         KOMElementList.__init__(self, by, value)
         self.table_structure = table_structure
+        self.next_page_button = next_page_button
+
+    def next_page(self):
+        if self.next_page_button and self.next_page_button.exists():
+            self.next_page_button.click()
+            return True
+        return False
 
     def get_content(self, specific_index=None, wait_time=0):
         Log.info("Getting content of a table: %s" % self._name)
+        start_time = datetime.now()
         out = []
         if self.exists(wait_time):
             elements = self.get_elements()
+            while not len(elements):
+                elements = self.get_elements()
+                if datetime.now() - start_time > timedelta(seconds=wait_time):
+                    break
             elements_count = len(elements)
             field_names = self.table_structure.keys()
             for i in range(elements_count):
@@ -45,35 +57,26 @@ class Table(KOMElementList):
 
     def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
         Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
-        start_time = datetime.now()
-        while True:
-            content = self.get_content()
-            if len(content) > 0:
-                for row in content:
-                    row_value = getattr(row, column_name).text()
-                    if row_value == value:
-                        return row
-            if datetime.now() - start_time > timedelta(seconds=wait_time):
-                if len(content) > 0:
-                    Log.info('Unable to find item by "%s" text' % value)
-                    for row in content:
-                        row_value = getattr(row, column_name).text()
-                        Log.info('Existing item: %s' % row_value)
-                break
+        content = self.get_content(wait_time=wait_time)
+        for row in content:
+            if getattr(row, column_name).exists():
+                row_value = getattr(row, column_name).text()
+                if row_value == value:
+                    return row
+        if self.next_page():
+            return self.get_row_by_column_value(column_name, value, wait_time)
         return None
 
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
         Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
-        start_time = datetime.now()
-        while True:
-            content = self.get_content()
-            for row in content:
-                if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).text()
-                    if pattern in row_value:
-                        return row
-            if datetime.now() - start_time > timedelta(seconds=wait_time):
-                break
+        content = self.get_content(wait_time=wait_time)
+        for row in content:
+            if getattr(row, column_name).exists():
+                row_value = getattr(row, column_name).text()
+                if pattern in row_value:
+                    return row
+        if self.next_page():
+            return self.get_row_by_column_pattern(column_name, pattern, wait_time)
         return None
 
     def get_row_by_index(self, index, wait_time=element_load_time):
@@ -92,20 +95,18 @@ class Table(KOMElementList):
         WebDriverWait(self.browser_session.driver, wait_time).until(
             lambda driver: len(driver.find_elements(self._locator[0], self._locator[1])) >= elements_count)
 
-    def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=10):
+    def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=element_load_time):
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
                  % (column_name, attribute_name, attribute_value, self._name))
         out = list()
-        start_time = datetime.now()
-        while True:
-            content = self.get_content()
-            for row in content:
-                if getattr(row, column_name).exists():
-                    act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
-                    if act_attr_value == attribute_value:
-                        out.append(row)
-            if datetime.now() - start_time > timedelta(seconds=wait_time) or out != []:
-                break
+        content = self.get_content(wait_time=wait_time)
+        for row in content:
+            if getattr(row, column_name).exists():
+                act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
+                if act_attr_value == attribute_value:
+                    out.append(row)
+        if self.next_page():
+            return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
         return out
 
 

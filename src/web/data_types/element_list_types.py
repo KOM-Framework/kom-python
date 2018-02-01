@@ -161,6 +161,25 @@ class SelectList(KOMElementList):
         if hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
+    def get_options_list(self):
+        Log.info("Getting all options list from the '%s' select list" % self._name)
+        out = list()
+        self.execute_action(Action.CLICK)
+        options = self.options_list.get_elements()
+        for option in options:
+            out.append(option.text)
+        return out
+
+    def select_option_by_attribute_value(self, attribute_name, attribute_value):
+        Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
+                 % (attribute_name, attribute_value, self._name))
+        self.execute_action(Action.CLICK)
+        options = self.options_list.get_elements()
+        for option in options:
+            if option.get_attribute(attribute_name) == attribute_value:
+                option.click()
+                break
+
 
 class SelectMenu(KOMElementList):
 

@@ -176,3 +176,10 @@ class IFrame(KOMElement):
 
 class Image(KOMElement):
     pass
+
+
+class Spinner(KOMElement):
+    """
+      Prefix it with spn_
+    """
+    pass

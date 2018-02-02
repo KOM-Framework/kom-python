@@ -96,10 +96,10 @@ class APIError(Exception):
 
 
 class TestRail:
-    def __init__(self):
-        self.client = APIClient('url')
-        self.client.user = 'user'
-        self.client.password = 'password'
+    def __init__(self, url, user, password):
+        self.client = APIClient(url)
+        self.client.user = user
+        self.client.password = password
 
     STATUSES = {
         "passed": 1,
@@ -143,3 +143,7 @@ class TestRail:
     def get_user_by_email(self, email):
         response = self.client.send_get("get_user_by_email&email=%s" % email)
         return response['id']
+
+    def get_tests(self, run_id):
+        response = self.client.send_get("get_tests/%s" % run_id)
+        return response

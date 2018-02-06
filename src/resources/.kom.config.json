@@ -23,14 +23,12 @@
   },
 
   "remote_execution": "False",
-  "hub_ip": "35.202.136.79",
-  "hub_port": 5555,
+  "hub_ip": "",
+  "hub_port": 4444,
 
   "video_recording": "False",
   "proxy_ip": "",
   "proxy_port": 8088,
-
-  "retry_failed": 1,
 
   "multi_application_mode": "True"
 }

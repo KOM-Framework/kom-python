@@ -54,12 +54,30 @@ class FRInput(Input):
 
 
 class TextBlock(KOMElement):
+    """
+        Prefix it with txt_
+    """
+
     def text(self):
         Log.info("Getting text from the '%s' text block" % self._name)
         return super(TextBlock, self).text()
 
 
+class TextArea(KOMElement):
+    """
+        Prefix it with txa_
+    """
+
+    def text(self):
+        Log.info("Getting text from the '%s' text area" % self._name)
+        return super(TextArea, self).text()
+
+
 class Button(KOMElement):
+    """
+        Prefix it with btn_
+    """
+
     def click(self, **kwargs):
         Log.info("Clicking on the '%s' button" % self._name)
         super(Button, self).click(**kwargs)
@@ -79,6 +97,9 @@ class LinkedText(KOMElement):
 
 
 class Link(KOMElement):
+    """
+        Prefix it with lnk_
+    """
 
     def click(self, **kwargs):
         Log.info("Clicking on the '%s' web link" % self._name)
@@ -165,4 +186,11 @@ class IFrame(KOMElement):
 
 
 class Image(KOMElement):
+    pass
+
+
+class Spinner(KOMElement):
+    """
+      Prefix it with spn_
+    """
     pass

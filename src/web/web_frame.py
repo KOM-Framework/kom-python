@@ -1,6 +1,9 @@
+from abc import abstractmethod
+
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
+from kom_framework.src.web import page_load_time
 from ..general import Log
 from ..web.support.session_factory import WebSessionsFactory
 from selenium.webdriver.support import expected_conditions
@@ -13,6 +16,7 @@ class WebFrame:
         obj.frame_name = obj.__class__.__name__
         obj.module_name = obj.__class__.__module__
         obj.browser_session = WebSessionsFactory.browser(obj.module_name)
+        obj.parent_page = WebSessionsFactory.active_page
         WebSessionsFactory.active_frame = obj
         return obj
 
@@ -27,3 +31,14 @@ class WebFrame:
             except (NoSuchElementException, TimeoutException):
                 Log.info("Frame '%s' was not found" % self.frame_name)
         return False
+
+    @abstractmethod
+    def open_actions(self):
+        pass
+
+    def open(self):
+        if not self.exists():
+            Log.info("Open %s web frame" % self.frame_name)
+            self.open_actions()
+            assert self.exists(page_load_time), "Frame %s cannot be found" % self.frame_name
+        return self

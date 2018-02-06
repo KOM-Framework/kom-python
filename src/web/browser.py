@@ -1,4 +1,3 @@
-import base64
 import time
 from urllib.request import urlopen
 
@@ -11,37 +10,15 @@ from selenium.webdriver.support import expected_conditions
 
 from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log, find_between
-from ..web import hub_ip, hub_port, remote_execution, iframe_load_time, http_request_wait_time, \
+from ..web import hub_ip, hub_port, iframe_load_time, http_request_wait_time, \
     page_load_time
 
 
 class Browser:
     def __init__(self, module_name=None):
-        self._active = False
-        self._driver = None
+        self.driver = None
         self.test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
         self.module_name = module_name
-
-    def __set_focus(self):
-        if remote_execution:
-            Log.info("Setting focus to the Browser")
-            self._driver.execute_script("alert('Focusing the window');")
-            time.sleep(0.5)
-            Alert(self._driver).accept()
-
-    def __get_driver(self):
-        if self._driver and not self._active:
-            Log.info("Switching to the other browser")
-            self.__set_focus()
-            self._active = True
-        return self._driver
-
-    def __set_driver(self, value):
-        self._driver = value
-        if value:
-            self.__set_focus()
-
-    driver = property(__get_driver, __set_driver)
 
     def get_node_id(self):
         self.open("http://localhost")
@@ -110,11 +87,11 @@ class Browser:
 
     def accept_alert(self):
         Log.info("Accept alert")
-        Alert(self._driver).accept()
+        Alert(self.driver).accept()
 
     def enter_text_into_alert(self, text):
         Log.info('Enter "%s" text into Alert' % text)
-        Alert(self._driver).send_keys(text)
+        Alert(self.driver).send_keys(text)
 
     def enter_text_and_accept_alert(self, text):
         self.wait_for_alert()

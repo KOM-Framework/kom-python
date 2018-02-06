@@ -1,6 +1,7 @@
 import os
 
 import pytest
+import sys
 
 from .src.general import Log
 
@@ -19,8 +20,8 @@ def main():
         pytest_args.append('--allure-stories=%s' % os.environ.get('STORIES_TO_TEST'))
     pytest_args.append('--alluredir=allure-results')
     Log.info('pytest args "%s"' % str(pytest_args))
-    pytest.main(pytest_args)
+    return pytest.main(pytest_args)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

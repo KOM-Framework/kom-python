@@ -1,1 +1,0 @@
-# thirdshelf-qa-framework

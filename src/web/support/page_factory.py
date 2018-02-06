@@ -14,7 +14,7 @@ class PageFactory:
         cls.instances[key] = page_object
 
 
-def locator(by, value):
+def locator(by, value, use_factory=True):
     def real_decorator(class_):
         class WrapperMeta(type):
             def __getattr__(self, attr):
@@ -22,12 +22,20 @@ def locator(by, value):
 
         class Wrapper(metaclass=WrapperMeta):
             def __new__(cls, *args, **kwargs):
-                key = (class_, args, str(kwargs))
-                if key not in PageFactory.instances:
-                    page_object = class_(*args, **kwargs)
-                    page_object._locator = (by, value)
-                    WebSessionsFactory.active_frame = None
-                    PageFactory.set_instance(key, page_object)
-                return PageFactory.get_instance(key)
+                if use_factory:
+                    key = (class_, args, str(kwargs))
+                    if key not in PageFactory.instances:
+                        page_object = cls.create_object(*args, **kwargs)
+                        PageFactory.set_instance(key, page_object)
+                    return PageFactory.get_instance(key)
+                else:
+                    return cls.create_object(*args, **kwargs)
+
+            @staticmethod
+            def create_object(*args, **kwargs):
+                page_object = class_(*args, **kwargs)
+                page_object._locator = (by, value)
+                WebSessionsFactory.active_frame = None
+                return page_object
         return Wrapper
     return real_decorator

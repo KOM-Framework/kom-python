@@ -86,11 +86,16 @@ class KOMElement:
                     self.scroll_to_element()
                 return self.execute_action(action, element_condition, arg)
             else:
-                self.browser_session.refresh()
+                #self.browser_session.refresh()
                 raise e
 
     def click(self, expected_element_condition=expected_conditions.element_to_be_clickable):
         self.execute_action(Action.CLICK, expected_element_condition)
+
+    def double_click(self):
+        Log.info("Double click on %s" % self._name)
+        element = self.get_element()
+        ActionChains(self.browser_session.driver).double_click(element).perform()
 
     def get_attribute(self, name):
         return self.execute_action(Action.GET_ATTRIBUTE, None, name)
@@ -116,7 +121,7 @@ class KOMElement:
 
     def wait_while_exists(self, wait_time=10):
         Log.info('Waiting for the text %s to disappear' % self._name)
-        WebDriverWait(self.browser_session.driver, wait_time).until(
+        return WebDriverWait(self.browser_session.driver, wait_time).until(
             expected_conditions.invisibility_of_element_located(self._locator)
         )
 
@@ -126,7 +131,7 @@ class KOMElement:
             expected_conditions.visibility_of_element_located(self._locator)
         )
 
-    def wait_for_text_to_be_present_in_element(self, wait_time=10, text=""):
+    def wait_for_text_to_be_present_in_element(self, wait_time=5, text=""):
         Log.info('Waiting for the text %s to be present' % self._name)
         x = WebDriverWait(self.browser_session.driver, wait_time).until(
             expected_conditions.text_to_be_present_in_element(self._locator, text)

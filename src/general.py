@@ -9,6 +9,8 @@ import time
 from datetime import datetime
 from subprocess import check_call
 
+import re
+
 
 def singleton(class_):
     instances = {}
@@ -29,7 +31,7 @@ class Log:
             datetime_format="%Y%m%d-%H%M%S"
             filename=os.path.join(folder, datetime.fromtimestamp(time.time()).strftime(datetime_format) + '.log')
             fileHandler = logging.FileHandler(filename)
-            fileHandler.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
+            fileHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s\t %(message)s"))
             logging.getLogger().addHandler(fileHandler)
 
     @classmethod
@@ -117,6 +119,36 @@ def find_between(str_in, first, last):
         return str_in[start:end]
     except ValueError:
         return None
+
+
+class File:
+
+    @staticmethod
+    def wait_until_file_download_finish(file_path=None, directory=None, regex=None, wait_time=5):
+        end_time = time.time() + wait_time
+        if file_path:
+            while not os.path.exists(file_path) and time.time() < end_time:
+                time.sleep(1)
+            return os.path.isfile(file_path)
+        elif directory and regex:
+            file_path = None
+            while not file_path and time.time() < end_time:
+                time.sleep(1)
+                file_path = File.get_file_by_regex(directory, regex)
+            if file_path:
+                return os.path.abspath(os.path.join(directory, file_path))
+
+
+    @staticmethod
+    def get_file_by_regex(dir_name, regex):
+        '''
+            find the first file in the input - directory with name matching regular expression of input - regex.
+            return the name of the file found
+        '''
+        pattern = re.compile(regex)
+        for filename in os.listdir(dir_name):
+            if pattern.match(filename):
+                return filename
 
 
 class Random:

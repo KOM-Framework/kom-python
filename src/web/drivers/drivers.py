@@ -26,7 +26,7 @@ class Driver:
     def get_local_session(self):
         if capabilities['browserName'] == 'firefox':
             driver_type = FireFox
-        elif capabilities['browserName'] == 'ie':
+        elif capabilities['browserName'] == 'internet explorer':
             driver_type = InternetExplorer
         else:
             driver_type = Chrome
@@ -40,7 +40,8 @@ class Driver:
             driver = self.get_remove_session()
         else:
             driver = self.get_local_session()
-        driver.set_window_size(1920, 1080)
+        driver.set_window_size(1024, 768)
+        driver.set_window_position(0, 0)
         return driver
 
 

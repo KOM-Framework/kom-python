@@ -85,6 +85,19 @@ class Browser:
         self.driver.refresh()
         self.wait_for_page_to_load()
 
+    def refresh_with_accept_browser_alert_if_shown(self):
+        Log.info("Refreshing the browser")
+        self.driver.refresh()
+        self.accept_browser_alert_if_shown()
+        self.wait_for_page_to_load()
+
+    def accept_browser_alert_if_shown(self):
+        try:
+            if self.wait_for_alert(1):
+                self.accept_alert()
+        except Exception:
+            pass
+
     def quit(self):
         if self.driver:
             Log.info("Closing the browser")
@@ -92,7 +105,7 @@ class Browser:
             self.driver = None
 
     def wait_for_alert(self, wait_time=iframe_load_time):
-        WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
+        return WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
                                                     'Timed out waiting for alert to appear.')
 
     def accept_alert(self):
@@ -136,3 +149,9 @@ class Browser:
     def type_keys(self, keys):
         self.driver.switch_to.active_element.send_keys(keys)
 
+    def switch_to_last_tab(self):
+        self.driver.switch_to_window(self.driver.window_handles[-1])
+
+    def close_last_tab(self):
+        self.driver.switch_to_window(self.driver.window_handles[-1])
+        self.driver.close()

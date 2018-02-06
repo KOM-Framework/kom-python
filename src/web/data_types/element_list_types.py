@@ -59,6 +59,21 @@ class GridView(KOMElementList):
                 break
         return None
 
+    def get_column_values(self, column_name, wait_time=element_load_time):
+        Log.info("Getting column %s values from the table: %s" % (column_name, self._name))
+        column = []
+        start_time = datetime.now()
+        while True:
+            content = self.get_content()
+            if len(content) > 0:
+                for row in content:
+                    column.append(getattr(row, column_name).text())
+                return column
+            if datetime.now() - start_time > timedelta(seconds=wait_time):
+                break
+        return None
+
+
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
         Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
         start_time = datetime.now()
@@ -119,8 +134,10 @@ class WebGroup(GridView):
 
 class SelectList(KOMElementList):
 
-    def __init__(self, link_by, link_value, list_by=None, list_value=None):
+    def __init__(self, link_by, link_value, list_by=None, list_value=None, extent_list_by_click_on_field=False, hide_list_by_click_on_field=False):
         KOMElementList.__init__(self, link_by, link_value)
+        self.extent_list_by_click_on_field = extent_list_by_click_on_field
+        self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if list_by is not None:
             self.options_list = KOMElementList(list_by, list_value)
 
@@ -138,7 +155,8 @@ class SelectList(KOMElementList):
 
     def select_item_by_text(self, text, hide_list_by_click_on_field=False):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
-        self.execute_action(Action.CLICK)
+        if self.extent_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
         options = self.options_list.get_elements()
         for option in options:
             if option.text == text:
@@ -147,6 +165,13 @@ class SelectList(KOMElementList):
         if hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
+    def get_option_list(self, hide_list_by_click_on_field=False):
+        Log.info("Get option list in the '%s' select list" % (self._name))
+        options = self.options_list.get_elements()
+        option_list = [option.text for option in options]
+        if hide_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
+        return option_list
 
 class SelectMenu(KOMElementList):
 

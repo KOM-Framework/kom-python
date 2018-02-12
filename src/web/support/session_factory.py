@@ -17,17 +17,13 @@ class WebSessionsFactory:
                 cls.sessions[module_name] = Browser(module_name)
             return cls.sessions[module_name]
         elif not cls.session:
-            cls.session = Browser()
-        return cls.session
+            cls.session['standard_mode'] = Browser()
+        return cls.session['standard_mode']
 
     @classmethod
     def close_sessions(cls):
-        if multi_application_mode:
-            for session in cls.sessions.keys():
-                cls.sessions[session].quit()
-            cls.sessions.clear()
-        else:
-            cls.session.quit()
+        for session in cls.sessions.keys():
+            cls.sessions[session].quit()
 
     @classmethod
     def refresh_browsers(cls):

@@ -6,6 +6,7 @@
   "retry_delay": 0.5,
 
   "driver_configurations": {
+    "browserSize": "1920x1080",
     "browserName": "chrome",
     "platform": "ANY",
     "version": "",

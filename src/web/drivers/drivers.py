@@ -20,7 +20,6 @@ class Driver:
         driver = webdriver.Remote(
             command_executor=self.hub_link,
             desired_capabilities=capabilities)
-        driver.set_window_size(1920, 1080)
         return driver
 
     def get_local_session(self):
@@ -40,7 +39,9 @@ class Driver:
             driver = self.get_remove_session()
         else:
             driver = self.get_local_session()
-        driver.set_window_size(1024, 768)
+        width = int(capabilities['browserSize'].split('x')[0])
+        height = int(capabilities['browserSize'].split('x')[1])
+        driver.set_window_size(width, height)
         driver.set_window_position(0, 0)
         return driver
 

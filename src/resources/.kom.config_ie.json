@@ -6,6 +6,7 @@
   "retry_delay": 0.5,
 
   "driver_configurations": {
+    "browserSize": "1920x1080",
     "browserName": "internet explorer",
     "platform": "windows",
     "version": "",
@@ -15,8 +16,8 @@
   },
 
   "remote_execution": "False",
-  "hub_ip": "35.202.136.79",
-  "hub_port": 5555,
+  "hub_ip": "",
+  "hub_port": 4444,
 
   "video_recording": "False",
   "proxy_ip": "",

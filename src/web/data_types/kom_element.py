@@ -62,8 +62,7 @@ class KOMElement:
             element_condition = expected_conditions.presence_of_element_located
         try:
             obj = getattr(self.get_element(element_condition), action)
-            value_type = type(obj).__name__
-            if 'str' == value_type:
+            if isinstance(obj, str):
                 self.__retry_count = 0
                 return obj
             else:

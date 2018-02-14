@@ -83,7 +83,7 @@ class Browser:
 
     def wait_for_alert(self, wait_time=iframe_load_time):
         return WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
-                                                    'Timed out waiting for alert to appear.')
+                                                           'Timed out waiting for alert to appear.')
 
     def accept_alert(self):
         Log.info("Accept alert")
@@ -106,7 +106,14 @@ class Browser:
 
     def get_browser_log(self):
         Log.info("Getting browser log")
-        return self.driver.get_log('browser')
+        logs = self.driver.get_log('browser')
+        list_logs = list()
+        for log_entry in logs:
+            log_str = ''
+            for key in log_entry.keys():
+                log_str += "%s: %s, " % (key, log_entry[key])
+            list_logs.append(log_str)
+        return list_logs
 
     def scroll_up(self):
         ActionChains(self.driver).send_keys(Keys.PAGE_UP).perform()
@@ -132,3 +139,6 @@ class Browser:
     def close_last_tab(self):
         self.driver.switch_to_window(self.driver.window_handles[-1])
         self.driver.close()
+
+    def clear_local_storage(self):
+        self.driver.execute_script('window.localStorage.clear();')

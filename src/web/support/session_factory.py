@@ -35,16 +35,10 @@ class WebSessionsFactory:
         out = dict()
         for session in cls.sessions.keys():
             session_logs = cls.sessions[session].get_browser_log()
-            list_logs = list()
-            for log_entry in session_logs:
-                log_str = ''
-                for key in log_entry.keys():
-                    log_str += "%s: %s, " % (key, log_entry[key])
-                list_logs.append(log_str)
-            out[session] = '\n'.join(list_logs)
+            out[session] = '\n'.join(session_logs)
         return out
 
     @classmethod
     def clear_browsers_local_storage(cls):
         for session in cls.sessions.keys():
-            cls.sessions[session].execute_script('window.localStorage.clear();')
+            cls.sessions[session].clear_local_storage()

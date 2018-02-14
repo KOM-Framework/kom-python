@@ -1,4 +1,3 @@
-
 from selenium.webdriver.common.by import By
 
 from kom_framework.src.web.data_types.element_types import Input

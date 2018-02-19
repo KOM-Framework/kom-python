@@ -97,5 +97,5 @@ class InternetExplorer(Driver):
     @classmethod
     def get_session(cls):
         from webdriver_manager.microsoft import IEDriverManager
-        driver = webdriver.Ie(executable_path=IEDriverManager().install(), capabilities=capabilities)
+        driver = webdriver.Ie(executable_path=IEDriverManager(os_type="win32").install(), capabilities=capabilities)
         return driver

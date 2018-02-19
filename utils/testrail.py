@@ -147,3 +147,17 @@ class TestRail:
     def get_tests(self, run_id):
         response = self.client.send_get("get_tests/%s" % run_id)
         return response
+
+    def get_run(self, run_id):
+        response = self.client.send_get("get_run/%s" % run_id)
+        return response
+
+    def get_configs(self, run_id):
+        run_response = self.get_run(run_id)
+        config_response = self.client.send_get("get_configs/%s" % run_response['project_id'])
+        out = dict()
+        for config_id in run_response['config_ids']:
+            for config in config_response[0]['configs']:
+                if config['id'] == config_id:
+                    out[config_response[0]['name']] = config['name']
+        return out

@@ -119,6 +119,10 @@ class Browser:
         ActionChains(self.driver).send_keys(Keys.PAGE_UP).perform()
         time.sleep(0.5)
 
+    def scroll_down(self):
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        time.sleep(0.5)
+
     def delete_all_cookies(self):
         self.driver.delete_all_cookies()
 

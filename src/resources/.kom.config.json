@@ -8,19 +8,10 @@
   "driver_configurations": {
     "browserSize": "1920x1080",
     "browserName": "chrome",
+//    "browserName": "internet explorer",
+//    "browserName": "firefox",
     "platform": "ANY",
-    "version": "",
-    "goog:chromeOptions": {
-      "prefs": {
-        "credentials_enable_service": "False",
-        "profile": {
-          "password_manager_enabled": "False"
-        }
-      }
-    },
-    "loggingPrefs": {
-      "browser": "ALL"
-    }
+    "version": ""
   },
 
   "remote_execution": "False",

@@ -1,6 +1,7 @@
 import base64
 
 from selenium import webdriver
+from selenium.webdriver import DesiredCapabilities
 
 from ...web.drivers import capabilities
 from ...web import hub_ip, remote_execution, hub_port
@@ -48,28 +49,26 @@ class Driver:
 
 class Chrome(Driver):
 
-    """
-        chrome capabilities config example:
-        "goog:chromeOptions": {
-            "prefs": {
-                "credentials_enable_service": "False",
-                "profile": {
-                    "password_manager_enabled": "False"
-                }
-            },
-            "args": [
-                "--headless",
-                "--no-sandbox"
-            ]
-        }
-    """
+    @classmethod
+    def get_chrome_capabilities(cls):
+        from selenium.webdriver.chrome.webdriver import Options as ChromeOptions
+        chrome_options = ChromeOptions()
+        chrome_options.add_experimental_option('prefs', {
+            'credentials_enable_service': False,
+            'profile': {
+                'password_manager_enabled': False
+            }
+        })
+        chrome_capabilities = chrome_options.to_capabilities()
+        chrome_capabilities['loggingPrefs'] = {'browser': 'ALL'}
+        return chrome_capabilities
 
     @classmethod
     def get_session(cls):
         from webdriver_manager.chrome import ChromeDriverManager
+        driver_capabilities = {**cls.get_chrome_capabilities(), **capabilities}
         driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
-                                  desired_capabilities=capabilities)
-
+                                  desired_capabilities=driver_capabilities)
         return driver
 
     @staticmethod
@@ -85,17 +84,34 @@ class Chrome(Driver):
 class FireFox(Driver):
 
     @classmethod
+    def get_firefox_capabilities(cls):
+        firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
+        firefox_capabilities['loggingPrefs'] = {'browser': 'ALL'}
+        return firefox_capabilities
+
+    @classmethod
     def get_session(cls):
         from webdriver_manager.firefox import GeckoDriverManager
+        driver_capabilities = {**cls.get_firefox_capabilities(), **capabilities}
+        driver_capabilities.pop('browserSize')
+        driver_capabilities.pop('version')
+        driver_capabilities.pop('platform')
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
-                                   capabilities=capabilities)
+                                   capabilities=driver_capabilities)
         return driver
 
 
 class InternetExplorer(Driver):
 
     @classmethod
+    def get_ie_capabilities(cls):
+        return DesiredCapabilities.INTERNETEXPLORER.copy()
+
+    @classmethod
     def get_session(cls):
         from webdriver_manager.microsoft import IEDriverManager
-        driver = webdriver.Ie(executable_path=IEDriverManager(os_type="win32").install(), capabilities=capabilities)
+        capabilities.pop('platform')
+        driver_capabilities = {**cls.get_ie_capabilities(), **capabilities}
+        driver = webdriver.Ie(executable_path=IEDriverManager(os_type="win32").install(),
+                              capabilities=driver_capabilities)
         return driver

@@ -8,8 +8,6 @@
   "driver_configurations": {
     "browserSize": "1920x1080",
     "browserName": "chrome",
-//    "browserName": "internet explorer",
-//    "browserName": "firefox",
     "platform": "ANY",
     "version": ""
   },

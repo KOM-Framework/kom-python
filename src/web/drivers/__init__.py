@@ -3,6 +3,7 @@ from ...utils.proxy import Proxy
 from ...utils import proxy_ip
 
 capabilities = env_file_content['driver_configurations']
+capabilities['loggingPrefs'] = {'browser': 'ALL'}
 
 if proxy_ip:
     proxy_url = Proxy.get_url()

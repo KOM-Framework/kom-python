@@ -33,6 +33,7 @@ class KOMElement:
         self._action_element = action_element
 
     def exists(self, wait_time=0, condition=expected_conditions.presence_of_all_elements_located):
+        Log.info("Checking if %s exists" % self._name)
         try:
             self.get_element(condition=condition, wait_time=wait_time)
             return True
@@ -119,7 +120,7 @@ class KOMElement:
         self.execute_action(Action.SEND_KEYS, None, key)
 
     def wait_while_exists(self, wait_time=10):
-        Log.info('Waiting for the text %s to disappear' % self._name)
+        Log.info('Waiting for the element %s to disappear' % self._name)
         return WebDriverWait(self.browser_session.driver, wait_time).until(
             expected_conditions.invisibility_of_element_located(self._locator)
         )

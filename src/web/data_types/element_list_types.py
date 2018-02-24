@@ -57,14 +57,19 @@ class Table(KOMElementList):
 
     def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
         Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
-        content = self.get_content(wait_time=wait_time)
-        for row in content:
-            if getattr(row, column_name).exists():
-                row_value = getattr(row, column_name).text()
-                if row_value == value:
-                    return row
-        if self.next_page():
-            return self.get_row_by_column_value(column_name, value, wait_time)
+        start_time = datetime.now()
+        while True:
+            content = self.get_content(wait_time=wait_time)
+            for row in content:
+                if getattr(row, column_name).exists():
+                    row_value = getattr(row, column_name).text()
+                    Log.info("Actual text: %s" % row_value)
+                    if row_value == value:
+                        return row
+            if self.next_page():
+                return self.get_row_by_column_value(column_name, value, wait_time)
+            if datetime.now() - start_time > timedelta(seconds=wait_time):
+                break
         return None
 
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):

@@ -12,6 +12,10 @@ from ...web.data_types.kom_element import KOMElement
 
 
 class Input(KOMElement):
+    """
+      Prefix it with inp_
+    """
+
     def send_keys(self, value):
         Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
@@ -192,5 +196,12 @@ class Image(KOMElement):
 class Spinner(KOMElement):
     """
       Prefix it with spn_
+    """
+    pass
+
+
+class Form(KOMElement):
+    """
+      Prefix it with frm_
     """
     pass

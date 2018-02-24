@@ -197,7 +197,10 @@ class Spinner(KOMElement):
     """
       Prefix it with spn_
     """
-    pass
+    def wait_for_appear_and_disappear(self, wait_time=30):
+        Log.info('Wait for %s spinner to appear and disappear' % self._name)
+        self.wait_for_visibility(wait_time)
+        return self.wait_while_exists(wait_time)
 
 
 class Form(KOMElement):

@@ -26,6 +26,7 @@ class MySql:
         while row:
             rtn.append(row)
             row = cursor.fetchone()
+        query = query.lower()
         if query.startswith('update') or query.startswith('delete') or query.startswith('insert'):
             conn.commit()
         if query.startswith('insert'):
@@ -61,8 +62,10 @@ class MySQLTable:
         query = "UPDATE %s SET %s=%s WHERE %s" % (self.table_name, column_name, value, condition)
         MySql.execute_query(self.environment, query)
 
-    def delete(self, condition):
-        query = "DELETE FROM %s WHERE %s" % (self.table_name, condition)
+    def delete(self, condition=None):
+        query = "DELETE FROM %s" % self.table_name
+        if condition:
+            query += " WHERE %s" % condition
         MySql.execute_query(self.environment, query)
 
     def select_value(self, column_name, condition, wait_time=1):

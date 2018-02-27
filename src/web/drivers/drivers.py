@@ -96,7 +96,8 @@ class FireFox(Driver):
         driver_capabilities.pop('browserSize')
         driver_capabilities.pop('version')
         driver_capabilities.pop('platform')
-        driver_capabilities.pop('enableVNC')
+        if 'enableVNC' in driver_capabilities:
+            driver_capabilities.pop('enableVNC')
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),
                                    capabilities=driver_capabilities)
         return driver

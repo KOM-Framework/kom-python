@@ -36,7 +36,7 @@ class WebFrame:
     def open_actions(self):
         pass
 
-    def setup_page(self):
+    def setup_frame(self):
         pass
 
     def open(self):
@@ -45,6 +45,6 @@ class WebFrame:
             self.open_actions()
             assert self.exists(page_load_time), "Frame %s cannot be found" % self.frame_name
         else:
-            if "setup_page" in dir(self):
-                self.setup_page()
+            if "setup_frame" in dir(self):
+                self.setup_frame()
         return self

@@ -36,9 +36,15 @@ class WebFrame:
     def open_actions(self):
         pass
 
+    def setup_page(self):
+        pass
+
     def open(self):
         if not self.exists():
             Log.info("Open %s web frame" % self.frame_name)
             self.open_actions()
             assert self.exists(page_load_time), "Frame %s cannot be found" % self.frame_name
+        else:
+            if "setup_page" in dir(self):
+                self.setup_page()
         return self

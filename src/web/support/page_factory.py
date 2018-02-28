@@ -27,6 +27,8 @@ def locator(by, value, use_factory=True):
                     if key not in PageFactory.instances:
                         page_object = cls.create_object(*args, **kwargs)
                         PageFactory.set_instance(key, page_object)
+                    else:
+                        WebSessionsFactory.active_page = PageFactory.get_instance(key)
                     return PageFactory.get_instance(key)
                 else:
                     return cls.create_object(*args, **kwargs)

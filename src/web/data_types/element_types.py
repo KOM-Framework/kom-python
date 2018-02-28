@@ -208,3 +208,10 @@ class Form(KOMElement):
       Prefix it with frm_
     """
     pass
+
+
+class Anytype(KOMElement):
+    """
+      Prefix it with ant_
+    """
+    pass

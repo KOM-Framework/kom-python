@@ -161,3 +161,11 @@ class TestRail:
                 if config['id'] == config_id:
                     out[config_response[0]['name']] = config['name']
         return out
+
+    def get_latest_milestone(self, project_id):
+        response = self.client.send_get("get_milestones/%s" % project_id)[-1]
+        return response
+
+    def get_suite(self, suite_id):
+        response = self.client.send_get("get_suite/%s" % suite_id)
+        return response

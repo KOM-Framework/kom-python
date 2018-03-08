@@ -2,6 +2,7 @@ import time
 
 from datetime import datetime, timedelta
 
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
@@ -11,6 +12,13 @@ from ...web import element_load_time
 from ...web.data_types.actions import Action
 from ...web.data_types.element_types import Input
 from ...web.data_types.kom_element_list import KOMElementList
+
+
+class AnyList(KOMElementList):
+    """
+        Prefix with anl_
+    """
+    pass
 
 
 class Table(KOMElementList):
@@ -219,3 +227,23 @@ class Menu(KOMElementList):
                 return True
         Log.info("Selecting '%s' section in '%s' menu failed" % (section_name, self._name))
         return False
+
+
+class BarChart(KOMElementList):
+    def __init__(self, by, value, tooltip_by=None, tooltip_value=None):
+        KOMElementList.__init__(self, by, value)
+        if tooltip_by is not None:
+            self.tooltip = KOMElementList(tooltip_by, tooltip_value)
+
+    def get_tooltip_lines_text(self):
+        out = list()
+        bar_list = self.get_elements()
+        for bar in bar_list:
+            ActionChains(self.browser_session.driver).move_to_element(bar).perform()
+            time.sleep(0.5)
+            tooltips = self.tooltip.get_elements()
+            data = list()
+            for line in tooltips:
+                data.append(line.text)
+            out.append(data)
+        return out

@@ -5,20 +5,19 @@ from ...web.browser import Browser
 class WebSessionsFactory:
 
     sessions = dict()
-    session = None
     active_module = None
     active_page = None
     active_frame = None
 
     @classmethod
     def browser(cls, module_name=None):
-        if multi_application_mode:
-            if module_name not in cls.sessions.keys():
-                cls.sessions[module_name] = Browser(module_name)
-            return cls.sessions[module_name]
-        elif not cls.session:
-            cls.session['standard_mode'] = Browser()
-        return cls.session['standard_mode']
+        if not multi_application_mode:
+                module_name = "standard_mode"
+        if module_name not in cls.sessions.keys():
+            cls.sessions[module_name] = Browser(module_name)
+        return cls.sessions[module_name]
+
+
 
     @classmethod
     def close_sessions(cls):

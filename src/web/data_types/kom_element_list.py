@@ -30,12 +30,15 @@ class KOMElementList(KOMElement):
         if by and value:
             self._locator = (by, value)
         driver = self.browser_session.driver
-        if self._base_element:
+        if self.base_element_list:
+            driver = self.base_element_list.get_elements()[self.base_element_index]
+        elif self._base_element:
             driver = WebDriverWait(driver, element_load_time).until(
                 expected_conditions.presence_of_element_located(self._base_element._locator))
         return WebDriverWait(driver, element_load_time).until(
             expected_conditions.presence_of_all_elements_located(self._locator)
         )
+
 
     def exists(self, wait_time=0, **kwargs):
         Log.info("List '%s' existence verification. Wait time = %s" % (self._name, str(wait_time)))

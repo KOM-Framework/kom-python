@@ -119,7 +119,7 @@ class CheckBox(KOMElement):
     def check(self, value=True):
         Log.info("Checking the '%s' check box" % self._name)
         actual_status = super(CheckBox, self).get_attribute('value')
-        if actual_status=='on':
+        if actual_status == 'on':
             actual_status = super(CheckBox, self).get_attribute('checked')
         if (value and actual_status != 'true') or (not value and actual_status == 'true'):
             super(CheckBox, self).click()
@@ -127,7 +127,7 @@ class CheckBox(KOMElement):
     def is_selected(self):
         Log.info("Check is the '%s' check box is selected" % self._name)
         actual_status = super(CheckBox, self).get_attribute('value')
-        if actual_status=='on':
+        if actual_status == 'on':
             actual_status = super(CheckBox, self).get_attribute('checked')
         if actual_status == 'true':
             return True

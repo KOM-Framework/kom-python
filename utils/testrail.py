@@ -137,6 +137,9 @@ class TestRail:
     def get_case(self, case_id):
         return self.client.send_get("get_case/%s" % case_id)
 
+    def updated_case(self, case_id, data):
+        return self.client.send_post('update_case/%s' % case_id, data=data)
+
     def delete_run(self, run_id):
         return self.client.send_post("delete_run/%s" % run_id, data={})
 
@@ -168,4 +171,8 @@ class TestRail:
 
     def get_suite(self, suite_id):
         response = self.client.send_get("get_suite/%s" % suite_id)
+        return response
+
+    def get_cases(self, project_id, suite_id):
+        response = self.client.send_get("get_cases/%s&suite_id=%s" % (project_id, suite_id))
         return response

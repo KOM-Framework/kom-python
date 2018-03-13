@@ -93,6 +93,7 @@ class Table(KOMElementList):
             if datetime.now() - start_time > timedelta(seconds=wait_time):
                 break
         return None
+
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
         Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
         content = self.get_content(wait_time=wait_time)
@@ -159,7 +160,8 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, link_by, link_value, list_by=None, list_value=None, extent_list_by_click_on_field=False, hide_list_by_click_on_field=False):
+    def __init__(self, link_by, link_value, list_by=None, list_value=None,
+                 extent_list_by_click_on_field=True, hide_list_by_click_on_field=False):
         KOMElementList.__init__(self, link_by, link_value)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
@@ -177,11 +179,12 @@ class SelectList(KOMElementList):
     def first_selected_option(self):
         Log.info('Get first selected option in the %s select list' % (self._name))
         return Select(self.get_element()).first_selected_option
+
     def click(self, **kwargs):
         Log.info("Clicking on the '%s' select list" % self._name)
         super(SelectList, self).click(**kwargs)
 
-    def select_item_by_text(self, text, hide_list_by_click_on_field=False):
+    def select_item_by_text(self, text):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)

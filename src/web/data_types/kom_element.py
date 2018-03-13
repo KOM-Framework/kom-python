@@ -5,6 +5,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException, \
     WebDriverException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -48,8 +49,8 @@ class KOMElement:
 
     def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
         driver = self.browser_session.driver
-        if self.base_element_list:
-            driver = self.base_element_list.get_elements()[self.base_element_index]
+        if self.base_element_list:driver = self.base_element_list.get_elements()[self.base_element_index]
+
         elif self._base_element:
             driver = WebDriverWait(driver, wait_time).until(
                 expected_conditions.presence_of_element_located(getattr(self._base_element, '_locator')))
@@ -92,6 +93,13 @@ class KOMElement:
     def click(self, expected_element_condition=expected_conditions.element_to_be_clickable):
         self.execute_action(Action.CLICK, expected_element_condition)
 
+    def drag_and_drop(self, destination):
+        Log.info("Drag and Drop on %s" % self._name)
+        element = self.get_element()
+        if not isinstance(destination, WebElement):
+            destination = destination.get_element()
+        ActionChains(self.browser_session.driver).drag_and_drop(element, destination).perform()
+
     def double_click(self):
         Log.info("Double click on %s" % self._name)
         element = self.get_element()
@@ -126,7 +134,7 @@ class KOMElement:
         )
 
     def wait_for_visibility(self, wait_time=10):
-        Log.info('Waiting for the text %s to be visible' % self._name)
+        Log.info('Waiting for the element %s to be visible' % self._name)
         return WebDriverWait(self.browser_session.driver, wait_time).until(
             expected_conditions.visibility_of_element_located(self._locator)
         )

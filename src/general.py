@@ -155,7 +155,7 @@ class Random:
 
     @staticmethod
     def rand_char_string(length):
-        return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for _ in range(length))
+        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
 
     @staticmethod
     def rand_int_string(length):

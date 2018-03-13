@@ -80,6 +80,19 @@ class Table(KOMElementList):
                 break
         return None
 
+    def get_column_values(self, column_name, wait_time=element_load_time):
+        Log.info("Getting column %s values from the table: %s" % (column_name, self._name))
+        column = []
+        start_time = datetime.now()
+        while True:
+            content = self.get_content()
+            if len(content) > 0:
+                for row in content:
+                    column.append(getattr(row, column_name).text())
+                return column
+            if datetime.now() - start_time > timedelta(seconds=wait_time):
+                break
+        return None
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
         Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
         content = self.get_content(wait_time=wait_time)
@@ -146,8 +159,10 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, link_by, link_value, list_by=None, list_value=None):
+    def __init__(self, link_by, link_value, list_by=None, list_value=None, extent_list_by_click_on_field=False, hide_list_by_click_on_field=False):
         KOMElementList.__init__(self, link_by, link_value)
+        self.extent_list_by_click_on_field = extent_list_by_click_on_field
+        self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if list_by is not None:
             self.options_list = KOMElementList(list_by, list_value)
 
@@ -159,19 +174,23 @@ class SelectList(KOMElementList):
         Log.info('Selecting %s text in the %s select list' % (value, self._name))
         Select(self.get_element()).select_by_visible_text(value)
 
+    def first_selected_option(self):
+        Log.info('Get first selected option in the %s select list' % (self._name))
+        return Select(self.get_element()).first_selected_option
     def click(self, **kwargs):
         Log.info("Clicking on the '%s' select list" % self._name)
         super(SelectList, self).click(**kwargs)
 
     def select_item_by_text(self, text, hide_list_by_click_on_field=False):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
-        self.execute_action(Action.CLICK)
+        if self.extent_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
         options = self.options_list.get_elements()
         for option in options:
             if option.text == text:
                 option.click()
                 break
-        if hide_list_by_click_on_field:
+        if self.hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
     def get_options_list(self):

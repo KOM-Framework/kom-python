@@ -2,6 +2,7 @@ import time
 
 from datetime import datetime, timedelta
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
@@ -119,8 +120,12 @@ class Table(KOMElementList):
 
     def wait_for_elements_count(self, elements_count, wait_time):
         Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self._name))
-        WebDriverWait(self.browser_session.driver, wait_time).until(
-            lambda driver: len(driver.find_elements(self._locator[0], self._locator[1])) >= elements_count)
+        try:
+            WebDriverWait(self.browser_session.driver, wait_time).until(
+                lambda driver: len(driver.find_elements(self._locator[0], self._locator[1])) == elements_count)
+            return True
+        except TimeoutException:
+            return False
 
     def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=element_load_time):
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"

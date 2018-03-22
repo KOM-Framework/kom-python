@@ -16,6 +16,10 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
+    def __init__(self, locator, message_locator=None):
+        KOMElement.__init__(self, locator)
+        self.message_locator = message_locator
+
     def send_keys(self, value):
         Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
@@ -136,8 +140,8 @@ class CheckBox(KOMElement):
 
 class MultiSelectTree(KOMElement):
 
-    def __init__(self, field_by, field_value, select_area, option_list, added_item, delete_item):
-        KOMElement.__init__(self, field_by, field_value)
+    def __init__(self, locator, select_area, option_list, added_item, delete_item):
+        KOMElement.__init__(self, locator)
         self._select_area = select_area
         self._option_list = option_list
         self._added_item = added_item
@@ -176,14 +180,14 @@ class IFrame(KOMElement):
 
     def switch_to(self):
         Log.info("Switching to iFrame: '%s'" % self._name)
-        self.browser_session.switch_to_frame(self._locator)
+        self.browser_session.switch_to_frame(self.locator)
 
     def exists(self, wait_time=5, **kwargs):
         Log.info("Checking if %s frame exists" % self._name)
         try:
             WebDriverWait(self.browser_session.driver,
                           wait_time).until(
-                expected_conditions.presence_of_element_located(self._locator))
+                expected_conditions.presence_of_element_located(self.locator))
             return True
         except TimeoutException:
             return False
@@ -210,7 +214,7 @@ class Form(KOMElement):
     pass
 
 
-class Anytype(KOMElement):
+class AnyType(KOMElement):
     """
       Prefix it with ant_
     """

@@ -27,8 +27,8 @@ class Table(KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, by, value, table_structure, next_page_button=None):
-        KOMElementList.__init__(self, by, value)
+    def __init__(self, locator, table_structure, next_page_button=None):
+        KOMElementList.__init__(self, locator)
         self.table_structure = table_structure
         self.next_page_button = next_page_button
 
@@ -115,14 +115,14 @@ class Table(KOMElementList):
     def wait_for_visibility(self, wait_time=element_load_time):
         Log.info('Waiting for the grid %s to be visible' % self._name)
         WebDriverWait(self.browser_session.driver, wait_time).until(
-            expected_conditions.presence_of_all_elements_located(self._locator)
+            expected_conditions.presence_of_all_elements_located(self.locator)
         )
 
     def wait_for_elements_count(self, elements_count, wait_time):
         Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self._name))
         try:
             WebDriverWait(self.browser_session.driver, wait_time).until(
-                lambda driver: len(driver.find_elements(self._locator[0], self._locator[1])) == elements_count)
+                lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
             return True
         except TimeoutException:
             return False
@@ -165,13 +165,13 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, link_by, link_value, list_by=None, list_value=None,
+    def __init__(self, link_locator, list_locator=None,
                  extent_list_by_click_on_field=True, hide_list_by_click_on_field=False):
-        KOMElementList.__init__(self, link_by, link_value)
+        KOMElementList.__init__(self, link_locator)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
-        if list_by is not None:
-            self.options_list = KOMElementList(list_by, list_value)
+        if list_locator:
+            self.options_list = KOMElementList(list_locator)
 
     def select_item_by_value(self, value):
         Log.info('Selecting %s value in the %s select list' % (value, self._name))
@@ -223,19 +223,17 @@ class SelectList(KOMElementList):
 
 class SelectMenu(KOMElementList):
 
-    def __init__(self, field_by, value_by, list_by=None, list_value=None):
-        KOMElementList.__init__(self, field_by, value_by)
-        if list_by is not None:
-            self.list_by = list_by
-            self.list_value = list_value
+    def __init__(self, locator, list_locator=None):
+        KOMElementList.__init__(self, locator)
+        self.list_locator = list_locator
 
     def select_item_by_text(self, text):
         Log.info("Selecting %s in the '%s' select menu" % (text, self._name))
-        text_field = Input(self._locator)
+        text_field = Input(self.locator)
         text_field.clear()
         text_field.type_keys(text)
         time.sleep(0.5)
-        options = KOMElementList(self.list_by, self.list_value).get_elements()
+        options = KOMElementList(self.list_locator).get_elements()
         for option in options:
             if text in option.get_attribute('title'):
                 option.click()
@@ -257,10 +255,10 @@ class Menu(KOMElementList):
 
 
 class BarChart(KOMElementList):
-    def __init__(self, by, value, tooltip_by=None, tooltip_value=None):
-        KOMElementList.__init__(self, by, value)
-        if tooltip_by is not None:
-            self.tooltip = KOMElementList(tooltip_by, tooltip_value)
+    def __init__(self, locator, tooltip_locator=None):
+        KOMElementList.__init__(self, locator)
+        if tooltip_locator:
+            self.tooltip = KOMElementList(tooltip_locator)
 
     def get_tooltip_lines_text(self):
         out = list()

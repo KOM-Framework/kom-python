@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
+from kom_framework.src.web.data_types import Xpath
 from ..general import Log
 from ..web import page_load_time
 from ..web.support.session_factory import WebSessionsFactory
@@ -67,7 +67,7 @@ class WebPage:
         if self.browser_session.driver:
             try:
                 WebDriverWait(self.browser_session.driver, wait_time).until(
-                    expected_conditions.visibility_of_element_located(getattr(self, "_locator"))
+                    expected_conditions.visibility_of_element_located(getattr(self, "locator"))
                 )
                 return True
             except (NoSuchElementException, TimeoutException):
@@ -86,13 +86,13 @@ class WebPage:
                 return False
 
     def can_be_focused(self, wait=15):
-        WebDriverWait(self.browser_session.driver, wait).until(self.CanBeFocused(getattr(self, "_locator")))
+        WebDriverWait(self.browser_session.driver, wait).until(self.CanBeFocused(getattr(self, "locator")))
 
     def wait_while_text_exists(self, text, wait_time=30):
         Log.info("Waiting for the '%s' text to disappear" % text)
         try:
             WebDriverWait(self.browser_session.driver, wait_time).until(
-                expected_conditions.invisibility_of_element_located((By.XPATH, '//*[contains(text(), "%s")]' % text))
+                expected_conditions.invisibility_of_element_located((Xpath('//*[contains(text(), "%s")]' % text)))
             )
         except (NoSuchElementException, TimeoutException):
             Log.info("Text '%s' still visible within %s seconds" % (text, wait_time))
@@ -101,7 +101,7 @@ class WebPage:
         Log.info("Waiting for the '%s' text to appear" % text)
         try:
             WebDriverWait(self.browser_session.driver, wait_time).until(
-                expected_conditions.visibility_of_element_located((By.XPATH, '//*[contains(text(), "%s")]' % text))
+                expected_conditions.visibility_of_element_located((Xpath('//*[contains(text(), "%s")]' % text)))
             )
             return True
         except (NoSuchElementException, TimeoutException):
@@ -109,11 +109,11 @@ class WebPage:
             return False
 
     def set_focus(self):
-        self.browser_session.driver.find_element(*getattr(self, "_locator")).click()
+        self.browser_session.driver.find_element(*getattr(self, "locator")).click()
 
     def text_exists(self, text, wait_time=0):
         Log.info("Text '%s' existence verification. Wait time = %s" % (text, str(wait_time)))
-        text_id = (By.XPATH, '//*[contains(text(),"%s")]' % text)
+        text_id = (Xpath('//*[contains(text(),"%s")]' % text))
         try:
             WebDriverWait(self.browser_session.driver, wait_time).until(
                 expected_conditions.visibility_of_element_located(text_id)

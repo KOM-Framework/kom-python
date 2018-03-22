@@ -28,11 +28,11 @@ class Log:
 
     def __init__(self, folder=None):
         if folder:
-            datetime_format="%Y%m%d-%H%M%S"
-            filename=os.path.join(folder, datetime.fromtimestamp(time.time()).strftime(datetime_format) + '.log')
-            fileHandler = logging.FileHandler(filename)
-            fileHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s\t %(message)s"))
-            logging.getLogger().addHandler(fileHandler)
+            datetime_format = "%Y%m%d-%H%M%S"
+            filename = os.path.join(folder, datetime.fromtimestamp(time.time()).strftime(datetime_format) + '.log')
+            file_handler = logging.FileHandler(filename)
+            file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s\t %(message)s"))
+            logging.getLogger().addHandler(file_handler)
 
     @classmethod
     def append_log(cls, message):
@@ -138,13 +138,12 @@ class File:
             if file_path:
                 return os.path.abspath(os.path.join(directory, file_path))
 
-
     @staticmethod
     def get_file_by_regex(dir_name, regex):
-        '''
+        """
             find the first file in the input - directory with name matching regular expression of input - regex.
             return the name of the file found
-        '''
+        """
         pattern = re.compile(regex)
         for filename in os.listdir(dir_name):
             if pattern.match(filename):

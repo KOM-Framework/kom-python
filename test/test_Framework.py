@@ -1,17 +1,18 @@
 from selenium.webdriver.common.by import By
 
+from kom_framework.src.web.data_types import Name, Id
 from kom_framework.src.web.data_types.element_types import Input
-from kom_framework.src.web.support.page_factory import locator
+from kom_framework.src.web.support.page_factory import find_by
 from kom_framework.src.web.web_page import WebPage
 
 
 class Frame:
 
     def __init__(self):
-        self.lucky = Input(By.NAME, "btnI", action_element=True)
+        self.lucky = Input(Name("btnI"), action_element=True)
 
 
-@locator(By.ID, 'viewport')
+@find_by(Id('viewport'))
 class PageTest(WebPage, Frame):
 
     some_variable = 'SOMETHING NEW'
@@ -19,7 +20,7 @@ class PageTest(WebPage, Frame):
     def __init__(self, module_name=None):
         Frame.__init__(self)
         self._set_module(module_name)
-        self.user = Input(By.ID, "lst-ib")
+        self.user = Input(Id("lst-ib"))
 
     def open_actions(self):
         self.browser_session.open("http://www.google.com")
@@ -54,3 +55,10 @@ class TestSomething:
     def test_proxy_get_url(self):
         from kom_framework.src.utils.proxy import Proxy
         print(Proxy.get_url())
+
+    def test_locator(self):
+        from kom_framework.src.web.data_types import Xpath
+        asda = Xpath('vale')
+        print(asda)
+
+

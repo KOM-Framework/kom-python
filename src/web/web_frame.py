@@ -25,7 +25,7 @@ class WebFrame:
         if self.browser_session.driver:
             try:
                 WebDriverWait(self.browser_session.driver, wait_time).until(
-                    expected_conditions.visibility_of_element_located(getattr(self, "_locator"))
+                    expected_conditions.visibility_of_element_located(getattr(self, "locator"))
                 )
                 return True
             except (NoSuchElementException, TimeoutException):

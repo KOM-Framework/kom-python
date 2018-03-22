@@ -26,25 +26,22 @@ class Structure(dict):
 class KOMElementList(KOMElement):
     __metaclass__ = ABCMeta
 
-    def get_elements(self, by=None, value=None):
-        if by and value:
-            self._locator = (by, value)
+    def get_elements(self):
         driver = self.browser_session.driver
         if self.base_element_list:
             driver = self.base_element_list.get_elements()[self.base_element_index]
         elif self._base_element:
             driver = WebDriverWait(driver, element_load_time).until(
-                expected_conditions.presence_of_element_located(self._base_element._locator))
+                expected_conditions.presence_of_element_located(self._base_element.locator))
         return WebDriverWait(driver, element_load_time).until(
-            expected_conditions.presence_of_all_elements_located(self._locator)
+            expected_conditions.presence_of_all_elements_located(self.locator)
         )
-
 
     def exists(self, wait_time=0, **kwargs):
         Log.info("List '%s' existence verification. Wait time = %s" % (self._name, str(wait_time)))
         try:
             WebDriverWait(self.browser_session.driver, wait_time).until(
-                lambda driver: driver.find_elements(self._locator[0], self._locator[1])
+                lambda driver: driver.find_elements(*self.locator)
             )
             return True
         except (NoSuchElementException, TimeoutException):

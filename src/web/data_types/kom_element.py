@@ -27,10 +27,10 @@ class KOMElement:
         obj.base_element_index = None
         return obj
 
-    def __init__(self, by, value, action_element=False):
+    def __init__(self, locator, action_element=False):
         self.__retry_count = 0
-        self._locator = (by, value)
-        self._name = str(self._locator)
+        self.locator = locator
+        self._name = str(locator)
         self._action_element = action_element
 
     def exists(self, wait_time=0, condition=expected_conditions.presence_of_all_elements_located):
@@ -49,13 +49,13 @@ class KOMElement:
 
     def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
         driver = self.browser_session.driver
-        if self.base_element_list:driver = self.base_element_list.get_elements()[self.base_element_index]
-
+        if self.base_element_list:
+            driver = self.base_element_list.get_elements()[self.base_element_index]
         elif self._base_element:
             driver = WebDriverWait(driver, wait_time).until(
-                expected_conditions.presence_of_element_located(getattr(self._base_element, '_locator')))
+                expected_conditions.presence_of_element_located(getattr(self._base_element, 'locator')))
         element = WebDriverWait(driver, wait_time).until(
-            condition(self._locator)
+            condition(self.locator)
         )
         return element
 
@@ -130,19 +130,19 @@ class KOMElement:
     def wait_while_exists(self, wait_time=10):
         Log.info('Waiting for the element %s to disappear' % self._name)
         return WebDriverWait(self.browser_session.driver, wait_time).until(
-            expected_conditions.invisibility_of_element_located(self._locator)
+            expected_conditions.invisibility_of_element_located(self.locator)
         )
 
     def wait_for_visibility(self, wait_time=10):
         Log.info('Waiting for the element %s to be visible' % self._name)
         return WebDriverWait(self.browser_session.driver, wait_time).until(
-            expected_conditions.visibility_of_element_located(self._locator)
+            expected_conditions.visibility_of_element_located(self.locator)
         )
 
     def wait_for_text_to_be_present_in_element(self, wait_time=5, text=""):
         Log.info('Waiting for the text %s to be present' % self._name)
         x = WebDriverWait(self.browser_session.driver, wait_time).until(
-            expected_conditions.text_to_be_present_in_element(self._locator, text)
+            expected_conditions.text_to_be_present_in_element(self.locator, text)
         )
         return x
 

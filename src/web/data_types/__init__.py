@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from kom_framework import js_waiter_file
 
 with open(js_waiter_file, 'r') as content:
@@ -45,3 +47,51 @@ https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-se
 | Complex  | TreeView                   | tre    | treOrganization |
 +----------+----------------------------+--------+-----------------+
 '''
+
+
+class Id:
+
+    def __new__(cls, value):
+        return By.ID, value
+
+
+class Xpath:
+
+    def __new__(cls, value):
+        return By.XPATH, value
+
+
+class LinkText:
+
+    def __new__(cls, value):
+        return By.LINK_TEXT, value
+
+
+class PartialLinkText:
+
+    def __new__(cls, value):
+        return By.PARTIAL_LINK_TEXT, value
+
+
+class Name:
+
+    def __new__(cls, value):
+        return By.NAME, value
+
+
+class TagName:
+
+    def __new__(cls, value):
+        return By.TAG_NAME, value
+
+
+class ClassName:
+
+    def __new__(cls, value):
+        return By.CLASS_NAME, value
+
+
+class CssSelector:
+
+    def __new__(cls, value):
+        return By.CSS_SELECTOR, value

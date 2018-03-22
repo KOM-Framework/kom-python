@@ -11,7 +11,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.actions import Action
-from ...web.data_types.element_types import Input
+from ...web.data_types.element_types import Input, AnyType
 from ...web.data_types.kom_element_list import KOMElementList
 
 
@@ -165,13 +165,15 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, link_locator, list_locator=None,
+    def __init__(self, link_locator, option_list_locator=None, message_locator=None,
                  extent_list_by_click_on_field=True, hide_list_by_click_on_field=False):
         KOMElementList.__init__(self, link_locator)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
-        if list_locator:
-            self.options_list = KOMElementList(list_locator)
+        if option_list_locator:
+            self.options_list = KOMElementList(option_list_locator)
+        if message_locator:
+            self.message = AnyType(message_locator)
 
     def select_item_by_value(self, value):
         Log.info('Selecting %s value in the %s select list' % (value, self._name))
@@ -182,7 +184,7 @@ class SelectList(KOMElementList):
         Select(self.get_element()).select_by_visible_text(value)
 
     def first_selected_option(self):
-        Log.info('Get first selected option in the %s select list' % (self._name))
+        Log.info('Get first selected option in the %s select list' % self._name)
         return Select(self.get_element()).first_selected_option
 
     def click(self, **kwargs):
@@ -219,6 +221,9 @@ class SelectList(KOMElementList):
             if option.get_attribute(attribute_name) == attribute_value:
                 option.click()
                 break
+
+    def get_message(self):
+        return self.message.text()
 
 
 class SelectMenu(KOMElementList):

@@ -20,25 +20,27 @@ class Input(KOMElement):
         KOMElement.__init__(self, locator)
         self.message_locator = message_locator
 
+    def clear(self, use_action_chain=False):
+        Log.info("Clearing %s input field" % self._name)
+        if use_action_chain:
+            ActionChains(self.browser_session.driver).click(self.get_element()) \
+                .send_keys(Keys.END) \
+                .key_down(Keys.SHIFT) \
+                .send_keys(Keys.HOME) \
+                .key_up(Keys.SHIFT) \
+                .send_keys(Keys.DELETE) \
+                .perform()
+        else:
+            self.execute_action(Action.CLEAR)
+
     def send_keys(self, value):
         Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def clear_and_send_keys(self, value, use_action_chain=False):
         Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self._name))
-        if use_action_chain:
-            ActionChains(self.browser_session.driver).click(self.get_element()) \
-                .send_keys(Keys.DELETE) \
-                .send_keys(Keys.BACKSPACE) \
-                .perform()
-            self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
-        else:
-            self.execute_action(Action.CLEAR, expected_conditions.element_to_be_clickable)
-            self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
-
-    def clear(self):
-        Log.info("Clearing %s input field" % self._name)
-        self.execute_action(Action.CLEAR)
+        self.clear(use_action_chain)
+        self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def type_keys(self, value):
         Log.info("Typing %s keys to the '%s' input field" % (value, self._name))
@@ -53,6 +55,15 @@ class Input(KOMElement):
 
     def get_content(self):
         return self.execute_action(Action.GET_ATTRIBUTE, arg="value")
+
+    def get_message(self):
+        if self.message_locator:
+            message = AnyType(self.message_locator)
+            if message.exists():
+                return message.text()
+        else:
+            raise Exception('Input message locator is not defined')
+        return ""
 
 
 class FRInput(Input):

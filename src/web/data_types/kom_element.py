@@ -59,6 +59,9 @@ class KOMElement:
         )
         return element
 
+    def get_name(self):
+        return self._name
+
     def execute_action(self, action, element_condition=None, arg=None):
         if not element_condition:
             element_condition = expected_conditions.presence_of_element_located
@@ -149,3 +152,6 @@ class KOMElement:
     def scroll_to_element(self):
         Log.info("Scrolling to %s element" % self._name)
         self.browser_session.driver.execute_script("return arguments[0].scrollIntoView();", self.get_element())
+
+    def is_enabled(self):
+        return self.execute_action(Action.IS_ENABLED)

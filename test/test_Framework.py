@@ -1,5 +1,3 @@
-from selenium.webdriver.common.by import By
-
 from kom_framework.src.web.data_types import Name, Id
 from kom_framework.src.web.data_types.element_types import Input
 from kom_framework.src.web.support.page_factory import find_by

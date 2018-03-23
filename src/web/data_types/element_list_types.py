@@ -27,8 +27,8 @@ class Table(KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, locator, table_structure, next_page_button=None):
-        KOMElementList.__init__(self, locator)
+    def __init__(self, locator, table_structure, next_page_button=None, **kwargs):
+        KOMElementList.__init__(self, locator, **kwargs)
         self.table_structure = table_structure
         self.next_page_button = next_page_button
 
@@ -66,7 +66,7 @@ class Table(KOMElementList):
 
     def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
         Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
-        start_time = datetime.now()
+        end_time = time.time() + wait_time
         while True:
             content = self.get_content(wait_time=wait_time)
             for row in content:
@@ -77,7 +77,7 @@ class Table(KOMElementList):
                         return row
             if self.next_page():
                 return self.get_row_by_column_value(column_name, value, wait_time)
-            if datetime.now() - start_time > timedelta(seconds=wait_time):
+            if time.time() > end_time:
                 break
         return None
 
@@ -166,8 +166,9 @@ class SelectList(KOMElementList):
     """
 
     def __init__(self, link_locator, option_list_locator=None, message_locator=None,
-                 extent_list_by_click_on_field=True, hide_list_by_click_on_field=False):
-        KOMElementList.__init__(self, link_locator)
+                 extent_list_by_click_on_field=True, hide_list_by_click_on_field=False,
+                 **kwargs):
+        KOMElementList.__init__(self, link_locator, **kwargs)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
@@ -228,8 +229,8 @@ class SelectList(KOMElementList):
 
 class SelectMenu(KOMElementList):
 
-    def __init__(self, locator, list_locator=None):
-        KOMElementList.__init__(self, locator)
+    def __init__(self, locator, list_locator=None, **kwargs):
+        KOMElementList.__init__(self, locator, **kwargs)
         self.list_locator = list_locator
 
     def select_item_by_text(self, text):
@@ -260,8 +261,8 @@ class Menu(KOMElementList):
 
 
 class BarChart(KOMElementList):
-    def __init__(self, locator, tooltip_locator=None):
-        KOMElementList.__init__(self, locator)
+    def __init__(self, locator, tooltip_locator=None, **kwargs):
+        KOMElementList.__init__(self, locator, **kwargs)
         if tooltip_locator:
             self.tooltip = KOMElementList(tooltip_locator)
 

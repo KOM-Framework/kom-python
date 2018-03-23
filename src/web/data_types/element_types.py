@@ -16,8 +16,8 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
-    def __init__(self, locator, message_locator=None):
-        KOMElement.__init__(self, locator)
+    def __init__(self, locator, message_locator=None, **kwargs):
+        KOMElement.__init__(self, locator, **kwargs)
         self.message_locator = message_locator
 
     def clear(self, use_action_chain=False):
@@ -151,8 +151,8 @@ class CheckBox(KOMElement):
 
 class MultiSelectTree(KOMElement):
 
-    def __init__(self, locator, select_area, option_list, added_item, delete_item):
-        KOMElement.__init__(self, locator)
+    def __init__(self, locator, select_area, option_list, added_item, delete_item, **kwargs):
+        KOMElement.__init__(self, locator, **kwargs)
         self._select_area = select_area
         self._option_list = option_list
         self._added_item = added_item

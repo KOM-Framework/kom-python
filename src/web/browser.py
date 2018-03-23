@@ -51,7 +51,7 @@ class Browser:
     def wait_until_http_requests_are_finished(self, wait_time=http_request_wait_time):
         try:
             WebDriverWait(self.driver, wait_time).until(
-                lambda web_driver: not self.driver.execute_script("return window.openHTTPs")
+                lambda driver: not driver.execute_script("return window.openHTTPs")
             )
         except TimeoutException:
             Log.error('HTTP request execution time is more than %s seconds' % wait_time)
@@ -129,7 +129,7 @@ class Browser:
     def wait_for_page_to_load(self, wait_time=page_load_time):
         try:
             WebDriverWait(self.driver, wait_time).until(
-                lambda web_driver: self.driver.execute_script('return document.readyState') == 'complete'
+                lambda driver: driver.execute_script('return document.readyState') == 'complete'
             )
         except TimeoutException:
             Log.info("Page was not loaded in %s seconds" % wait_time)

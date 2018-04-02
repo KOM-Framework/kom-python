@@ -78,8 +78,10 @@ class MySQLTable:
             Log.info("SQl result: %s" % value[0][0])
             return value[0][0]
 
-    def select_values(self, column_name, condition, wait_time=1):
-        query = "SELECT %s FROM %s WHERE %s" % (column_name, self.table_name, condition)
+    def select_values(self, column_name, condition=None, wait_time=1):
+        query = "SELECT %s FROM %s" % (column_name, self.table_name)
+        if condition:
+            query += ' WHERE %s' % condition
         values = MySql.execute_query(self.environment, query, wait_time)
         if values:
             values = [i[0] for i in values]

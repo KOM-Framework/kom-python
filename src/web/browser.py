@@ -102,7 +102,7 @@ class Browser:
         return self.driver.current_url
 
     def execute_script(self, script):
-        self.driver.execute_script(script)
+        return self.driver.execute_script(script)
 
     def get_browser_log(self):
         Log.info("Getting browser log")

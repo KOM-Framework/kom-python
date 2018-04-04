@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+import time
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -124,3 +125,16 @@ class WebPage:
 
     def check_if_field_is_displayed(self, field_name):
         return getattr(self, field_name).is_displayed()
+
+    def wait_while_scrolling(self, wait_time=5):
+        get_position_command = 'return window.pageYOffset;'
+        end_time = time.time() + wait_time
+        initial_pos = self.browser_session.execute_script(get_position_command)
+        time.sleep(0.1)
+        while True:
+            current_pos = self.browser_session.execute_script(get_position_command)
+            if current_pos == initial_pos or time.time() > end_time:
+                break
+            else:
+                initial_pos = current_pos
+                time.sleep(0.1)

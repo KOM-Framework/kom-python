@@ -1,7 +1,5 @@
 import time
 
-from datetime import datetime, timedelta
-
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions
@@ -40,13 +38,13 @@ class Table(KOMElementList):
 
     def get_content(self, specific_index=None, wait_time=0):
         Log.info("Getting content of a table: %s" % self._name)
-        start_time = datetime.now()
+        end_time = time.time() + wait_time
         out = []
         if self.exists(wait_time):
-            elements = self.get_elements()
+            elements = []
             while not len(elements):
                 elements = self.get_elements()
-                if datetime.now() - start_time > timedelta(seconds=wait_time):
+                if time.time() > end_time:
                     break
             elements_count = len(elements)
             field_names = self.table_structure.keys()
@@ -68,7 +66,7 @@ class Table(KOMElementList):
         Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
         end_time = time.time() + wait_time
         while True:
-            content = self.get_content(wait_time=wait_time)
+            content = self.get_content()
             for row in content:
                 if getattr(row, column_name).exists():
                     row_value = getattr(row, column_name).text()
@@ -84,27 +82,31 @@ class Table(KOMElementList):
     def get_column_values(self, column_name, wait_time=element_load_time):
         Log.info("Getting column %s values from the table: %s" % (column_name, self._name))
         column = []
-        start_time = datetime.now()
+        end_time = time.time() + wait_time
         while True:
             content = self.get_content()
             if len(content) > 0:
                 for row in content:
                     column.append(getattr(row, column_name).text())
                 return column
-            if datetime.now() - start_time > timedelta(seconds=wait_time):
+            if time.time() > end_time:
                 break
         return None
 
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
         Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
-        content = self.get_content(wait_time=wait_time)
-        for row in content:
-            if getattr(row, column_name).exists():
-                row_value = getattr(row, column_name).text()
-                if pattern in row_value:
-                    return row
-        if self.next_page():
-            return self.get_row_by_column_pattern(column_name, pattern, wait_time)
+        end_time = time.time() + wait_time
+        while True:
+            content = self.get_content()
+            for row in content:
+                if getattr(row, column_name).exists():
+                    row_value = getattr(row, column_name).text()
+                    if pattern in row_value:
+                        return row
+            if self.next_page():
+                return self.get_row_by_column_pattern(column_name, pattern, wait_time)
+            if time.time() > end_time:
+                break
         return None
 
     def get_row_by_index(self, index, wait_time=element_load_time):
@@ -131,14 +133,18 @@ class Table(KOMElementList):
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
                  % (column_name, attribute_name, attribute_value, self._name))
         out = list()
-        content = self.get_content(wait_time=wait_time)
-        for row in content:
-            if getattr(row, column_name).exists():
-                act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
-                if act_attr_value == attribute_value:
-                    out.append(row)
-        if self.next_page():
-            return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
+        end_time = time.time() + wait_time
+        while True:
+            content = self.get_content()
+            for row in content:
+                if getattr(row, column_name).exists():
+                    act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
+                    if act_attr_value == attribute_value:
+                        out.append(row)
+            if self.next_page():
+                return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
+            if time.time() > end_time:
+                break
         return out
 
 

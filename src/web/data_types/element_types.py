@@ -161,19 +161,19 @@ class MultiSelectTree(KOMElement):
     def add_item(self, option_name):
         Log.info("Adding %s item to the %s" % (option_name, self._name))
         field = self.get_element()
-        field.find_element_by_xpath(self._select_area).click()
-        options = field.find_elements_by_xpath(self._option_list)
+        field.find_element(*self._select_area).click()
+        options = field.find_elements(*self._option_list)
         for option in options:
             if option.text == option_name:
                 option.click()
                 break
-        field.find_element_by_xpath(self._select_area).click()
+        field.find_element(*self._select_area).click()
 
     def get_selected_items(self):
         Log.info("Getting all the added items to the %s" % self._name)
         field = self.get_element()
         time.sleep(1)
-        items = field.find_elements_by_xpath(self._added_item)
+        items = field.find_elements(*self._added_item)
         out = [item.text for item in items]
         return out
 
@@ -183,8 +183,7 @@ class MultiSelectTree(KOMElement):
         time.sleep(1)
         item_index = self.get_selected_items().index(item_name)
         if item_index:
-            element = field.find_element_by_xpath('%s[%s]%s' % (self._added_item, str(item_index+1), self._delete_item))
-            element.click()
+            field.find_element(*self._delete_item).click()
 
 
 class IFrame(KOMElement):

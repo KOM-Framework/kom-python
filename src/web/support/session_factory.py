@@ -17,8 +17,6 @@ class WebSessionsFactory:
             cls.sessions[module_name] = Browser(module_name)
         return cls.sessions[module_name]
 
-
-
     @classmethod
     def close_sessions(cls):
         for session in cls.sessions.keys():

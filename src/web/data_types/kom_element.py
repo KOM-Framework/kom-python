@@ -151,7 +151,10 @@ class KOMElement:
 
     def scroll_to_element(self):
         Log.info("Scrolling to %s element" % self._name)
-        self.browser_session.driver.execute_script("return arguments[0].scrollIntoView();", self.get_element())
+        self.browser_session.execute_script("return arguments[0].scrollIntoView();", self.get_element())
 
     def is_enabled(self):
         return self.execute_action(Action.IS_ENABLED)
+
+    def js_click(self):
+        self.browser_session.execute_script("arguments[0].click();", self.get_element())

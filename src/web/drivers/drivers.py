@@ -1,5 +1,3 @@
-import base64
-
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 

@@ -69,11 +69,8 @@ class Browser:
         self.wait_for_page_to_load()
 
     def accept_browser_alert_if_shown(self):
-        try:
-            if self.wait_for_alert(1):
-                self.accept_alert()
-        except Exception:
-            pass
+        if self.wait_for_alert(1):
+            self.accept_alert()
 
     def quit(self):
         if self.driver:
@@ -101,8 +98,8 @@ class Browser:
     def current_url(self):
         return self.driver.current_url
 
-    def execute_script(self, script):
-        return self.driver.execute_script(script)
+    def execute_script(self, script, *args):
+        return self.driver.execute_script(script, *args)
 
     def get_browser_log(self):
         Log.info("Getting browser log")

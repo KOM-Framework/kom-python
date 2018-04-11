@@ -47,14 +47,16 @@ class KOMElement:
     def wait_for_all_http_requests_to_be_completed(self):
         self.browser_session.wait_until_http_requests_are_finished()
 
-    def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
-        driver = self.browser_session.driver
+    def get_driver(self, wait_time=element_load_time):
         if self.base_element_list:
-            driver = self.base_element_list.get_elements()[self.base_element_index]
+            return self.base_element_list.get_elements()[self.base_element_index]
         elif self._base_element:
-            driver = WebDriverWait(driver, wait_time).until(
+            return WebDriverWait(self.browser_session.driver, wait_time).until(
                 expected_conditions.presence_of_element_located(getattr(self._base_element, 'locator')))
-        element = WebDriverWait(driver, wait_time).until(
+        return self.browser_session.driver
+
+    def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
+        element = WebDriverWait(self.get_driver(wait_time), wait_time).until(
             condition(self.locator)
         )
         return element
@@ -101,12 +103,12 @@ class KOMElement:
         element = self.get_element()
         if not isinstance(destination, WebElement):
             destination = destination.get_element()
-        ActionChains(self.browser_session.driver).drag_and_drop(element, destination).perform()
+        ActionChains(self.get_driver()).drag_and_drop(element, destination).perform()
 
     def double_click(self):
         Log.info("Double click on %s" % self._name)
         element = self.get_element()
-        ActionChains(self.browser_session.driver).double_click(element).perform()
+        ActionChains(self.get_driver()).double_click(element).perform()
 
     def get_attribute(self, name):
         return self.execute_action(Action.GET_ATTRIBUTE, None, name)
@@ -116,12 +118,12 @@ class KOMElement:
 
     def move_to(self):
         Log.info("Moving to %s" % self._name)
-        ActionChains(self.browser_session.driver).move_to_element(self.get_element()).perform()
+        ActionChains(self.get_driver()).move_to_element(self.get_element()).perform()
 
     def move_to_and_click(self):
         Log.info("Moving to and clicking on %s" % self._name)
         element = self.get_element()
-        ActionChains(self.browser_session.driver).move_to_element(element).click(element).perform()
+        ActionChains(self.get_driver()).move_to_element(element).click(element).perform()
 
     def is_displayed(self):
         return self.execute_action(Action.IS_DISPLAYED)
@@ -132,19 +134,19 @@ class KOMElement:
 
     def wait_while_exists(self, wait_time=10):
         Log.info('Waiting for the element %s to disappear' % self._name)
-        return WebDriverWait(self.browser_session.driver, wait_time).until(
+        return WebDriverWait(self.get_driver(), wait_time).until(
             expected_conditions.invisibility_of_element_located(self.locator)
         )
 
     def wait_for_visibility(self, wait_time=10):
         Log.info('Waiting for the element %s to be visible' % self._name)
-        return WebDriverWait(self.browser_session.driver, wait_time).until(
+        return WebDriverWait(self.get_driver(), wait_time).until(
             expected_conditions.visibility_of_element_located(self.locator)
         )
 
     def wait_for_text_to_be_present_in_element(self, wait_time=5, text=""):
         Log.info('Waiting for the text %s to be present' % self._name)
-        x = WebDriverWait(self.browser_session.driver, wait_time).until(
+        x = WebDriverWait(self.get_driver(), wait_time).until(
             expected_conditions.text_to_be_present_in_element(self.locator, text)
         )
         return x

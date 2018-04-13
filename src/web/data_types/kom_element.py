@@ -22,9 +22,8 @@ class KOMElement:
     def __new__(cls, *args, **kwargs):
         obj = super(KOMElement, cls).__new__(cls)
         obj.browser_session = WebSessionsFactory.active_page.browser_session
-        obj._base_element = WebSessionsFactory.active_frame
-        obj.base_element_list = None
-        obj.base_element_index = None
+        obj._ancestor_element = WebSessionsFactory.active_frame
+        obj._base_element_index = 0
         return obj
 
     def __init__(self, locator, action_element=False):
@@ -48,11 +47,10 @@ class KOMElement:
         self.browser_session.wait_until_http_requests_are_finished()
 
     def get_driver(self, wait_time=element_load_time):
-        if self.base_element_list:
-            return self.base_element_list.get_elements()[self.base_element_index]
-        elif self._base_element:
-            return WebDriverWait(self.browser_session.driver, wait_time).until(
-                expected_conditions.presence_of_element_located(getattr(self._base_element, 'locator')))
+        if self._ancestor_element:
+            element = WebDriverWait(self.browser_session.driver, wait_time).until(
+                expected_conditions.presence_of_all_elements_located(getattr(self._ancestor_element, 'locator')))
+            return element[self._base_element_index]
         return self.browser_session.driver
 
     def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):

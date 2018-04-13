@@ -54,8 +54,8 @@ class Table(KOMElementList):
                 obj = self.table_structure.get_copy()
                 for field in field_names:
                     field_object = getattr(obj, field)
-                    setattr(field_object, 'base_element_list', self)
-                    setattr(field_object, 'base_element_index', i)
+                    setattr(field_object, '_ancestor_element', self)
+                    setattr(field_object, '_base_element_index', i)
                 if specific_index is not None:
                     obj.test = elements[specific_index]
                     return obj

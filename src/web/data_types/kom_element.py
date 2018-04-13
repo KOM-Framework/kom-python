@@ -103,12 +103,11 @@ class KOMElement:
         element = self.get_element()
         if not isinstance(destination, WebElement):
             destination = destination.get_element()
-        ActionChains(self.get_driver()).drag_and_drop(element, destination).perform()
+        ActionChains(self.browser_session.driver).drag_and_drop(element, destination).perform()
 
     def double_click(self):
         Log.info("Double click on %s" % self._name)
-        element = self.get_element()
-        ActionChains(self.get_driver()).double_click(element).perform()
+        ActionChains(self.browser_session.driver).double_click(self.get_element()).perform()
 
     def get_attribute(self, name):
         return self.execute_action(Action.GET_ATTRIBUTE, None, name)
@@ -118,12 +117,12 @@ class KOMElement:
 
     def move_to(self):
         Log.info("Moving to %s" % self._name)
-        ActionChains(self.get_driver()).move_to_element(self.get_element()).perform()
+        ActionChains(self.browser_session.driver).move_to_element(self.get_element()).perform()
 
     def move_to_and_click(self):
         Log.info("Moving to and clicking on %s" % self._name)
         element = self.get_element()
-        ActionChains(self.get_driver()).move_to_element(element).click(element).perform()
+        ActionChains(self.browser_session.driver).move_to_element(element).click(element).perform()
 
     def is_displayed(self):
         return self.execute_action(Action.IS_DISPLAYED)

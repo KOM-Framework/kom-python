@@ -3,7 +3,7 @@ from abc import ABCMeta
 import time
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException, \
-    WebDriverException
+    WebDriverException, InvalidElementStateException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
@@ -80,7 +80,7 @@ class KOMElement:
                 if self._action_element:
                     self.wait_for_all_http_requests_to_be_completed()
                 return value
-        except (StaleElementReferenceException, WebDriverException) as e:
+        except (StaleElementReferenceException, WebDriverException, InvalidElementStateException) as e:
             if self.__retry_count <= 2:
                 self.__retry_count += 1
                 Log.error('Error on performing \'%s\' action. Retrying...' % action)

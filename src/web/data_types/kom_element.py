@@ -48,7 +48,11 @@ class KOMElement:
 
     def get_driver(self, wait_time=element_load_time):
         if self._ancestor_element:
-            element = WebDriverWait(self.browser_session.driver, wait_time).until(
+            if isinstance(self._ancestor_element, KOMElement):
+                ancestor_driver = self._ancestor_element.get_driver()
+            else:
+                ancestor_driver = self.browser_session.driver
+            element = WebDriverWait(ancestor_driver, wait_time).until(
                 expected_conditions.presence_of_all_elements_located(getattr(self._ancestor_element, 'locator')))
             return element[self._base_element_index]
         return self.browser_session.driver

@@ -18,6 +18,8 @@ def main():
         pytest_args.append('--allure-features=%s' % os.environ.get('FEATURES_TO_TEST'))
     if os.environ.get('STORIES_TO_TEST'):
         pytest_args.append('--allure-stories=%s' % os.environ.get('STORIES_TO_TEST'))
+    if os.environ.get('PYTEST_ARGS'):
+        pytest_args.append(os.environ.get('PYTEST_ARGS'))
     pytest_args.append('--alluredir=allure-results')
     Log.info('pytest args "%s"' % str(pytest_args))
     return pytest.main(pytest_args)

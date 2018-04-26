@@ -3,7 +3,7 @@ import os
 import pytest
 import sys
 
-from kom_framework.src.general import Log
+from .src.general import Log
 
 
 def main():

@@ -3,7 +3,7 @@ import os
 import pytest
 import sys
 
-from .src.general import Log
+from kom_framework.src.general import Log
 
 
 def main():
@@ -19,7 +19,13 @@ def main():
     if os.environ.get('STORIES_TO_TEST'):
         pytest_args.append('--allure-stories=%s' % os.environ.get('STORIES_TO_TEST'))
     if os.environ.get('PYTEST_ARGS'):
-        pytest_args.append(os.environ.get('PYTEST_ARGS'))
+        args_string = os.environ.get('PYTEST_ARGS')
+        if ';' in args_string:
+            args = args_string.split(';')
+            for arg in args:
+                pytest_args.append(arg)
+        else:
+            pytest_args.append(args_string)
     pytest_args.append('--alluredir=allure-results')
     Log.info('pytest args "%s"' % str(pytest_args))
     return pytest.main(pytest_args)

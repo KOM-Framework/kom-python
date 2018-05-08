@@ -143,7 +143,7 @@ class Table(KOMElementList):
                         out.append(row)
             if self.next_page():
                 return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
-            if time.time() > end_time:
+            elif out or time.time() > end_time:
                 break
         return out
 

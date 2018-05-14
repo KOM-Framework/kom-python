@@ -214,6 +214,7 @@ class SelectList(KOMElementList):
         Log.info("Getting all options list from the '%s' select list" % self._name)
         out = list()
         self.execute_action(Action.CLICK)
+        time.sleep(0.5)
         options = self.options_list.get_elements()
         for option in options:
             out.append(option.text)

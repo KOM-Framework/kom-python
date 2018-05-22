@@ -198,10 +198,11 @@ class SelectList(KOMElementList):
         Log.info("Clicking on the '%s' select list" % self._name)
         super(SelectList, self).click(**kwargs)
 
-    def select_item_by_text(self, text):
+    def select_item_by_text(self, text, delay_for_options_to_appear_time=0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self._name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)
+            time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.get_elements()
         for option in options:
             if option.text == text:
@@ -210,20 +211,21 @@ class SelectList(KOMElementList):
         if self.hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
-    def get_options_list(self):
+    def get_options_list(self, delay_for_options_to_appear_time=0.5):
         Log.info("Getting all options list from the '%s' select list" % self._name)
         out = list()
         self.execute_action(Action.CLICK)
-        time.sleep(0.5)
+        time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.get_elements()
         for option in options:
             out.append(option.text)
         return out
 
-    def select_option_by_attribute_value(self, attribute_name, attribute_value):
+    def select_option_by_attribute_value(self, attribute_name, attribute_value, delay_for_options_to_appear_time=0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self._name))
         self.execute_action(Action.CLICK)
+        time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.get_elements()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:

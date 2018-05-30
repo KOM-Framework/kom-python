@@ -3,7 +3,7 @@ from abc import ABCMeta
 import time
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException, \
-    WebDriverException
+    WebDriverException, InvalidElementStateException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
@@ -48,7 +48,11 @@ class KOMElement:
 
     def get_driver(self, wait_time=element_load_time):
         if self._ancestor_element:
-            element = WebDriverWait(self.browser_session.driver, wait_time).until(
+            if isinstance(self._ancestor_element, KOMElement):
+                ancestor_driver = self._ancestor_element.get_driver()
+            else:
+                ancestor_driver = self.browser_session.driver
+            element = WebDriverWait(ancestor_driver, wait_time).until(
                 expected_conditions.presence_of_all_elements_located(getattr(self._ancestor_element, 'locator')))
             return element[self._base_element_index]
         return self.browser_session.driver
@@ -80,7 +84,7 @@ class KOMElement:
                 if self._action_element:
                     self.wait_for_all_http_requests_to_be_completed()
                 return value
-        except (StaleElementReferenceException, WebDriverException) as e:
+        except (StaleElementReferenceException, WebDriverException, InvalidElementStateException) as e:
             if self.__retry_count <= 2:
                 self.__retry_count += 1
                 Log.error('Error on performing \'%s\' action. Retrying...' % action)

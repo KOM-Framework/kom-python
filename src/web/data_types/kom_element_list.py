@@ -51,3 +51,6 @@ class KOMElementList(KOMElement):
             if item.is_enabled():
                 item.click()
                 break
+
+    def get_elements_texts(self):
+        return [element.text for element in self.get_elements()]

@@ -13,7 +13,7 @@
   },
 
   "remote_execution": "False",
-  "hub_ip": "",
+  "hub_ip": "0.0.0.0",
   "hub_port": 4444,
 
   "video_recording": "False",

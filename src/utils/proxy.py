@@ -28,16 +28,16 @@ class Proxy:
         return cls.get_url()
 
     @classmethod
-    def new_har(cls):
+    def new_har(cls, title):
         if not cls.proxy:
             cls.start()
-        cls.proxy.new_har(options={"captureHeaders": True, "captureContent": True})
+        cls.proxy.new_har(options={"captureHeaders": True, "captureContent": True}, title=title)
 
     @classmethod
     def get_url(cls):
+        if not cls.proxy:
+            cls.start()
         if not cls.url:
-            if not cls.proxy:
-                cls.start()
             cls.url = urlparse(cls.proxy.proxy).path
             if remote_execution:
                 cls.url = cls.url.replace('localhost', proxy_ip)
@@ -51,6 +51,7 @@ class Proxy:
     def stop(cls):
         if cls.server:
             Log.info('Closing browsermob-proxy server')
+            cls.proxy.close()
             cls.server.stop()
             cls.proxy = None
             cls.server = None

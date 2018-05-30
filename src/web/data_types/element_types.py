@@ -127,24 +127,25 @@ class Link(KOMElement):
 
 class CheckBox(KOMElement):
 
+    def __init__(self, locator, attribute='value', checked_value='on', **kwargs):
+        KOMElement.__init__(self, locator, **kwargs)
+        self.attribute = attribute
+        self.checked_value = checked_value
+
     def click(self, **kwargs):
         Log.info("Clicking on the '%s' check box" % self._name)
         super(CheckBox, self).click(**kwargs)
 
     def check(self, value=True):
         Log.info("Checking the '%s' check box" % self._name)
-        actual_status = super(CheckBox, self).get_attribute('value')
-        if actual_status == 'on':
-            actual_status = super(CheckBox, self).get_attribute('checked')
-        if (value and actual_status != 'true') or (not value and actual_status == 'true'):
+        actual_status = super(CheckBox, self).get_attribute(self.attribute)
+        if (value and actual_status != self.checked_value) or (not value and actual_status == self.checked_value):
             super(CheckBox, self).click()
 
     def is_selected(self):
         Log.info("Check is the '%s' check box is selected" % self._name)
-        actual_status = super(CheckBox, self).get_attribute('value')
-        if actual_status == 'on':
-            actual_status = super(CheckBox, self).get_attribute('checked')
-        if actual_status == 'true':
+        actual_status = super(CheckBox, self).get_attribute(self.attribute)
+        if actual_status == self.checked_value:
             return True
         return False
 

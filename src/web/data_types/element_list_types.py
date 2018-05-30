@@ -79,6 +79,23 @@ class Table(KOMElementList):
                 break
         return None
 
+    def get_row_by_column_textContent(self, column_name, value, wait_time=element_load_time):
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
+        end_time = time.time() + wait_time
+        while True:
+            content = self.get_content(wait_time=wait_time)
+            for row in content:
+                if getattr(row, column_name).exists():
+                    row_value = getattr(row, column_name).get_attribute('textContent')
+                    Log.info("Actual text: %s" % row_value)
+                    if row_value == value:
+                        return row
+            if self.next_page():
+                return self.get_row_by_column_value(column_name, value, wait_time)
+            if time.time() > end_time:
+                break
+        return None
+
     def get_column_values(self, column_name, wait_time=element_load_time):
         Log.info("Getting column %s values from the table: %s" % (column_name, self._name))
         column = []
@@ -87,7 +104,7 @@ class Table(KOMElementList):
             content = self.get_content()
             if len(content) > 0:
                 for row in content:
-                    column.append(getattr(row, column_name).text())
+                    column.append(getattr(row, column_name).get_attribute('textContent'))
                 return column
             if time.time() > end_time:
                 break

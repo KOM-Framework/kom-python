@@ -31,10 +31,13 @@ class KOMElementList(KOMElement):
             expected_conditions.presence_of_all_elements_located(self.locator)
         )
 
+    def get_size(self):
+        return len(self.get_elements())
+
     def exists(self, wait_time=0, **kwargs):
         Log.info("List '%s' existence verification. Wait time = %s" % (self._name, str(wait_time)))
         try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
+            WebDriverWait(self.get_driver(), wait_time).until(
                 lambda driver: driver.find_elements(*self.locator)
             )
             return True

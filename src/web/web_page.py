@@ -44,9 +44,8 @@ class WebPage:
                 Log.info("Open %s web page" % self.page_name)
                 self.open_actions()
                 assert self.exists(page_load_time), "Page %s cannot be found" % self.page_name
-            else:
-                if "setup_page" in dir(self):
-                    self.setup_page()
+            if "setup_page" in dir(self):
+                self.setup_page()
         except WebDriverException as e:
             if "terminated due to SO_TIMEOUT" in e.msg:
                 if self._retry_count <= 1:

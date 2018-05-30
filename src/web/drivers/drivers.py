@@ -102,10 +102,10 @@ class InternetExplorer(Driver):
         return DesiredCapabilities.INTERNETEXPLORER.copy()
 
     @classmethod
-    def get_session(cls):
+    def get_session(cls, driver_capabilities):
         from webdriver_manager.microsoft import IEDriverManager
-        capabilities.pop('platform')
+        capabilities.pop('platform', "windows")
         driver_capabilities = {**cls.get_capabilities(), **capabilities}
-        driver = webdriver.Ie(executable_path=IEDriverManager(os_type="win32").install(),
+        driver = webdriver.Ie(executable_path=IEDriverManager(version="3.9.0", os_type="win32").install(),
                               capabilities=driver_capabilities)
         return driver

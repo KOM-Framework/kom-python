@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
+from kom_framework.src.web.drivers import capabilities
 from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log, find_between
 from ..web import hub_ip, hub_port, iframe_load_time, http_request_wait_time, \
@@ -64,19 +65,29 @@ class Browser:
 
     def refresh_with_accept_browser_alert_if_shown(self):
         Log.info("Refreshing the browser")
+        self.accept_browser_alert_if_shown()
         self.driver.refresh()
         self.accept_browser_alert_if_shown()
-        self.wait_for_page_to_load()
+        if capabilities['browserName'] != "internet explorer":
+            self.wait_for_page_to_load()
 
     def accept_browser_alert_if_shown(self):
-        if self.wait_for_alert(1):
-            self.accept_alert()
+        try:
+            if self.wait_for_alert(1):
+                self.accept_alert()
+        except Exception:
+            pass
 
     def quit(self):
         if self.driver:
             Log.info("Closing the browser")
-            self.driver.quit()
-            self.driver = None
+            try:
+                self.driver.quit()
+            except Exception as e:
+                Log.error("Can't quit driver")
+                Log.error(e)
+            finally:
+                self.driver = None
 
     def wait_for_alert(self, wait_time=iframe_load_time):
         return WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
@@ -135,11 +146,15 @@ class Browser:
         self.driver.switch_to.active_element.send_keys(keys)
 
     def switch_to_last_tab(self):
+        Log.info("Browser switch to last tab")
         self.driver.switch_to_window(self.driver.window_handles[-1])
 
     def close_last_tab(self):
-        self.driver.switch_to_window(self.driver.window_handles[-1])
-        self.driver.close()
+        Log.info("Browser close last tab")
+        if len(self.driver.window_handles)>1:
+            self.driver.switch_to_window(self.driver.window_handles[-1])
+            self.driver.close()
+        self.driver.switch_to_window(self.driver.window_handles[0])
 
     def clear_local_storage(self):
         self.driver.execute_script('window.localStorage.clear();')

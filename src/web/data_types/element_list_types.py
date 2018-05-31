@@ -133,14 +133,14 @@ class Table(KOMElementList):
 
     def wait_for_visibility(self, wait_time=element_load_time):
         Log.info('Waiting for the grid %s to be visible' % self._name)
-        WebDriverWait(self.browser_session.driver, wait_time).until(
+        WebDriverWait(self.driver, wait_time).until(
             expected_conditions.presence_of_all_elements_located(self.locator)
         )
 
     def wait_for_elements_count(self, elements_count, wait_time):
         Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self._name))
         try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
             return True
         except TimeoutException:
@@ -296,7 +296,7 @@ class BarChart(KOMElementList):
         out = list()
         bar_list = self.get_elements()
         for bar in bar_list:
-            ActionChains(self.browser_session.driver).move_to_element(bar).perform()
+            ActionChains(self.driver).move_to_element(bar).perform()
             time.sleep(0.5)
             tooltips = self.tooltip.get_elements()
             data = list()

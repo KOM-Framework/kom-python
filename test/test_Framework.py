@@ -21,7 +21,7 @@ class PageTest(WebPage, Frame):
         self.user = Input(Id("lst-ib"))
 
     def open_actions(self):
-        self.browser_session.open("http://www.google.com")
+        self.get("http://www.google.com")
 
 
 class TestSomething:
@@ -34,10 +34,10 @@ class TestSomething:
         assert True
 
     def test_session_factory_close(self):
-        from kom_framework.src.web.support.session_factory import WebSessionsFactory
+        from kom_framework.src.web.support.session_factory import WebHelper
         obj_1 = PageTest('asdasd').open()
         obj_2 = PageTest('asdasda2ss').open()
-        WebSessionsFactory.close_sessions()
+        WebHelper.close_sessions()
         assert True
 
     def test_action_element(self):

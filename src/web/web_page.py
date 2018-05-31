@@ -4,30 +4,31 @@ import time
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
+from kom_framework.src.web.browser import Browser
 from kom_framework.src.web.data_types import Xpath
 from ..general import Log
 from ..web import page_load_time
-from ..web.support.session_factory import WebSessionsFactory
+from ..web.support.session_factory import WebHelper
 from selenium.webdriver.support import expected_conditions
 
 
-class WebPage:
+class WebPage(Browser):
 
     _retry_count = 0
 
+    def get_driver(self):
+        return Browser.driver
+
+    def set_driver(self, value):
+        Browser.driver = value
+
+    driver = property(get_driver, set_driver)
+
     def __new__(cls, *args, **kwargs):
         obj = super(WebPage, cls).__new__(cls)
-        obj._retry_count = 0
         obj.page_name = obj.__class__.__name__
-        obj.module_name = obj.__class__.__module__
-        obj.browser_session = WebSessionsFactory.browser(obj.module_name)
-        WebSessionsFactory.active_page = obj
+        WebHelper.active_page = obj
         return obj
-
-    def _set_module(self, module_name):
-        if module_name:
-            self.module_name = module_name
-            self.browser_session = WebSessionsFactory.browser(self.module_name)
 
     __metaclass__ = ABCMeta
 
@@ -44,13 +45,12 @@ class WebPage:
                 Log.info("Open %s web page" % self.page_name)
                 self.open_actions()
                 assert self.exists(page_load_time), "Page %s cannot be found" % self.page_name
-            if "setup_page" in dir(self):
-                self.setup_page()
+            self.setup_page()
         except WebDriverException as e:
             if "terminated due to SO_TIMEOUT" in e.msg:
                 if self._retry_count <= 1:
                     self._retry_count += 1
-                    self.browser_session.driver = None
+                    self.driver = None
                     Log.error('Something went wrong. Retrying to open the page')
                     self.open()
                 else:
@@ -59,14 +59,14 @@ class WebPage:
         return self
 
     def forced_open(self):
-        self.browser_session.quit()
+        self.quit()
         return self.open()
 
     def exists(self, wait_time=0):
         Log.info("Page '%s' existence verification. Wait time = %s" % (self.page_name, str(wait_time)))
-        if self.browser_session.driver:
+        if self.driver:
             try:
-                WebDriverWait(self.browser_session.driver, wait_time).until(
+                WebDriverWait(self.driver, wait_time).until(
                     expected_conditions.visibility_of_element_located(getattr(self, "locator"))
                 )
                 return True
@@ -86,12 +86,12 @@ class WebPage:
                 return False
 
     def can_be_focused(self, wait=15):
-        WebDriverWait(self.browser_session.driver, wait).until(self.CanBeFocused(getattr(self, "locator")))
+        WebDriverWait(self.driver, wait).until(self.CanBeFocused(getattr(self, "locator")))
 
     def wait_while_text_exists(self, text, wait_time=30):
         Log.info("Waiting for the '%s' text to disappear" % text)
         try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 expected_conditions.invisibility_of_element_located((Xpath('//*[contains(text(), "%s")]' % text)))
             )
         except (NoSuchElementException, TimeoutException):
@@ -100,7 +100,7 @@ class WebPage:
     def wait_for_text_exists(self, text, wait_time=30):
         Log.info("Waiting for the '%s' text to appear" % text)
         try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 expected_conditions.visibility_of_element_located((Xpath('//*[contains(text(), "%s")]' % text)))
             )
             return True
@@ -109,13 +109,13 @@ class WebPage:
             return False
 
     def set_focus(self):
-        self.browser_session.driver.find_element(*getattr(self, "locator")).click()
+        self.driver.find_element(*getattr(self, "locator")).click()
 
     def text_exists(self, text, wait_time=0):
         Log.info("Text '%s' existence verification. Wait time = %s" % (text, str(wait_time)))
         text_id = (Xpath('//*[contains(text(),"%s")]' % text))
         try:
-            WebDriverWait(self.browser_session.driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 expected_conditions.visibility_of_element_located(text_id)
             )
             return True
@@ -128,10 +128,10 @@ class WebPage:
     def wait_while_scrolling(self, wait_time=5):
         get_position_command = 'return window.pageYOffset;'
         end_time = time.time() + wait_time
-        initial_pos = self.browser_session.execute_script(get_position_command)
+        initial_pos = self.execute_script(get_position_command)
         time.sleep(0.1)
         while True:
-            current_pos = self.browser_session.execute_script(get_position_command)
+            current_pos = self.execute_script(get_position_command)
             if current_pos == initial_pos or time.time() > end_time:
                 break
             else:

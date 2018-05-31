@@ -5,7 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web import page_load_time
 from ..general import Log
-from ..web.support.session_factory import WebSessionsFactory
+from ..web.support.session_factory import WebHelper
 from selenium.webdriver.support import expected_conditions
 
 
@@ -14,17 +14,15 @@ class WebFrame:
     def __new__(cls, *args, **kwargs):
         obj = super(WebFrame, cls).__new__(cls)
         obj.frame_name = obj.__class__.__name__
-        obj.module_name = obj.__class__.__module__
-        obj.browser_session = WebSessionsFactory.browser(obj.module_name)
-        obj.parent_page = WebSessionsFactory.active_page
-        WebSessionsFactory.active_frame = obj
+        obj._ancestor = WebHelper.active_page
+        WebHelper.active_frame = obj
         return obj
 
     def exists(self, wait_time=0):
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self.browser_session.driver:
+        if self._ancestor.driver:
             try:
-                WebDriverWait(self.browser_session.driver, wait_time).until(
+                WebDriverWait(self._ancestor.driver, wait_time).until(
                     expected_conditions.visibility_of_element_located(getattr(self, "locator"))
                 )
                 return True

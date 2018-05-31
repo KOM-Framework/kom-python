@@ -23,7 +23,7 @@ class Input(KOMElement):
     def clear(self, use_action_chain=False):
         Log.info("Clearing %s input field" % self._name)
         if use_action_chain:
-            ActionChains(self.browser_session.driver).click(self.get_element()) \
+            ActionChains(self.driver).click(self.get_element()) \
                 .send_keys(Keys.END) \
                 .key_down(Keys.SHIFT) \
                 .send_keys(Keys.HOME) \
@@ -191,12 +191,12 @@ class IFrame(KOMElement):
 
     def switch_to(self):
         Log.info("Switching to iFrame: '%s'" % self._name)
-        self.browser_session.switch_to_frame(self.locator)
+        self.switch_to_frame(self.locator)
 
     def exists(self, wait_time=5, **kwargs):
         Log.info("Checking if %s frame exists" % self._name)
         try:
-            WebDriverWait(self.browser_session.driver,
+            WebDriverWait(self.driver,
                           wait_time).until(
                 expected_conditions.presence_of_element_located(self.locator))
             return True

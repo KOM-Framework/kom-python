@@ -1,4 +1,4 @@
-from kom_framework.src.web.support.session_factory import WebSessionsFactory
+from kom_framework.src.web.support.session_factory import WebHelper
 
 
 class PageFactory:
@@ -28,7 +28,7 @@ def find_by(locator, use_factory=True):
                         page_object = cls.create_object(*args, **kwargs)
                         PageFactory.set_instance(key, page_object)
                     else:
-                        WebSessionsFactory.active_page = PageFactory.get_instance(key)
+                        WebHelper.active_page = PageFactory.get_instance(key)
                     return PageFactory.get_instance(key)
                 else:
                     return cls.create_object(*args, **kwargs)
@@ -37,7 +37,7 @@ def find_by(locator, use_factory=True):
             def create_object(*args, **kwargs):
                 page_object = class_(*args, **kwargs)
                 page_object.locator = locator
-                WebSessionsFactory.active_frame = None
+                WebHelper.active_frame = None
                 return page_object
         return Wrapper
     return real_decorator

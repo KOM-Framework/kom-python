@@ -1,5 +1,4 @@
 import time
-from urllib.request import urlopen
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
@@ -8,37 +7,25 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
+
 from kom_framework.src.web.drivers import capabilities
 from kom_framework.src.web.drivers.drivers import Driver
-from ..general import Log, find_between
+from ..general import Log
 from ..web import hub_ip, hub_port, iframe_load_time, http_request_wait_time, \
     page_load_time
 
 
 class Browser:
-    def __init__(self, module_name=None):
-        self.driver = None
-        self.test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
-        self.module_name = module_name
 
-    def get_node_id(self):
-        self.open("http://localhost")
-        hub_session_api = "%s?session=%s" % (self.test_session_api, self.driver.session_id)
-        result = urlopen(hub_session_api)
-        string_data = str(result.read())
-        Log.info("Result api: %s" % string_data)
-        node_id = find_between(string_data, "http://", ":%s" % hub_port)
-        Log.info("ProxyId: %s" % node_id)
-        self.quit()
-        return node_id
+    driver = None
+    test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
 
-    def open(self, url, extensions=None, open_url=True):
+    def get(self, url, extensions=None):
         Log.info("Opening %s url" % url)
         if not self.driver:
             Log.info("Creating an instance of a Browser.")
             self.driver = Driver(extensions).create_session()
-        if open_url:
-            self.driver.get(url)
+        self.driver.get(url)
 
     def switch_to_frame(self, frame_locator):
         out = WebDriverWait(self.driver,

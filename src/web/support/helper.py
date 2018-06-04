@@ -11,9 +11,6 @@ class WebPageHelper:
     def get_driver(self, **kwargs):
         pass
 
-    def execute_script(self, script, *args):
-        return self.get_driver().execute_script(script, *args)
-
     def wait_until_http_requests_are_finished(self, wait_time=http_request_wait_time):
         try:
             WebDriverWait(self.get_driver(), wait_time).until(

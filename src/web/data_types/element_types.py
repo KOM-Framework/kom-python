@@ -58,7 +58,7 @@ class Input(KOMElement):
 
     def get_message(self):
         if self.message_locator:
-            message = AnyType(self.message_locator)
+            message = AnyType(self._ancestor, self.message_locator)
             if message.exists():
                 return message.text()
         else:
@@ -191,12 +191,12 @@ class IFrame(KOMElement):
 
     def switch_to(self):
         Log.info("Switching to iFrame: '%s'" % self._name)
-        self.switch_to_frame(self.locator)
+        self._ancestor.switch_to_frame(self.locator)
 
     def exists(self, wait_time=5, **kwargs):
         Log.info("Checking if %s frame exists" % self._name)
         try:
-            WebDriverWait(self.driver,
+            WebDriverWait(self._get_driver(),
                           wait_time).until(
                 expected_conditions.presence_of_element_located(self.locator))
             return True

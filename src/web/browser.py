@@ -133,3 +133,6 @@ class Browser:
 
     def clear_local_storage(self):
         self.driver.execute_script('window.localStorage.clear();')
+
+    def execute_script(self, script, *args):
+        return self.driver.execute_script(script, *args)

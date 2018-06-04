@@ -235,11 +235,11 @@ class SelectMenu(KOMElementList):
 
     def select_item_by_text(self, text):
         Log.info("Selecting %s in the '%s' select menu" % (text, self._name))
-        text_field = Input(self.locator)
+        text_field = Input(self._ancestor, self.locator)
         text_field.clear()
         text_field.type_keys(text)
         time.sleep(0.5)
-        options = KOMElementList(self.list_locator).get_elements()
+        options = KOMElementList(self._ancestor, self.list_locator).get_elements()
         for option in options:
             if text in option.get_attribute('title'):
                 option.click()

@@ -52,3 +52,9 @@ class WebFrame(WebPageHelper):
         if "setup_frame" in dir(self):
             self.setup_frame()
         return self
+
+    def execute_script(self, script, *args):
+        return self._ancestor.execute_script(script, *args)
+
+    def quit(self):
+        self._ancestor.quit()

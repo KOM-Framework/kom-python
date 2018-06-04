@@ -23,7 +23,7 @@ class Input(KOMElement):
     def clear(self, use_action_chain=False):
         Log.info("Clearing %s input field" % self._name)
         if use_action_chain:
-            ActionChains(self.driver).click(self.get_element()) \
+            ActionChains(self._get_driver()).click(self.get_element()) \
                 .send_keys(Keys.END) \
                 .key_down(Keys.SHIFT) \
                 .send_keys(Keys.HOME) \

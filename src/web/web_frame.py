@@ -5,25 +5,32 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web import page_load_time
 from ..general import Log
-from ..web.support.session_factory import WebHelper
+from ..web.support.helper import WebPageHelper
 from selenium.webdriver.support import expected_conditions
 
 
-class WebFrame:
+class WebFrame(WebPageHelper):
+
+    def get_driver(self, **kwargs):
+        wait_time = kwargs.get('wait_time', 0)
+        index = kwargs.get('index', 0)
+        return self.get_descendant_element(self._ancestor.get_driver(), self.locator, wait_time, index)
 
     def __new__(cls, *args, **kwargs):
         obj = super(WebFrame, cls).__new__(cls)
         obj.frame_name = obj.__class__.__name__
-        obj._ancestor = WebHelper.active_page
-        WebHelper.active_frame = obj
+        obj.locator = None
         return obj
+
+    def __init__(self, ancestor):
+        self._ancestor = ancestor
 
     def exists(self, wait_time=0):
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self._ancestor.driver:
+        if self._ancestor.get_driver():
             try:
-                WebDriverWait(self._ancestor.driver, wait_time).until(
-                    expected_conditions.visibility_of_element_located(getattr(self, "locator"))
+                WebDriverWait(self._ancestor.get_driver(), wait_time).until(
+                    expected_conditions.visibility_of_element_located(self.locator)
                 )
                 return True
             except (NoSuchElementException, TimeoutException):

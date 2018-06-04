@@ -11,8 +11,7 @@ from selenium.webdriver.support import expected_conditions
 from kom_framework.src.web.drivers import capabilities
 from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log
-from ..web import hub_ip, hub_port, iframe_load_time, http_request_wait_time, \
-    page_load_time
+from ..web import hub_ip, hub_port, iframe_load_time, page_load_time
 
 
 class Browser:
@@ -22,9 +21,9 @@ class Browser:
 
     def get(self, url, extensions=None):
         Log.info("Opening %s url" % url)
-        if not self.driver:
+        if not Browser.driver:
             Log.info("Creating an instance of a Browser.")
-            self.driver = Driver(extensions).create_session()
+            Browser.driver = Driver(extensions).create_session()
         self.driver.get(url)
 
     def switch_to_frame(self, frame_locator):
@@ -35,15 +34,6 @@ class Browser:
 
     def switch_to_default_content(self):
         self.driver.switch_to.default_content()
-
-    def wait_until_http_requests_are_finished(self, wait_time=http_request_wait_time):
-        try:
-            WebDriverWait(self.driver, wait_time).until(
-                lambda driver: not driver.execute_script("return window.openHTTPs")
-            )
-        except TimeoutException:
-            Log.error('HTTP request execution time is more than %s seconds' % wait_time)
-            self.driver.execute_script("window.openHTTPs=0")
 
     def refresh(self):
         Log.info("Refreshing the browser")
@@ -62,19 +52,20 @@ class Browser:
         try:
             if self.wait_for_alert(1):
                 self.accept_alert()
-        except Exception:
+        except TimeoutException:
             pass
 
-    def quit(self):
-        if self.driver:
+    @staticmethod
+    def quit():
+        if Browser.driver:
             Log.info("Closing the browser")
             try:
-                self.driver.quit()
+                Browser.driver.quit()
             except Exception as e:
                 Log.error("Can't quit driver")
                 Log.error(e)
             finally:
-                self.driver = None
+                Browser.driver = None
 
     def wait_for_alert(self, wait_time=iframe_load_time):
         return WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
@@ -95,9 +86,6 @@ class Browser:
 
     def current_url(self):
         return self.driver.current_url
-
-    def execute_script(self, script, *args):
-        return self.driver.execute_script(script, *args)
 
     def get_browser_log(self):
         Log.info("Getting browser log")

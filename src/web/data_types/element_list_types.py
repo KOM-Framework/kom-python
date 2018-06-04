@@ -1,16 +1,13 @@
 import time
 
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
-from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
 
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.actions import Action
 from ...web.data_types.element_types import Input, AnyType
-from ...web.data_types.kom_element_list import KOMElementList
+from ...web.data_types.kom_element_list import KOMElementList, Structure
 
 
 class AnyList(KOMElementList):
@@ -25,10 +22,15 @@ class Table(KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, locator, table_structure, next_page_button=None, **kwargs):
-        KOMElementList.__init__(self, locator, **kwargs)
+    def __init__(self, page_object, locator, table_structure: Structure, next_page_button=None, **kwargs):
+        KOMElementList.__init__(self, page_object, locator, **kwargs)
         self.table_structure = table_structure
         self.next_page_button = next_page_button
+
+    def get_driver(self, **kwargs):
+        wait_time = kwargs.get('wait_time', 0)
+        index = kwargs.get('index', 0)
+        return self.get_elements(wait_time)[index]
 
     def next_page(self):
         if self.next_page_button and self.next_page_button.exists():
@@ -36,7 +38,7 @@ class Table(KOMElementList):
             return True
         return False
 
-    def get_content(self, specific_index=None, wait_time=0):
+    def get_content(self, index=None, wait_time=0):
         Log.info("Getting content of a table: %s" % self._name)
         end_time = time.time() + wait_time
         out = []
@@ -46,20 +48,7 @@ class Table(KOMElementList):
                 elements = self.get_elements()
                 if time.time() > end_time:
                     break
-            elements_count = len(elements)
-            field_names = self.table_structure.keys()
-            for i in range(elements_count):
-                if specific_index is not None:
-                    i = specific_index
-                obj = self.table_structure.get_copy()
-                for field in field_names:
-                    field_object = getattr(obj, field)
-                    setattr(field_object, '_ancestor_element', self)
-                    setattr(field_object, '_base_element_index', i)
-                if specific_index is not None:
-                    obj.test = elements[specific_index]
-                    return obj
-                out.append(obj)
+            out = self.table_structure.init_structure(self, len(elements), index)
         return out
 
     def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
@@ -79,7 +68,7 @@ class Table(KOMElementList):
                 break
         return None
 
-    def get_row_by_column_textContent(self, column_name, value, wait_time=element_load_time):
+    def get_row_by_column_text_content(self, column_name, value, wait_time=element_load_time):
         Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
         end_time = time.time() + wait_time
         while True:
@@ -131,21 +120,6 @@ class Table(KOMElementList):
         element = self.get_content(index, wait_time=wait_time)
         return element
 
-    def wait_for_visibility(self, wait_time=element_load_time):
-        Log.info('Waiting for the grid %s to be visible' % self._name)
-        WebDriverWait(self.driver, wait_time).until(
-            expected_conditions.presence_of_all_elements_located(self.locator)
-        )
-
-    def wait_for_elements_count(self, elements_count, wait_time):
-        Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self._name))
-        try:
-            WebDriverWait(self.driver, wait_time).until(
-                lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
-            return True
-        except TimeoutException:
-            return False
-
     def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=element_load_time):
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
                  % (column_name, attribute_name, attribute_value, self._name))
@@ -188,16 +162,16 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, link_locator, option_list_locator=None, message_locator=None,
+    def __init__(self, page_object, link_locator, option_list_locator=None, message_locator=None,
                  extent_list_by_click_on_field=True, hide_list_by_click_on_field=False,
                  **kwargs):
-        KOMElementList.__init__(self, link_locator, **kwargs)
+        KOMElementList.__init__(self, page_object, link_locator, **kwargs)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
-            self.options_list = KOMElementList(option_list_locator)
+            self.options_list = KOMElementList(page_object, option_list_locator)
         if message_locator:
-            self.message = AnyType(message_locator)
+            self.message = AnyType(page_object, message_locator)
 
     def select_item_by_value(self, value):
         Log.info('Selecting %s value in the %s select list' % (value, self._name))
@@ -287,16 +261,16 @@ class Menu(KOMElementList):
 
 
 class BarChart(KOMElementList):
-    def __init__(self, locator, tooltip_locator=None, **kwargs):
-        KOMElementList.__init__(self, locator, **kwargs)
+    def __init__(self, page_object, locator, tooltip_locator=None, **kwargs):
+        KOMElementList.__init__(self, page_object, locator, **kwargs)
         if tooltip_locator:
-            self.tooltip = KOMElementList(tooltip_locator)
+            self.tooltip = KOMElementList(page_object, tooltip_locator)
 
     def get_tooltip_lines_text(self):
         out = list()
         bar_list = self.get_elements()
         for bar in bar_list:
-            ActionChains(self.driver).move_to_element(bar).perform()
+            ActionChains(self._get_driver()).move_to_element(bar).perform()
             time.sleep(0.5)
             tooltips = self.tooltip.get_elements()
             data = list()

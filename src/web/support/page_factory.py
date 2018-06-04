@@ -1,4 +1,4 @@
-from kom_framework.src.web.support.session_factory import WebHelper
+from kom_framework.src.general import get_obj_key
 
 
 class PageFactory:
@@ -14,7 +14,7 @@ class PageFactory:
         cls.instances[key] = page_object
 
 
-def find_by(locator, use_factory=True):
+def find_by(locator):
     def real_decorator(class_):
         class WrapperMeta(type):
             def __getattr__(self, attr):
@@ -22,13 +22,10 @@ def find_by(locator, use_factory=True):
 
         class Wrapper(metaclass=WrapperMeta):
             def __new__(cls, *args, **kwargs):
-                if use_factory:
-                    key = (class_, args, str(kwargs))
-                    if key not in PageFactory.instances:
-                        page_object = cls.create_object(*args, **kwargs)
-                        PageFactory.set_instance(key, page_object)
-                    else:
-                        WebHelper.active_page = PageFactory.get_instance(key)
+                key = get_obj_key(class_, args, kwargs)
+                if key not in PageFactory.instances:
+                    page_object = cls.create_object(*args, **kwargs)
+                    PageFactory.set_instance(key, page_object)
                     return PageFactory.get_instance(key)
                 else:
                     return cls.create_object(*args, **kwargs)
@@ -37,7 +34,6 @@ def find_by(locator, use_factory=True):
             def create_object(*args, **kwargs):
                 page_object = class_(*args, **kwargs)
                 page_object.locator = locator
-                WebHelper.active_frame = None
                 return page_object
         return Wrapper
     return real_decorator

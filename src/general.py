@@ -178,3 +178,7 @@ def make_gzip_archive(file):
         pass
     check_call(['gzip', file])
     return compressed_file_path
+
+
+def get_obj_key(obj_cls, *args, **kwargs):
+    return str(obj_cls) + str(args) + str(kwargs)

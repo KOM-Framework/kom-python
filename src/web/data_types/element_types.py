@@ -16,8 +16,8 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
-    def __init__(self, locator, message_locator=None, **kwargs):
-        KOMElement.__init__(self, locator, **kwargs)
+    def __init__(self, page_object, locator, message_locator=None, **kwargs):
+        KOMElement.__init__(self, page_object, locator, **kwargs)
         self.message_locator = message_locator
 
     def clear(self, use_action_chain=False):

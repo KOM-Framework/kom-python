@@ -13,24 +13,24 @@ from ...web.data_types.actions import Action
 from ...web.data_types import js_waiter
 from ...general import Log
 from ...web import element_load_time, retry_delay
-from ...web.support.session_factory import WebHelper
 
 
 class KOMElement:
     __metaclass__ = ABCMeta
 
-    def __new__(cls, *args, **kwargs):
-        obj = super(KOMElement, cls).__new__(cls)
-        obj._ancestor = WebHelper.active_page
-        obj._ancestor_element = WebHelper.active_frame
-        obj._base_element_index = 0
-        return obj
-
-    def __init__(self, locator, action_element=False):
+    def __init__(self, page_object, locator, action_element=False):
         self.__retry_count = 0
         self.locator = locator
+        self._ancestor = page_object
+        self._ancestor_index = 0
         self._name = str(locator)
         self._action_element = action_element
+
+    def set_ancestor(self, ancestor):
+        self._ancestor = ancestor
+
+    def set_ancestor_index(self, index):
+        self._ancestor_index = index
 
     def exists(self, wait_time=0, condition=expected_conditions.presence_of_all_elements_located):
         Log.info("Checking if %s exists" % self._name)
@@ -46,19 +46,11 @@ class KOMElement:
     def wait_for_all_http_requests_to_be_completed(self):
         self._ancestor.wait_until_http_requests_are_finished()
 
-    def get_driver(self, wait_time=element_load_time):
-        if self._ancestor_element:
-            if isinstance(self._ancestor_element, KOMElement):
-                ancestor_driver = self._ancestor_element.get_driver()
-            else:
-                ancestor_driver = self._ancestor.driver
-            element = WebDriverWait(ancestor_driver, wait_time).until(
-                expected_conditions.presence_of_all_elements_located(getattr(self._ancestor_element, 'locator')))
-            return element[self._base_element_index]
-        return self._ancestor.driver
+    def _get_driver(self, wait_time=element_load_time):
+        return self._ancestor.get_driver(wait_time=wait_time, index=self._ancestor_index)
 
     def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time=element_load_time):
-        element = WebDriverWait(self.get_driver(wait_time), wait_time).until(
+        element = WebDriverWait(self._get_driver(wait_time), wait_time).until(
             condition(self.locator)
         )
         return element
@@ -94,7 +86,6 @@ class KOMElement:
                     self.scroll_to_element()
                 return self.execute_action(action, element_condition, arg)
             else:
-                #self.refresh()
                 raise e
 
     def click(self, expected_element_condition=expected_conditions.element_to_be_clickable):
@@ -135,19 +126,19 @@ class KOMElement:
 
     def wait_while_exists(self, wait_time=10):
         Log.info('Waiting for the element %s to disappear' % self._name)
-        return WebDriverWait(self.get_driver(), wait_time).until(
+        return WebDriverWait(self._get_driver(), wait_time).until(
             expected_conditions.invisibility_of_element_located(self.locator)
         )
 
     def wait_for_visibility(self, wait_time=10):
         Log.info('Waiting for the element %s to be visible' % self._name)
-        return WebDriverWait(self.get_driver(), wait_time).until(
+        return WebDriverWait(self._get_driver(), wait_time).until(
             expected_conditions.visibility_of_element_located(self.locator)
         )
 
     def wait_for_text_to_be_present_in_element(self, wait_time=5, text=""):
         Log.info('Waiting for the text %s to be present' % self._name)
-        x = WebDriverWait(self.get_driver(), wait_time).until(
+        x = WebDriverWait(self._get_driver(), wait_time).until(
             expected_conditions.text_to_be_present_in_element(self.locator, text)
         )
         return x

@@ -20,5 +20,5 @@
   "proxy_ip": "",
   "proxy_port": 8088,
 
-  "multi_application_mode": "True"
+  "multi_application_mode": "False"
 }

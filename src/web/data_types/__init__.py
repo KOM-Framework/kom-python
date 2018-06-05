@@ -49,49 +49,55 @@ https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-se
 '''
 
 
-class Id:
+class Locator:
+
+    def __new__(cls, value):
+        pass
+
+
+class Id(Locator):
 
     def __new__(cls, value):
         return By.ID, value
 
 
-class Xpath:
+class Xpath(Locator):
 
     def __new__(cls, value):
         return By.XPATH, value
 
 
-class LinkText:
+class LinkText(Locator):
 
     def __new__(cls, value):
         return By.LINK_TEXT, value
 
 
-class PartialLinkText:
+class PartialLinkText(Locator):
 
     def __new__(cls, value):
         return By.PARTIAL_LINK_TEXT, value
 
 
-class Name:
+class Name(Locator):
 
     def __new__(cls, value):
         return By.NAME, value
 
 
-class TagName:
+class TagName(Locator):
 
     def __new__(cls, value):
         return By.TAG_NAME, value
 
 
-class ClassName:
+class ClassName(Locator):
 
     def __new__(cls, value):
         return By.CLASS_NAME, value
 
 
-class CssSelector:
+class CssSelector(Locator):
 
     def __new__(cls, value):
         return By.CSS_SELECTOR, value

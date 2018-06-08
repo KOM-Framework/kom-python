@@ -17,8 +17,8 @@
   "hub_port": 4444,
 
   "video_recording": "False",
-  "proxy_ip": "",
-  "proxy_port": 8088,
+  "proxy_ip": "localhost",
+  "proxy_port": 9090,
 
   "multi_application_mode": "False"
 }

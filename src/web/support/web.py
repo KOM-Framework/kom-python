@@ -1,3 +1,5 @@
+from abc import ABCMeta, abstractmethod
+
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -6,8 +8,11 @@ from kom_framework.src.general import Log
 from kom_framework.src.web import http_request_wait_time
 
 
-class WebPageHelper:
+class DriverBase:
 
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
     def get_driver(self, **kwargs):
         pass
 
@@ -24,3 +29,6 @@ class WebPageHelper:
     def get_descendant_element(driver, locator, wait_time=0, index=0):
         return WebDriverWait(driver, wait_time).until(
             expected_conditions.presence_of_all_elements_located(locator))[index]
+
+    def execute_script(self, script, *args):
+        return self.get_driver().execute_script(script, *args)

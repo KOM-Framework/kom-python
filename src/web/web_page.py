@@ -6,13 +6,14 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.browser import Browser
 from kom_framework.src.web.data_types import Xpath
+from kom_framework.src.web.support.element_factory import PageElementFactory
+from kom_framework.src.web.support.web import DriverBase
 from ..general import Log
 from ..web import page_load_time
-from ..web.support.helper import WebPageHelper
 from selenium.webdriver.support import expected_conditions
 
 
-class WebPage(Browser, WebPageHelper):
+class WebPage(Browser, DriverBase):
 
     _retry_count = 0
 
@@ -27,6 +28,7 @@ class WebPage(Browser, WebPageHelper):
         obj = super(WebPage, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__
         obj.locator = None
+        obj.elem = PageElementFactory(obj)
         return obj
 
     __metaclass__ = ABCMeta

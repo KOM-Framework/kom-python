@@ -6,7 +6,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.browser import Browser
 from kom_framework.src.web.data_types import Xpath
-from kom_framework.src.web.support.element_factory import PageElementFactory
 from kom_framework.src.web.support.web import DriverBase
 from ..general import Log
 from ..web import page_load_time
@@ -28,7 +27,6 @@ class WebPage(Browser, DriverBase):
         obj = super(WebPage, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__
         obj.locator = None
-        obj.elem = PageElementFactory(obj)
         return obj
 
     __metaclass__ = ABCMeta
@@ -63,7 +61,7 @@ class WebPage(Browser, DriverBase):
         self.quit()
         return self.open()
 
-    def exists(self, wait_time=0):
+    def exists(self, wait_time=0) -> bool:
         Log.info("Page '%s' existence verification. Wait time = %s" % (self.page_name, str(wait_time)))
         if self.get_driver():
             try:
@@ -86,10 +84,10 @@ class WebPage(Browser, DriverBase):
             except WebDriverException:
                 return False
 
-    def can_be_focused(self, wait=15):
+    def can_be_focused(self, wait: int=15):
         WebDriverWait(self.get_driver(), wait).until(self.CanBeFocused(self.locator))
 
-    def wait_while_text_exists(self, text, wait_time=30):
+    def wait_while_text_exists(self, text: str, wait_time: int=30):
         Log.info("Waiting for the '%s' text to disappear" % text)
         try:
             WebDriverWait(self.get_driver(), wait_time).until(
@@ -98,7 +96,7 @@ class WebPage(Browser, DriverBase):
         except (NoSuchElementException, TimeoutException):
             Log.info("Text '%s' still visible within %s seconds" % (text, wait_time))
 
-    def wait_for_text_exists(self, text, wait_time=30):
+    def wait_for_text_exists(self, text: str, wait_time: int=30) -> bool:
         Log.info("Waiting for the '%s' text to appear" % text)
         try:
             WebDriverWait(self.get_driver(), wait_time).until(
@@ -112,7 +110,7 @@ class WebPage(Browser, DriverBase):
     def set_focus(self):
         self.get_driver().find_element(*self.locator).click()
 
-    def text_exists(self, text, wait_time=0):
+    def text_exists(self, text: str, wait_time: int=0) -> bool:
         Log.info("Text '%s' existence verification. Wait time = %s" % (text, str(wait_time)))
         text_id = (Xpath('//*[contains(text(),"%s")]' % text))
         try:
@@ -123,10 +121,10 @@ class WebPage(Browser, DriverBase):
         except (NoSuchElementException, TimeoutException):
             return False
 
-    def check_if_field_is_displayed(self, field_name):
+    def check_if_field_is_displayed(self, field_name) -> bool:
         return getattr(self, field_name).is_displayed()
 
-    def wait_while_scrolling(self, wait_time=5):
+    def wait_while_scrolling(self, wait_time: int=5):
         get_position_command = 'return window.pageYOffset;'
         end_time = time.time() + wait_time
         initial_pos = self.execute_script(get_position_command)

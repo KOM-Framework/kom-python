@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-
+from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.drivers import capabilities
 from kom_framework.src.web.drivers.drivers import Driver
 from ..general import Log
@@ -19,14 +19,14 @@ class Browser:
     driver = None
     test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
 
-    def get(self, url, extensions=None):
+    def get(self, url: str, extensions: list=()):
         Log.info("Opening %s url" % url)
         if not Browser.driver:
             Log.info("Creating an instance of a Browser.")
             Browser.driver = Driver(extensions).create_session()
         self.driver.get(url)
 
-    def switch_to_frame(self, frame_locator):
+    def switch_to_frame(self, frame_locator: Locator) -> bool:
         out = WebDriverWait(self.driver,
                             iframe_load_time).until(
             expected_conditions.frame_to_be_available_and_switch_to_it(frame_locator))
@@ -67,7 +67,7 @@ class Browser:
             finally:
                 Browser.driver = None
 
-    def wait_for_alert(self, wait_time=iframe_load_time):
+    def wait_for_alert(self, wait_time: int=iframe_load_time) -> bool:
         return WebDriverWait(self.driver, wait_time).until(expected_conditions.alert_is_present(),
                                                            'Timed out waiting for alert to appear.')
 
@@ -75,11 +75,11 @@ class Browser:
         Log.info("Accept alert")
         Alert(self.driver).accept()
 
-    def enter_text_into_alert(self, text):
+    def enter_text_into_alert(self, text: str):
         Log.info('Enter "%s" text into Alert' % text)
         Alert(self.driver).send_keys(text)
 
-    def enter_text_and_accept_alert(self, text):
+    def enter_text_and_accept_alert(self, text: str):
         self.wait_for_alert()
         self.enter_text_into_alert(text)
         self.accept_alert()
@@ -109,7 +109,7 @@ class Browser:
     def delete_all_cookies(self):
         self.driver.delete_all_cookies()
 
-    def wait_for_page_to_load(self, wait_time=page_load_time):
+    def wait_for_page_to_load(self, wait_time: int=page_load_time):
         try:
             WebDriverWait(self.driver, wait_time).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete'
@@ -134,5 +134,5 @@ class Browser:
     def clear_local_storage(self):
         self.driver.execute_script('window.localStorage.clear();')
 
-    def execute_script(self, script, *args):
+    def execute_script(self, script: str, *args):
         return self.driver.execute_script(script, *args)

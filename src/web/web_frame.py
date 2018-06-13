@@ -25,7 +25,7 @@ class WebFrame(DriverBase):
     def __init__(self, ancestor):
         self._ancestor = ancestor
 
-    def exists(self, wait_time=0):
+    def exists(self, wait_time: int=0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
         if self._ancestor.get_driver():
             try:
@@ -55,3 +55,7 @@ class WebFrame(DriverBase):
 
     def quit(self):
         self._ancestor.quit()
+
+    def execute_script(self, script: str, *args):
+        element = self.get_driver()
+        element.parent.execute_script(script, element, *args)

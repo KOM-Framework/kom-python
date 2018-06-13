@@ -41,7 +41,7 @@ class KOMElement:
             return False
 
     def inject_js_waiter(self):
-        self._ancestor.execute_script(js_waiter)
+        self.execute_script(js_waiter)
 
     def wait_for_all_http_requests_to_be_completed(self):
         self._ancestor.wait_until_http_requests_are_finished()
@@ -49,7 +49,8 @@ class KOMElement:
     def _get_driver(self, wait_time: int=element_load_time):
         return self._ancestor.get_driver(wait_time=wait_time, index=self._ancestor_index)
 
-    def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time: int=element_load_time):
+    def get_element(self, condition=expected_conditions.presence_of_element_located, wait_time: int=element_load_time)\
+            -> WebElement:
         element = WebDriverWait(self._get_driver(wait_time), wait_time).until(
             condition(self.locator)
         )
@@ -143,12 +144,16 @@ class KOMElement:
         )
         return x
 
+    def execute_script(self, script, *args):
+        element = self.get_element()
+        element.parent.execute_script(script, element, *args)
+
     def scroll_to_element(self):
         Log.info("Scrolling to %s element" % self._name)
-        self._ancestor.execute_script("return arguments[0].scrollIntoView();", self.get_element())
+        self.execute_script("arguments[0].scrollIntoView();")
 
     def is_enabled(self):
         return self.execute_action(Action.IS_ENABLED)
 
     def js_click(self):
-        self._ancestor.execute_script("arguments[0].click();", self.get_element())
+        self.execute_script("arguments[0].click();")

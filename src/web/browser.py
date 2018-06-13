@@ -18,9 +18,7 @@ from ..web import hub_ip, hub_port, iframe_load_time, page_load_time
 
 class Browser(DriverBase):
 
-    def __init__(self):
-        self.test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
-
+    test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
     driver = None
 
     def get_driver(self, **kwargs) -> WebDriver:

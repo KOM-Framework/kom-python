@@ -6,18 +6,14 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.browser import Browser
 from kom_framework.src.web.data_types import Xpath
-from kom_framework.src.web.support.web import DriverBase
 from ..general import Log
 from ..web import page_load_time
 from selenium.webdriver.support import expected_conditions
 
 
-class WebPage(Browser, DriverBase):
+class WebPage(Browser):
 
     _retry_count = 0
-
-    def get_driver(self, **kwargs):
-        return Browser.driver
 
     @staticmethod
     def set_driver(value):

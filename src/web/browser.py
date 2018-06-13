@@ -26,6 +26,10 @@ class Browser(DriverBase):
     def get_driver(self, **kwargs) -> WebDriver:
         return Browser.driver
 
+    @staticmethod
+    def set_driver(value):
+        Browser.driver = value
+
     def get(self, url: str, extensions: list=()):
         Log.info("Opening %s url" % url)
         if not Browser.driver:

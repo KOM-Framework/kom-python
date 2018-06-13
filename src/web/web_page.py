@@ -15,10 +15,6 @@ class WebPage(Browser):
 
     _retry_count = 0
 
-    @staticmethod
-    def set_driver(value):
-        Browser.driver = value
-
     def __new__(cls, *args, **kwargs):
         obj = super(WebPage, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__

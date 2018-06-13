@@ -39,10 +39,6 @@ class TestSomething:
         page.open().lucky.click()
         assert True
 
-    def test_proxy_get_url(self):
-        from kom_framework.src.utils.proxy import Proxy
-        print(Proxy.get_url())
-
     def test_locator(self):
         from kom_framework.src.web.data_types import Xpath
         asda = Xpath('vale')

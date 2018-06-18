@@ -97,11 +97,12 @@ class KOMElement:
         element = self.get_element()
         if not isinstance(destination, WebElement):
             destination = destination.get_element()
-        ActionChains(self._ancestor.driver).drag_and_drop(element, destination).perform()
+        ActionChains(element.parent).drag_and_drop(element, destination).perform()
 
     def double_click(self):
         Log.info("Double click on %s" % self._name)
-        ActionChains(self._ancestor.driver).double_click(self.get_element()).perform()
+        element = self.get_element()
+        ActionChains(element.parent).double_click(element).perform()
 
     def get_attribute(self, name: str):
         return self.execute_action(Action.GET_ATTRIBUTE, None, name)
@@ -111,12 +112,13 @@ class KOMElement:
 
     def move_to(self):
         Log.info("Moving to %s" % self._name)
-        ActionChains(self._ancestor.driver).move_to_element(self.get_element()).perform()
+        element = self.get_element()
+        ActionChains(element.parent).move_to_element(element).perform()
 
     def move_to_and_click(self):
         Log.info("Moving to and clicking on %s" % self._name)
         element = self.get_element()
-        ActionChains(self._ancestor.driver).move_to_element(element).click(element).perform()
+        ActionChains(element.parent).move_to_element(element).click(element).perform()
 
     def is_displayed(self):
         return self.execute_action(Action.IS_DISPLAYED)
@@ -143,6 +145,14 @@ class KOMElement:
             expected_conditions.text_to_be_present_in_element(self.locator, text)
         )
         return x
+
+    def wait_for_value(self, expected_value: str, wait_time: int=5) -> str:
+        end_time = time.time() + wait_time
+        while True:
+            actual_value = self.text()
+            if actual_value == expected_value or time.time() > end_time:
+                break
+        return actual_value
 
     def execute_script(self, script, *args):
         element = self.get_element()

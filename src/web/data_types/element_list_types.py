@@ -271,7 +271,7 @@ class BarChart(KOMElementList):
         out = list()
         bar_list = self.get_elements()
         for bar in bar_list:
-            ActionChains(self._get_driver()).move_to_element(bar).perform()
+            ActionChains(bar.parent).move_to_element(bar).perform()
             time.sleep(0.5)
             tooltips = self.tooltip.get_elements()
             data = list()

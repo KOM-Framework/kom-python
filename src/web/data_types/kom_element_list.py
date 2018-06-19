@@ -43,7 +43,7 @@ class KOMElementList(KOMElement):
     __metaclass__ = ABCMeta
 
     def get_elements(self, wait_time=element_load_time):
-        return WebDriverWait(self._get_driver(), wait_time).until(
+        return WebDriverWait(self.get_driver(), wait_time).until(
             expected_conditions.presence_of_all_elements_located(self.locator)
         )
 
@@ -51,9 +51,9 @@ class KOMElementList(KOMElement):
         return len(self.get_elements())
 
     def exists(self, wait_time=0, **kwargs):
-        Log.info("List '%s' existence verification. Wait time = %s" % (self._name, str(wait_time)))
+        Log.info("List '%s' existence verification. Wait time = %s" % (self.name, str(wait_time)))
         try:
-            WebDriverWait(self._get_driver(), wait_time).until(
+            WebDriverWait(self.get_driver(), wait_time).until(
                 lambda driver: driver.find_elements(*self.locator)
             )
             return True
@@ -61,7 +61,7 @@ class KOMElementList(KOMElement):
             return False
 
     def select_first_enabled(self):
-        Log.info("Selecting first enabled item in the list '%s'" % self._name)
+        Log.info("Selecting first enabled item in the list '%s'" % self.name)
         elements = self.get_elements()
         for item in elements:
             if item.is_enabled():
@@ -72,15 +72,15 @@ class KOMElementList(KOMElement):
         return [element.text for element in self.get_elements()]
 
     def wait_for_visibility(self, wait_time=element_load_time):
-        Log.info('Waiting for the grid %s to be visible' % self._name)
-        WebDriverWait(self._get_driver(), wait_time).until(
+        Log.info('Waiting for the grid %s to be visible' % self.name)
+        WebDriverWait(self.get_driver(), wait_time).until(
             expected_conditions.presence_of_all_elements_located(self.locator)
         )
 
     def wait_for_elements_count(self, elements_count, wait_time):
-        Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self._name))
+        Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self.name))
         try:
-            WebDriverWait(self._get_driver(), wait_time).until(
+            WebDriverWait(self.get_driver(), wait_time).until(
                 lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
             return True
         except TimeoutException:

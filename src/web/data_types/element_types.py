@@ -21,7 +21,7 @@ class Input(KOMElement):
         self.message_locator = message_locator
 
     def clear(self, use_action_chain=False):
-        Log.info("Clearing %s input field" % self._name)
+        Log.info("Clearing %s input field" % self.name)
         if use_action_chain:
             element = self.get_element()
             ActionChains(element.parent).click(element) \
@@ -35,23 +35,23 @@ class Input(KOMElement):
             self.execute_action(Action.CLEAR)
 
     def send_keys(self, value):
-        Log.info("Sending %s keys to the '%s' input field" % (value, self._name))
+        Log.info("Sending %s keys to the '%s' input field" % (value, self.name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def clear_and_send_keys(self, value, use_action_chain=False):
-        Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self._name))
+        Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self.name))
         self.clear(use_action_chain)
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, str(value))
 
     def type_keys(self, value):
-        Log.info("Typing %s keys to the '%s' input field" % (value, self._name))
+        Log.info("Typing %s keys to the '%s' input field" % (value, self.name))
         element = self.get_element(expected_conditions.element_to_be_clickable)
         for ch in str(value):
             element.send_keys(ch)
             time.sleep(0.1)
 
     def send_keys_to_invisible_field(self, value):
-        Log.info("Sending %s keys '%s' to the invisible text field" % (value, self._name))
+        Log.info("Sending %s keys '%s' to the invisible text field" % (value, self.name))
         self.execute_action(Action.SEND_KEYS,  arg=str(value))
 
     def get_content(self):
@@ -59,7 +59,7 @@ class Input(KOMElement):
 
     def get_message(self):
         if self.message_locator:
-            message = AnyType(self._ancestor, self.message_locator)
+            message = AnyType(self.ancestor, self.message_locator)
             if message.exists():
                 return message.text()
         else:
@@ -79,7 +79,7 @@ class TextBlock(KOMElement):
     """
 
     def text(self):
-        Log.info("Getting text from the '%s' text block" % self._name)
+        Log.info("Getting text from the '%s' text block" % self.name)
         return super(TextBlock, self).text()
 
 
@@ -89,7 +89,7 @@ class TextArea(KOMElement):
     """
 
     def text(self):
-        Log.info("Getting text from the '%s' text area" % self._name)
+        Log.info("Getting text from the '%s' text area" % self.name)
         return super(TextArea, self).text()
 
 
@@ -99,20 +99,20 @@ class Button(KOMElement):
     """
 
     def click(self, **kwargs):
-        Log.info("Clicking on the '%s' button" % self._name)
+        Log.info("Clicking on the '%s' button" % self.name)
         super(Button, self).click(**kwargs)
 
 
 class PanelItem(KOMElement):
     def click(self, **kwargs):
-        Log.info("Clicking on the '%s' panel item" % self._name)
+        Log.info("Clicking on the '%s' panel item" % self.name)
         super(PanelItem, self).click(**kwargs)
 
 
 class LinkedText(KOMElement):
 
     def text(self):
-        Log.info("Getting text from the '%s' linked text" % self._name)
+        Log.info("Getting text from the '%s' linked text" % self.name)
         return super(LinkedText, self).text()
 
 
@@ -122,7 +122,7 @@ class Link(KOMElement):
     """
 
     def click(self, **kwargs):
-        Log.info("Clicking on the '%s' web link" % self._name)
+        Log.info("Clicking on the '%s' web link" % self.name)
         super(Link, self).click(**kwargs)
 
 
@@ -134,17 +134,17 @@ class CheckBox(KOMElement):
         self.checked_value = checked_value
 
     def click(self, **kwargs):
-        Log.info("Clicking on the '%s' check box" % self._name)
+        Log.info("Clicking on the '%s' check box" % self.name)
         super(CheckBox, self).click(**kwargs)
 
     def check(self, value=True):
-        Log.info("Checking the '%s' check box" % self._name)
+        Log.info("Checking the '%s' check box" % self.name)
         actual_status = super(CheckBox, self).get_attribute(self.attribute)
         if (value and actual_status != self.checked_value) or (not value and actual_status == self.checked_value):
             super(CheckBox, self).click()
 
     def is_selected(self):
-        Log.info("Check is the '%s' check box is selected" % self._name)
+        Log.info("Check is the '%s' check box is selected" % self.name)
         actual_status = super(CheckBox, self).get_attribute(self.attribute)
         if actual_status == self.checked_value:
             return True
@@ -161,7 +161,7 @@ class MultiSelectTree(KOMElement):
         self._delete_item = delete_item
 
     def add_item(self, option_name):
-        Log.info("Adding %s item to the %s" % (option_name, self._name))
+        Log.info("Adding %s item to the %s" % (option_name, self.name))
         field = self.get_element()
         field.find_element(*self._select_area).click()
         options = field.find_elements(*self._option_list)
@@ -172,7 +172,7 @@ class MultiSelectTree(KOMElement):
         field.find_element(*self._select_area).click()
 
     def get_selected_items(self):
-        Log.info("Getting all the added items to the %s" % self._name)
+        Log.info("Getting all the added items to the %s" % self.name)
         field = self.get_element()
         time.sleep(1)
         items = field.find_elements(*self._added_item)
@@ -180,7 +180,7 @@ class MultiSelectTree(KOMElement):
         return out
 
     def delete_item(self, item_name):
-        Log.info("Deleting %s item to the %s" % (item_name, self._name))
+        Log.info("Deleting %s item to the %s" % (item_name, self.name))
         field = self.get_element()
         time.sleep(1)
         item_index = self.get_selected_items().index(item_name)
@@ -191,13 +191,13 @@ class MultiSelectTree(KOMElement):
 class IFrame(KOMElement):
 
     def switch_to(self):
-        Log.info("Switching to iFrame: '%s'" % self._name)
-        self._ancestor.switch_to_frame(self.locator)
+        Log.info("Switching to iFrame: '%s'" % self.name)
+        self.ancestor.switch_to_frame(self.locator)
 
     def exists(self, wait_time=5, **kwargs):
-        Log.info("Checking if %s frame exists" % self._name)
+        Log.info("Checking if %s frame exists" % self.name)
         try:
-            WebDriverWait(self._get_driver(),
+            WebDriverWait(self.get_driver(),
                           wait_time).until(
                 expected_conditions.presence_of_element_located(self.locator))
             return True
@@ -214,7 +214,7 @@ class Spinner(KOMElement):
       Prefix it with spn_
     """
     def wait_for_appear_and_disappear(self, wait_time=30):
-        Log.info('Wait for %s spinner to appear and disappear' % self._name)
+        Log.info('Wait for %s spinner to appear and disappear' % self.name)
         self.wait_for_visibility(wait_time)
         return self.wait_while_exists(wait_time)
 

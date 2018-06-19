@@ -40,7 +40,7 @@ class Table(KOMElementList, DriverBase):
         return False
 
     def get_content(self, index=None, wait_time=0):
-        Log.info("Getting content of a table: %s" % self._name)
+        Log.info("Getting content of a table: %s" % self.name)
         end_time = time.time() + wait_time
         out = []
         if self.exists(wait_time):
@@ -53,7 +53,7 @@ class Table(KOMElementList, DriverBase):
         return out
 
     def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
-        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content()
@@ -70,7 +70,7 @@ class Table(KOMElementList, DriverBase):
         return None
 
     def get_row_by_column_text_content(self, column_name, value, wait_time=element_load_time):
-        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self._name))
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content(wait_time=wait_time)
@@ -87,7 +87,7 @@ class Table(KOMElementList, DriverBase):
         return None
 
     def get_column_values(self, column_name, wait_time=element_load_time):
-        Log.info("Getting column %s values from the table: %s" % (column_name, self._name))
+        Log.info("Getting column %s values from the table: %s" % (column_name, self.name))
         column = []
         end_time = time.time() + wait_time
         while True:
@@ -101,7 +101,7 @@ class Table(KOMElementList, DriverBase):
         return None
 
     def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
-        Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self._name))
+        Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content()
@@ -117,13 +117,13 @@ class Table(KOMElementList, DriverBase):
         return None
 
     def get_row_by_index(self, index, wait_time=element_load_time):
-        Log.info("Getting row by index %s from the table: %s" % (index, self._name))
+        Log.info("Getting row by index %s from the table: %s" % (index, self.name))
         element = self.get_content(index, wait_time=wait_time)
         return element
 
     def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=element_load_time):
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
-                 % (column_name, attribute_name, attribute_value, self._name))
+                 % (column_name, attribute_name, attribute_value, self.name))
         out = list()
         end_time = time.time() + wait_time
         while True:
@@ -143,7 +143,7 @@ class Table(KOMElementList, DriverBase):
 class WebGroup(Table):
 
     def select_by_text(self, text):
-        Log.info("Selecting %s text in the %s group" % (text, self._name))
+        Log.info("Selecting %s text in the %s group" % (text, self.name))
         elements = self.get_elements()
         for element in elements:
             if element.text == text:
@@ -175,23 +175,23 @@ class SelectList(KOMElementList):
             self.message = AnyType(page_object, message_locator)
 
     def select_item_by_value(self, value):
-        Log.info('Selecting %s value in the %s select list' % (value, self._name))
+        Log.info('Selecting %s value in the %s select list' % (value, self.name))
         Select(self.get_element()).select_by_value(value)
 
     def select_item_by_visible_text(self, value):
-        Log.info('Selecting %s text in the %s select list' % (value, self._name))
+        Log.info('Selecting %s text in the %s select list' % (value, self.name))
         Select(self.get_element()).select_by_visible_text(value)
 
     def first_selected_option(self):
-        Log.info('Get first selected option in the %s select list' % self._name)
+        Log.info('Get first selected option in the %s select list' % self.name)
         return Select(self.get_element()).first_selected_option
 
     def click(self, **kwargs):
-        Log.info("Clicking on the '%s' select list" % self._name)
+        Log.info("Clicking on the '%s' select list" % self.name)
         super(SelectList, self).click(**kwargs)
 
     def select_item_by_text(self, text, delay_for_options_to_appear_time=0.5):
-        Log.info("Selecting %s in the '%s' select list" % (text, self._name))
+        Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)
             time.sleep(delay_for_options_to_appear_time)
@@ -204,7 +204,7 @@ class SelectList(KOMElementList):
             self.execute_action(Action.CLICK)
 
     def get_options_list(self, delay_for_options_to_appear_time=0.5):
-        Log.info("Getting all options list from the '%s' select list" % self._name)
+        Log.info("Getting all options list from the '%s' select list" % self.name)
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
@@ -215,7 +215,7 @@ class SelectList(KOMElementList):
 
     def select_option_by_attribute_value(self, attribute_name, attribute_value, delay_for_options_to_appear_time=0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
-                 % (attribute_name, attribute_value, self._name))
+                 % (attribute_name, attribute_value, self.name))
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.get_elements()
@@ -235,12 +235,12 @@ class SelectMenu(KOMElementList):
         self.list_locator = list_locator
 
     def select_item_by_text(self, text):
-        Log.info("Selecting %s in the '%s' select menu" % (text, self._name))
-        text_field = Input(self._ancestor, self.locator)
+        Log.info("Selecting %s in the '%s' select menu" % (text, self.name))
+        text_field = Input(self.ancestor, self.locator)
         text_field.clear()
         text_field.type_keys(text)
         time.sleep(0.5)
-        options = KOMElementList(self._ancestor, self.list_locator).get_elements()
+        options = KOMElementList(self.ancestor, self.list_locator).get_elements()
         for option in options:
             if text in option.get_attribute('title'):
                 option.click()
@@ -250,14 +250,14 @@ class SelectMenu(KOMElementList):
 class Menu(KOMElementList):
 
     def select_menu_section_by_name(self, section_name):
-        Log.info("Selecting '%s' section in '%s' menu" % (section_name, self._name))
+        Log.info("Selecting '%s' section in '%s' menu" % (section_name, self.name))
         sections = self.get_elements()
         for section in sections:
             if section.text == section_name:
                 section.click()
-                Log.info("Selected '%s' section in '%s' menu" % (section_name, self._name))
+                Log.info("Selected '%s' section in '%s' menu" % (section_name, self.name))
                 return True
-        Log.info("Selecting '%s' section in '%s' menu failed" % (section_name, self._name))
+        Log.info("Selecting '%s' section in '%s' menu failed" % (section_name, self.name))
         return False
 
 

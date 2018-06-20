@@ -3,11 +3,12 @@ import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.select import Select
 
+from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.support.web import Ancestor
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.actions import Action
-from ...web.data_types.element_types import Input, AnyType
+from ...web.data_types.element_types import Input, TextBlock
 from ...web.data_types.kom_element_list import KOMElementList, Structure
 
 
@@ -18,20 +19,16 @@ class AnyList(KOMElementList):
     pass
 
 
-class Table(KOMElementList, Ancestor):
+class Table(KOMElementList):
     """
         Prefix it with tbl_
     """
 
-    def __init__(self, page_object, locator, table_structure: Structure, next_page_button=None, **kwargs):
+    def __init__(self, page_object: Ancestor, locator: Locator, table_structure: Structure, next_page_button=None,
+                 **kwargs):
         KOMElementList.__init__(self, page_object, locator, **kwargs)
         self.table_structure = table_structure
         self.next_page_button = next_page_button
-
-    def get_driver(self, **kwargs):
-        wait_time = kwargs.get('wait_time', 0)
-        index = kwargs.get('index', 0)
-        return self.get_elements(wait_time)[index]
 
     def next_page(self):
         if self.next_page_button and self.next_page_button.exists():
@@ -46,7 +43,7 @@ class Table(KOMElementList, Ancestor):
         if self.exists(wait_time):
             elements = []
             while not len(elements):
-                elements = self.get_elements()
+                elements = self.get_element()
                 if time.time() > end_time:
                     break
             out = self.table_structure.init_structure(self, len(elements), index)
@@ -129,7 +126,8 @@ class Table(KOMElementList, Ancestor):
         while True:
             content = self.get_content()
             for row in content:
-                if getattr(row, column_name).exists():
+                column = getattr(row, column_name)
+                if column.exists():
                     act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
                     if act_attr_value == attribute_value:
                         out.append(row)
@@ -141,10 +139,13 @@ class Table(KOMElementList, Ancestor):
 
 
 class WebGroup(Table):
+    """
+        Prefix with wbg_
+    """
 
     def select_by_text(self, text):
         Log.info("Selecting %s text in the %s group" % (text, self.name))
-        elements = self.get_elements()
+        elements = self.get_element()
         for element in elements:
             if element.text == text:
                 element.click()
@@ -163,22 +164,22 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, page_object, link_locator, option_list_locator=None, message_locator=None,
-                 extent_list_by_click_on_field=True, hide_list_by_click_on_field=False,
-                 **kwargs):
+    def __init__(self, page_object: Ancestor, link_locator: Locator, option_list_locator: Locator=None,
+                 message_locator: Locator=None, extent_list_by_click_on_field: bool=True,
+                 hide_list_by_click_on_field: bool=False, **kwargs):
         KOMElementList.__init__(self, page_object, link_locator, **kwargs)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
             self.options_list = KOMElementList(page_object, option_list_locator)
         if message_locator:
-            self.message = AnyType(page_object, message_locator)
+            self.message = TextBlock(page_object, message_locator)
 
-    def select_item_by_value(self, value):
+    def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
         Select(self.get_element()).select_by_value(value)
 
-    def select_item_by_visible_text(self, value):
+    def select_item_by_visible_text(self, value: str):
         Log.info('Selecting %s text in the %s select list' % (value, self.name))
         Select(self.get_element()).select_by_visible_text(value)
 
@@ -190,12 +191,12 @@ class SelectList(KOMElementList):
         Log.info("Clicking on the '%s' select list" % self.name)
         super(SelectList, self).click(**kwargs)
 
-    def select_item_by_text(self, text, delay_for_options_to_appear_time=0.5):
+    def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)
             time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_elements()
+        options = self.options_list.get_element()
         for option in options:
             if option.text == text:
                 option.click()
@@ -203,44 +204,48 @@ class SelectList(KOMElementList):
         if self.hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
-    def get_options_list(self, delay_for_options_to_appear_time=0.5):
+    def get_options_list(self, delay_for_options_to_appear_time: int=0.5):
         Log.info("Getting all options list from the '%s' select list" % self.name)
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_elements()
+        options = self.options_list.get_element()
         for option in options:
             out.append(option.text)
         return out
 
-    def select_option_by_attribute_value(self, attribute_name, attribute_value, delay_for_options_to_appear_time=0.5):
+    def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
+                                         delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self.name))
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_elements()
+        options = self.options_list.get_element()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:
                 option.click()
                 break
 
-    def get_message(self):
+    def get_message(self) -> str:
         return self.message.text()
 
 
 class SelectMenu(KOMElementList):
+    """
+        Prefix with slm_
+    """
 
-    def __init__(self, locator, list_locator=None, **kwargs):
-        KOMElementList.__init__(self, locator, **kwargs)
+    def __init__(self, ancestor: Ancestor, locator: Locator, list_locator: Locator=None, **kwargs):
+        KOMElementList.__init__(self, ancestor, locator, **kwargs)
         self.list_locator = list_locator
 
-    def select_item_by_text(self, text):
+    def select_item_by_text(self, text: str):
         Log.info("Selecting %s in the '%s' select menu" % (text, self.name))
         text_field = Input(self.ancestor, self.locator)
         text_field.clear()
         text_field.type_keys(text)
         time.sleep(0.5)
-        options = KOMElementList(self.ancestor, self.list_locator).get_elements()
+        options = KOMElementList(self.ancestor, self.list_locator).get_element()
         for option in options:
             if text in option.get_attribute('title'):
                 option.click()
@@ -248,10 +253,13 @@ class SelectMenu(KOMElementList):
 
 
 class Menu(KOMElementList):
+    """
+        Prefix with mn_
+    """
 
-    def select_menu_section_by_name(self, section_name):
+    def select_menu_section_by_name(self, section_name: str) -> bool:
         Log.info("Selecting '%s' section in '%s' menu" % (section_name, self.name))
-        sections = self.get_elements()
+        sections = self.get_element()
         for section in sections:
             if section.text == section_name:
                 section.click()
@@ -262,18 +270,21 @@ class Menu(KOMElementList):
 
 
 class BarChart(KOMElementList):
-    def __init__(self, page_object, locator, tooltip_locator=None, **kwargs):
+    """
+        Prefix with mn_
+    """
+    def __init__(self, page_object: Ancestor, locator: Locator, tooltip_locator: Locator=None, **kwargs):
         KOMElementList.__init__(self, page_object, locator, **kwargs)
         if tooltip_locator:
             self.tooltip = KOMElementList(page_object, tooltip_locator)
 
-    def get_tooltip_lines_text(self):
+    def get_tooltip_lines_text(self) -> list:
         out = list()
-        bar_list = self.get_elements()
+        bar_list = self.get_element()
         for bar in bar_list:
             ActionChains(bar.parent).move_to_element(bar).perform()
             time.sleep(0.5)
-            tooltips = self.tooltip.get_elements()
+            tooltips = self.tooltip.get_element()
             data = list()
             for line in tooltips:
                 data.append(line.text)

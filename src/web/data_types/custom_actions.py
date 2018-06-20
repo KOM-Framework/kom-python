@@ -1,12 +1,14 @@
 import time
 from abc import abstractmethod
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.general import Log
-from kom_framework.src.web import element_load_time
+from kom_framework.src.web import element_load_time, http_request_wait_time
 from kom_framework.src.web.data_types import js_waiter
 from selenium.webdriver import ActionChains
 
@@ -22,19 +24,26 @@ class JSActions:
         raise NotImplementedError
 
     @abstractmethod
-    def get_element(self):
+    def get_element(self, condition: expected_conditions=presence_of_element_located, wait_time: int=element_load_time):
         pass
 
-    def execute_script(self, script, *args):
+    def execute_script(self, script, *args) -> str:
         element = self.get_element()
-        element.parent.execute_script(script, element, *args)
+        return element.parent.execute_script(script, element, *args)
 
     def inject_js_waiter(self):
         Log.info("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.name)
         self.execute_script(js_waiter)
 
-    def wait_for_all_http_requests_to_be_completed(self):
-        self.ancestor.wait_until_http_requests_are_finished()
+    def wait_until_http_requests_are_finished(self, wait_time: int=http_request_wait_time):
+        try:
+            end_time = time.time() + wait_time
+            while True:
+                if not self.execute_script("return window.openHTTPs") or time.time() > end_time:
+                    break
+        except TimeoutException:
+            Log.error('HTTP request execution time is more than %s seconds' % wait_time)
+            self.execute_script("window.openHTTPs=0")
 
     def scroll_to_element(self):
         Log.info("Scrolling to '%s' element by JavaScript" % self.name)
@@ -48,7 +57,7 @@ class JSActions:
 class ActionsChains:
 
     @abstractmethod
-    def get_element(self):
+    def get_element(self, condition: expected_conditions=presence_of_element_located, wait_time: int=element_load_time):
         pass
 
     @property
@@ -93,16 +102,16 @@ class Waiters:
         pass
 
     @abstractmethod
-    def get_element(self):
+    def get_element(self, condition: expected_conditions=presence_of_element_located, wait_time: int=element_load_time):
         pass
 
-    def wait_while_exists(self, wait_time: int=10):
+    def wait_while_exists(self, wait_time: int=element_load_time):
         Log.info('Waiting for the element %s to disappear' % self.name)
         return WebDriverWait(self.get_element().parent, wait_time).until(
             expected_conditions.invisibility_of_element_located(self.locator)
         )
 
-    def wait_for_visibility(self, wait_time: int=10):
+    def wait_for_visibility(self, wait_time: int=element_load_time):
         Log.info('Waiting for the element %s to be visible' % self.name)
         return WebDriverWait(self.get_element().parent, wait_time).until(
             expected_conditions.visibility_of_element_located(self.locator)
@@ -115,7 +124,7 @@ class Waiters:
         )
         return x
 
-    def wait_for_value(self, expected_value: str, wait_time: int=5) -> str:
+    def wait_for_value(self, expected_value: str, wait_time: int=element_load_time) -> str:
         end_time = time.time() + wait_time
         while True:
             actual_value = self.text()

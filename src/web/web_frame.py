@@ -13,8 +13,7 @@ class WebFrame(Ancestor):
 
     def get_driver(self, **kwargs):
         wait_time = kwargs.get('wait_time', 0)
-        index = kwargs.get('index', 0)
-        return self.get_descendant_element(self.ancestor.get_driver(), self.locator, wait_time, index)
+        return self.get_descendant_element(self.ancestor.get_driver(), self.locator, wait_time)
 
     def __new__(cls, *args, **kwargs):
         obj = super(WebFrame, cls).__new__(cls)

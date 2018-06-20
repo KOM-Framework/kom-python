@@ -19,20 +19,11 @@ class Ancestor:
     def get_driver(self, **kwargs):
         pass
 
-    def wait_until_http_requests_are_finished(self, wait_time: int=http_request_wait_time):
-        try:
-            end_time = time.time() + wait_time
-            while True:
-                if not self.execute_script("return window.openHTTPs") or time.time() > end_time:
-                    break
-        except TimeoutException:
-            Log.error('HTTP request execution time is more than %s seconds' % wait_time)
-            self.execute_script("window.openHTTPs=0")
-
     @staticmethod
-    def get_descendant_element(driver, locator: Locator, wait_time: int=0, index: int=0) -> WebElement:
-        return WebDriverWait(driver, wait_time).until(
-            expected_conditions.presence_of_all_elements_located(locator))[index]
+    def get_descendant_element(driver, locator: Locator, wait_time: int=0) -> WebElement:
+        element = WebDriverWait(driver, wait_time).until(
+            expected_conditions.presence_of_element_located(locator))
+        return element
 
     @abstractmethod
     def execute_script(self, script: str, *args):

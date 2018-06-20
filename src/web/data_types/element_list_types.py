@@ -3,7 +3,7 @@ import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.select import Select
 
-from kom_framework.src.web.support.web import DriverBase
+from kom_framework.src.web.support.web import Ancestor
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.actions import Action
@@ -18,7 +18,7 @@ class AnyList(KOMElementList):
     pass
 
 
-class Table(KOMElementList, DriverBase):
+class Table(KOMElementList, Ancestor):
     """
         Prefix it with tbl_
     """

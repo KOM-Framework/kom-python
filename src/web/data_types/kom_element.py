@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types.custom_actions import JSActions, ActionsChains, Waiters
-from kom_framework.src.web.support.web import DriverBase
+from kom_framework.src.web.support.web import Ancestor
 from ...web.data_types.actions import Action
 from ...web.data_types import Locator
 from ...general import Log
@@ -20,7 +20,7 @@ class KOMElement(WebElement, JSActions, ActionsChains, Waiters):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, page_object: DriverBase, locator: Locator, action_element: bool=False):
+    def __init__(self, page_object: Ancestor, locator: Locator, action_element: bool=False):
         super().__init__(page_object, Locator)
         self.__retry_count = 0
         self.__locator = locator

@@ -11,7 +11,7 @@ from kom_framework.src.web import http_request_wait_time
 from kom_framework.src.web.data_types import Locator
 
 
-class DriverBase:
+class Ancestor:
 
     __metaclass__ = ABCMeta
 

@@ -4,12 +4,12 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web import page_load_time
-from kom_framework.src.web.support.web import DriverBase
+from kom_framework.src.web.support.web import Ancestor
 from ..general import Log
 from selenium.webdriver.support import expected_conditions
 
 
-class WebFrame(DriverBase):
+class WebFrame(Ancestor):
 
     def get_driver(self, **kwargs):
         wait_time = kwargs.get('wait_time', 0)

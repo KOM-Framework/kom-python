@@ -20,9 +20,9 @@ class HTTP:
         return respond
 
     @staticmethod
-    def send_put_request(url, data, headers=None):
+    def send_put_request(url, data=None, json=None, headers=None):
         Log.info('Sending PUT request to %s url' % url)
-        respond = requests.put(url, data=data, headers=headers)
+        respond = requests.put(url, data=data, headers=headers, json=json)
         Log.info('Respond status: %s' % respond.status_code)
         return respond
 

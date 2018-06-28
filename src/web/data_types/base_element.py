@@ -24,7 +24,6 @@ class BaseElement(JSActions):
         pass
 
     def __init__(self, page_object: Ancestor, locator: Locator, action_element: bool=False):
-        super().__init__(page_object, locator)
         self.__retry_count = 0
         self.__locator = locator
         self.__ancestor = page_object

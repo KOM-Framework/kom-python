@@ -3,6 +3,7 @@ import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.select import Select
 
+from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.support.web import DriverBase
 from ...general import Log
 from ...web import element_load_time
@@ -216,8 +217,9 @@ class SelectList(KOMElementList):
     def select_option_by_attribute_value(self, attribute_name, attribute_value, delay_for_options_to_appear_time=0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self._name))
-        self.execute_action(Action.CLICK)
-        time.sleep(delay_for_options_to_appear_time)
+        if self.extent_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
+            time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.get_elements()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:
@@ -230,8 +232,8 @@ class SelectList(KOMElementList):
 
 class SelectMenu(KOMElementList):
 
-    def __init__(self, locator, list_locator=None, **kwargs):
-        KOMElementList.__init__(self, locator, **kwargs)
+    def __init__(self, page_object, locator, list_locator=None, **kwargs):
+        KOMElementList.__init__(self, page_object, locator, **kwargs)
         self.list_locator = list_locator
 
     def select_item_by_text(self, text):
@@ -279,3 +281,56 @@ class BarChart(KOMElementList):
                 data.append(line.text)
             out.append(data)
         return out
+
+
+class CheckBoxList(KOMElementList):
+
+    def __init__(self, page_object, locator: Locator, label_locator: Locator, **kwargs):
+        KOMElementList.__init__(self, page_object, locator, **kwargs)
+        self.label_locator = label_locator
+
+    @staticmethod
+    def is_checked(check_box):
+        return 'checked' in check_box.get_attribute('class')
+
+    def uncheck_all(self):
+        check_box_list = self.get_elements()
+        for check_box in check_box_list:
+            if self.is_checked(check_box):
+                check_box.click()
+
+    def get_label_value(self, check_box, attribute_name: str='value'):
+        label_element = check_box.find_element(*self.label_locator)
+        label_attribute_value = label_element.get_attribute(attribute_name)
+        return label_attribute_value
+
+    def check_by_attribute_values(self, attribute_name: str, values: list=()):
+        check_box_list = self.get_elements()
+        for check_box in check_box_list:
+            label_attribute_value = self.get_label_value(check_box, attribute_name)
+            if label_attribute_value in values:
+                check_box.click()
+
+    def get_checked_label_values(self) -> list:
+        out = list()
+        check_box_list = self.get_elements()
+        for check_box in check_box_list:
+            if self.is_checked(check_box):
+                out.append(self.get_label_value(check_box))
+        return out
+
+
+class RadioGroup(KOMElementList):
+
+    def __init__(self, page_object, group_locator: Locator, label_locator: Locator, **kwargs):
+        KOMElementList.__init__(self, page_object, group_locator, **kwargs)
+        self.label_locator = label_locator
+
+    def check_by_label_value(self, value):
+        check_box_list = self.get_elements()
+        for check_box in check_box_list:
+            label_element = check_box.find_element(*self.label_locator)
+            label_value = label_element.text
+            if label_value == value:
+                label_element.click()
+                break

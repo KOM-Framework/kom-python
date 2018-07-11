@@ -4,7 +4,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.support.select import Select
 
 from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.support.web import Ancestor
+from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.actions import Action
@@ -24,7 +24,7 @@ class Table(KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, page_object: Ancestor, locator: Locator, table_structure: Structure, next_page_button=None,
+    def __init__(self, page_object: DriverAware, locator: Locator, table_structure: Structure, next_page_button=None,
                  **kwargs):
         KOMElementList.__init__(self, page_object, locator, **kwargs)
         self.table_structure = table_structure
@@ -164,7 +164,7 @@ class SelectList(KOMElementList):
      Prefix it with slc_
     """
 
-    def __init__(self, page_object: Ancestor, link_locator: Locator, option_list_locator: Locator=None,
+    def __init__(self, page_object: DriverAware, link_locator: Locator, option_list_locator: Locator=None,
                  message_locator: Locator=None, extent_list_by_click_on_field: bool=True,
                  hide_list_by_click_on_field: bool=False, **kwargs):
         KOMElementList.__init__(self, page_object, link_locator, **kwargs)
@@ -235,7 +235,7 @@ class SelectMenu(KOMElementList):
         Prefix with slm_
     """
 
-    def __init__(self, ancestor: Ancestor, locator: Locator, list_locator: Locator=None, **kwargs):
+    def __init__(self, ancestor: DriverAware, locator: Locator, list_locator: Locator=None, **kwargs):
         KOMElementList.__init__(self, ancestor, locator, **kwargs)
         self.list_locator = list_locator
 
@@ -273,7 +273,7 @@ class BarChart(KOMElementList):
     """
         Prefix with mn_
     """
-    def __init__(self, page_object: Ancestor, locator: Locator, tooltip_locator: Locator=None, **kwargs):
+    def __init__(self, page_object: DriverAware, locator: Locator, tooltip_locator: Locator=None, **kwargs):
         KOMElementList.__init__(self, page_object, locator, **kwargs)
         if tooltip_locator:
             self.tooltip = KOMElementList(page_object, tooltip_locator)

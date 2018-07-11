@@ -8,11 +8,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.general import Log
 from kom_framework.src.web.data_types.base_element import BaseElement
-from kom_framework.src.web.data_types.custom_actions import JSActions, ActionsChains, Waiters
+from kom_framework.src.web.data_types.custom_action_mixins import JsActionMixin, ActionChainMixin, WaitMixin
 from ...web import element_load_time
 
 
-class KOMElement(BaseElement, JSActions, ActionsChains, Waiters):
+class KOMElement(BaseElement, JsActionMixin, ActionChainMixin, WaitMixin):
 
     __metaclass__ = ABCMeta
 

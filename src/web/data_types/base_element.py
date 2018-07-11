@@ -9,11 +9,11 @@ from kom_framework.src.general import Log
 from kom_framework.src.web import retry_delay
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.data_types.actions import Action
-from kom_framework.src.web.data_types.custom_actions import JSActions
-from kom_framework.src.web.support.web import Ancestor
+from kom_framework.src.web.data_types.custom_action_mixins import JsActionMixin
+from kom_framework.src.web.support.web import DriverAware
 
 
-class BaseElement(JSActions):
+class BaseElement(JsActionMixin):
 
     @abstractmethod
     def get_driver(self, **kwargs):
@@ -23,7 +23,7 @@ class BaseElement(JSActions):
     def exists(self, wait_time: int, condition: expected_conditions) -> bool:
         pass
 
-    def __init__(self, page_object: Ancestor, locator: Locator, action_element: bool=False):
+    def __init__(self, page_object: DriverAware, locator: Locator, action_element: bool=False):
         self.__retry_count = 0
         self.__locator = locator
         self.__ancestor = page_object

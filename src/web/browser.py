@@ -11,12 +11,12 @@ from selenium.webdriver.support import expected_conditions
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.drivers import capabilities
 from kom_framework.src.web.drivers.drivers import Driver
-from kom_framework.src.web.support.web import Ancestor
+from kom_framework.src.web.support.web import DriverAware
 from ..general import Log
 from ..web import hub_ip, hub_port, iframe_load_time, page_load_time
 
 
-class Browser(Ancestor):
+class Browser(DriverAware):
 
     test_session_api = 'http://%s:%s/grid/api/testsession' % (hub_ip, hub_port)
     driver = None

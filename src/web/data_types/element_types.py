@@ -8,7 +8,7 @@ from selenium.webdriver.support.expected_conditions import presence_of_element_l
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.support.web import Ancestor
+from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web.data_types.actions import Action
 from ...web.data_types.kom_element import KOMElement
@@ -19,7 +19,7 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
-    def __init__(self, page_object: Ancestor, locator: Locator, message_locator: Locator=None, **kwargs):
+    def __init__(self, page_object: DriverAware, locator: Locator, message_locator: Locator=None, **kwargs):
         KOMElement.__init__(self, page_object, locator, **kwargs)
         self.message_locator = message_locator
 
@@ -141,7 +141,7 @@ class CheckBox(KOMElement):
         Prefix with chk_
     """
 
-    def __init__(self, ancestor: Ancestor, locator: Locator, attribute: str='value', checked_value: str='on', **kwargs):
+    def __init__(self, ancestor: DriverAware, locator: Locator, attribute: str= 'value', checked_value: str= 'on', **kwargs):
         KOMElement.__init__(self, ancestor, locator, **kwargs)
         self.attribute = attribute
         self.checked_value = checked_value
@@ -169,7 +169,7 @@ class MultiSelectTree(KOMElement):
         Prefix with mst_
     """
 
-    def __init__(self, ancestor: Ancestor, locator: Locator, select_area: Locator, option_list: Locator,
+    def __init__(self, ancestor: DriverAware, locator: Locator, select_area: Locator, option_list: Locator,
                  added_item: Locator, delete_item, **kwargs):
         KOMElement.__init__(self, ancestor, locator, **kwargs)
         self._select_area = select_area

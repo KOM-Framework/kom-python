@@ -13,7 +13,7 @@ from kom_framework.src.web.data_types import js_waiter
 from selenium.webdriver import ActionChains
 
 
-class JSActions:
+class JsActionMixin:
 
     @property
     def name(self):
@@ -54,7 +54,7 @@ class JSActions:
         self.execute_script("arguments[0].click();")
 
 
-class ActionsChains:
+class ActionChainMixin:
 
     @abstractmethod
     def get_element(self, condition: expected_conditions=presence_of_element_located, wait_time: int=element_load_time):
@@ -87,7 +87,7 @@ class ActionsChains:
         ActionChains(element.parent).move_to_element(element).click(element).perform()
 
 
-class Waiters:
+class WaitMixin:
 
     @property
     def name(self):

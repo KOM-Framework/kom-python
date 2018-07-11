@@ -4,17 +4,16 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web import page_load_time
-from kom_framework.src.web.support.web import DriverBase
+from kom_framework.src.web.support.web import DriverAware
 from ..general import Log
 from selenium.webdriver.support import expected_conditions
 
 
-class WebFrame(DriverBase):
+class WebFrame(DriverAware):
 
     def get_driver(self, **kwargs):
         wait_time = kwargs.get('wait_time', 0)
-        index = kwargs.get('index', 0)
-        return self.get_descendant_element(self._ancestor.get_driver(), self.locator, wait_time, index)
+        return self.get_descendant_element(self.ancestor.get_driver(), self.locator, wait_time)
 
     def __new__(cls, *args, **kwargs):
         obj = super(WebFrame, cls).__new__(cls)
@@ -23,13 +22,13 @@ class WebFrame(DriverBase):
         return obj
 
     def __init__(self, ancestor):
-        self._ancestor = ancestor
+        self.ancestor = ancestor
 
     def exists(self, wait_time: int=0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self._ancestor.get_driver():
+        if self.ancestor.get_driver():
             try:
-                WebDriverWait(self._ancestor.get_driver(), wait_time).until(
+                WebDriverWait(self.ancestor.get_driver(), wait_time).until(
                     expected_conditions.visibility_of_element_located(self.locator)
                 )
                 return True
@@ -54,7 +53,7 @@ class WebFrame(DriverBase):
         return self
 
     def quit(self):
-        self._ancestor.quit()
+        self.ancestor.quit()
 
     def execute_script(self, script: str, *args):
         element = self.get_driver()

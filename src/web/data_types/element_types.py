@@ -5,9 +5,11 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types import Locator
+from kom_framework.src.web.data_types.kom_element_list import KOMElementList
 from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web.data_types.actions import Action
@@ -255,3 +257,74 @@ class AnyType(KOMElement):
       Prefix it with ant_
     """
     pass
+
+
+class SelectExtended(KOMElement):
+    """
+     Prefix it with slc_
+    """
+
+    def __init__(self, page_object: DriverAware, link_locator: Locator, option_list_locator: Locator=None,
+                 message_locator: Locator=None, extent_list_by_click_on_field: bool=True,
+                 hide_list_by_click_on_field: bool=False, **kwargs):
+        KOMElement.__init__(self, page_object, link_locator, **kwargs)
+        self.extent_list_by_click_on_field = extent_list_by_click_on_field
+        self.hide_list_by_click_on_field = hide_list_by_click_on_field
+        if option_list_locator:
+            self.options_list = KOMElementList(page_object, option_list_locator)
+        if message_locator:
+            self.message = TextBlock(page_object, message_locator)
+
+    def select_item_by_value(self, value: str):
+        Log.info('Selecting %s value in the %s select list' % (value, self.name))
+        Select(self.get_element()).select_by_value(value)
+
+    def select_item_by_visible_text(self, value: str):
+        Log.info('Selecting %s text in the %s select list' % (value, self.name))
+        Select(self.get_element()).select_by_visible_text(value)
+
+    def first_selected_option(self):
+        Log.info('Get first selected option in the %s select list' % self.name)
+        return Select(self.get_element()).first_selected_option
+
+    def click(self, **kwargs):
+        Log.info("Clicking on the '%s' select list" % self.name)
+        super(SelectExtended, self).click(**kwargs)
+
+    def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
+        Log.info("Selecting %s in the '%s' select list" % (text, self.name))
+        if self.extent_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
+            time.sleep(delay_for_options_to_appear_time)
+        options = self.options_list.get_element()
+        for option in options:
+            if option.text == text:
+                option.click()
+                break
+        if self.hide_list_by_click_on_field:
+            self.execute_action(Action.CLICK)
+
+    def get_options_list(self, delay_for_options_to_appear_time: int=0.5):
+        Log.info("Getting all options list from the '%s' select list" % self.name)
+        out = list()
+        self.execute_action(Action.CLICK)
+        time.sleep(delay_for_options_to_appear_time)
+        options = self.options_list.get_element()
+        for option in options:
+            out.append(option.text)
+        return out
+
+    def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
+                                         delay_for_options_to_appear_time: int=0.5):
+        Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
+                 % (attribute_name, attribute_value, self.name))
+        self.execute_action(Action.CLICK)
+        time.sleep(delay_for_options_to_appear_time)
+        options = self.options_list.get_element()
+        for option in options:
+            if option.get_attribute(attribute_name) == attribute_value:
+                option.click()
+                break
+
+    def get_message(self) -> str:
+        return self.message.text()

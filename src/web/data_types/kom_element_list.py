@@ -4,7 +4,8 @@ from copy import copy
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.expected_conditions import presence_of_all_elements_located
+from selenium.webdriver.support.expected_conditions import presence_of_all_elements_located, \
+    visibility_of_any_elements_located
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types.base_element import BaseElement
@@ -79,14 +80,12 @@ class KOMElementList(BaseElement):
 
     def wait_for_visibility(self, wait_time=element_load_time):
         Log.info('Waiting for the grid %s to be visible' % self.name)
-        WebDriverWait(self.get_driver(), wait_time).until(
-            expected_conditions.presence_of_all_elements_located(self.locator)
-        )
+        self.get_element(condition=visibility_of_any_elements_located, wait_time=wait_time)
 
     def wait_for_elements_count(self, elements_count, wait_time):
         Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self.name))
         try:
-            WebDriverWait(self.get_driver(), wait_time).until(
+            WebDriverWait(self.ancestor.get_driver(), wait_time).until(
                 lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
             return True
         except TimeoutException:

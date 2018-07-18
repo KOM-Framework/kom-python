@@ -36,6 +36,17 @@ class WebFrame(DriverAware):
                 Log.info("Frame '%s' was not found" % self.frame_name)
         return False
 
+    def wait_to_disappear(self, wait_time: int=0):
+        Log.info("Waiting for the Frame '%s' to disappear. Wait time = %s" % (self.frame_name, str(wait_time)))
+        try:
+            WebDriverWait(self.ancestor.get_driver(), wait_time).until(
+                expected_conditions.invisibility_of_element_located(self.locator)
+            )
+            return True
+        except TimeoutException:
+            Log.info("Frame '%s' was still found" % self.frame_name)
+        return False
+
     @abstractmethod
     def open_actions(self):
         pass

@@ -173,7 +173,7 @@ class BarChart(KOMElementList):
         bar_list = self.get_element()
         for bar in bar_list:
             ActionChains(bar.parent).move_to_element(bar).perform()
-            time.sleep(0.5)
+            self.tooltip.exists(element_load_time)
             tooltips = self.tooltip.get_element()
             data = list()
             for line in tooltips:

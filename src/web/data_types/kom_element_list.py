@@ -1,6 +1,7 @@
 from abc import ABCMeta
 
 from copy import copy
+from typing import List
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions
@@ -9,6 +10,7 @@ from selenium.webdriver.support.expected_conditions import presence_of_all_eleme
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types.base_element import BaseElement
+from kom_framework.src.web.data_types.kom_element import KOMElement
 from ...general import Log
 from ...web import element_load_time
 
@@ -51,10 +53,17 @@ class KOMElementList(BaseElement):
         out = self.get_element(wait_time=wait_time)[index]
         return out
 
-    def get_element(self, condition=presence_of_all_elements_located, wait_time=element_load_time) -> list:
-        return WebDriverWait(self.ancestor.get_driver(wait_time=wait_time), wait_time).until(
+    def get_element(self, condition: expected_conditions=presence_of_all_elements_located,
+                    wait_time: int=element_load_time) -> List[KOMElement]:
+        elements = WebDriverWait(self.ancestor.get_driver(wait_time=wait_time), wait_time).until(
             condition(self.locator)
         )
+        kom_elements = list()
+        for i in range(elements):
+            kom_element = KOMElement(self.ancestor, self.locator)
+            kom_element.set_ancestor_index(i)
+            kom_elements.append(kom_element)
+        return kom_elements
 
     def exists(self, wait_time: int=0, condition: expected_conditions=presence_of_all_elements_located):
         Log.info("Checking if '%s' list of elements exists" % self.name)

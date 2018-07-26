@@ -3,14 +3,10 @@ from abc import ABCMeta
 from copy import copy
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.expected_conditions import presence_of_all_elements_located, \
-    visibility_of_any_elements_located
-from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types.base_element import BaseElement
+from kom_framework.src.web.mixins.wait import WaitElementsMixin
 from ...general import Log
-from ...web import element_load_time
 
 
 class Structure(dict):
@@ -45,48 +41,30 @@ class KOMElementList(BaseElement):
 
     __metaclass__ = ABCMeta
 
-    def get_driver(self, **kwargs):
-        wait_time = kwargs.get('wait_time', 0)
-        index = kwargs.get('index', self.ancestor_index)
-        out = self.get_element(wait_time=wait_time)[index]
-        return out
+    def find(self, wait_time: int=0):
+        return self.wait_for().presence_of_all_elements_located(wait_time)
 
-    def get_element(self, condition=presence_of_all_elements_located, wait_time=element_load_time) -> list:
-        return WebDriverWait(self.ancestor.get_driver(wait_time=wait_time), wait_time).until(
-            condition(self.locator)
-        )
+    def wait_for(self) -> WaitElementsMixin:
+        return WaitElementsMixin(self.get_driver(), self.locator)
 
-    def exists(self, wait_time: int=0, condition: expected_conditions=presence_of_all_elements_located):
+    def exists(self, wait_time: int=0):
         Log.info("Checking if '%s' list of elements exists" % self.name)
         try:
-            self.get_element(condition=condition, wait_time=wait_time)
+            self.wait_for().presence_of_all_elements_located(wait_time)
             return True
         except (NoSuchElementException, TimeoutException):
             return False
 
     def get_size(self):
-        return len(self.get_element())
+        return len(self.wait_for().presence_of_all_elements_located())
 
     def select_first_enabled(self):
         Log.info("Selecting first enabled item in the list '%s'" % self.name)
-        elements = self.get_element()
+        elements = self.wait_for().presence_of_all_elements_located()
         for item in elements:
             if item.is_enabled():
                 item.click()
                 break
 
     def get_elements_texts(self):
-        return [element.text for element in self.get_element()]
-
-    def wait_for_visibility(self, wait_time=element_load_time):
-        Log.info('Waiting for the grid %s to be visible' % self.name)
-        self.get_element(condition=visibility_of_any_elements_located, wait_time=wait_time)
-
-    def wait_for_elements_count(self, elements_count, wait_time):
-        Log.info('Waiting for the %s elements appears in a grid %s' % (elements_count, self.name))
-        try:
-            WebDriverWait(self.ancestor.get_driver(), wait_time).until(
-                lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
-            return True
-        except TimeoutException:
-            return False
+        return [element.text for element in self.wait_for().presence_of_all_elements_located()]

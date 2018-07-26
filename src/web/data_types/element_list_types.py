@@ -35,14 +35,9 @@ class Table(KOMElementList):
 
     def get_content(self, index=None, wait_time=0):
         Log.info("Getting content of a table: %s" % self.name)
-        end_time = time.time() + wait_time
         out = []
         if self.exists(wait_time):
-            elements = []
-            while not len(elements):
-                elements = self.get_element()
-                if time.time() > end_time:
-                    break
+            elements = self.wait_for().presence_of_all_elements_located()
             out = self.table_structure.init_structure(self, len(elements), index)
         return out
 
@@ -149,7 +144,7 @@ class Menu(KOMElementList):
 
     def select_menu_section_by_name(self, section_name: str) -> bool:
         Log.info("Selecting '%s' section in '%s' menu" % (section_name, self.name))
-        sections = self.get_element()
+        sections = self.wait_for().presence_of_all_elements_located()
         for section in sections:
             if section.text == section_name:
                 section.click()
@@ -170,11 +165,11 @@ class BarChart(KOMElementList):
 
     def get_tooltip_lines_text(self) -> list:
         out = list()
-        bar_list = self.get_element()
+        bar_list = self.wait_for().presence_of_all_elements_located()
         for bar in bar_list:
             ActionChains(bar.parent).move_to_element(bar).perform()
             self.tooltip.exists(element_load_time)
-            tooltips = self.tooltip.get_element()
+            tooltips = self.tooltip.wait_for().presence_of_all_elements_located()
             data = list()
             for line in tooltips:
                 data.append(line.text)
@@ -193,18 +188,18 @@ class CheckBoxList(KOMElementList):
         return 'checked' in check_box.get_attribute('class')
 
     def uncheck_all(self):
-        check_box_list = self.get_element()
+        check_box_list = self.wait_for().presence_of_all_elements_located()
         for check_box in check_box_list:
             if self.is_checked(check_box):
                 check_box.click()
 
     def get_label_value(self, check_box, attribute_name: str='value'):
-        label_element = check_box.find_element(*self.label_locator)
+        label_element = check_box.find_element(self.label_locator)
         label_attribute_value = label_element.get_attribute(attribute_name)
         return label_attribute_value
 
     def check_by_attribute_values(self, attribute_name: str, values: list=()):
-        check_box_list = self.get_element()
+        check_box_list = self.wait_for().presence_of_all_elements_located()
         for check_box in check_box_list:
             label_attribute_value = self.get_label_value(check_box, attribute_name)
             if label_attribute_value in values:
@@ -212,7 +207,7 @@ class CheckBoxList(KOMElementList):
 
     def get_checked_label_values(self) -> list:
         out = list()
-        check_box_list = self.get_element()
+        check_box_list = self.wait_for().presence_of_all_elements_located()
         for check_box in check_box_list:
             if self.is_checked(check_box):
                 out.append(self.get_label_value(check_box))
@@ -226,9 +221,9 @@ class RadioGroup(KOMElementList):
         self.label_locator = label_locator
 
     def check_by_label_value(self, value):
-        check_box_list = self.get_element()
+        check_box_list = self.wait_for().presence_of_all_elements_located()
         for check_box in check_box_list:
-            label_element = check_box.find_element(*self.label_locator)
+            label_element = check_box.find_element(self.label_locator)
             label_value = label_element.text
             if label_value == value:
                 label_element.click()

@@ -1,19 +1,14 @@
 from abc import abstractmethod
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web import page_load_time
+from kom_framework.src.web.mixins.wait import WaitElementMixin
 from kom_framework.src.web.support.web import DriverAware
 from ..general import Log
-from selenium.webdriver.support import expected_conditions
 
 
 class WebFrame(DriverAware):
-
-    def get_driver(self, **kwargs):
-        wait_time = kwargs.get('wait_time', 0)
-        return self.get_descendant_element(self.ancestor.get_driver(), self.locator, wait_time)
 
     def __new__(cls, *args, **kwargs):
         obj = super(WebFrame, cls).__new__(cls)
@@ -24,13 +19,20 @@ class WebFrame(DriverAware):
     def __init__(self, ancestor):
         self.ancestor = ancestor
 
+    def get_driver(self):
+        return self.ancestor.find()
+
+    def find(self, wait_time: int = 0):
+        return self.wait_for().presence_of_element_located(wait_time)
+
+    def wait_for(self) -> WaitElementMixin:
+        return WaitElementMixin(self.get_driver(), self.locator)
+
     def exists(self, wait_time: int=0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
         if self.ancestor.get_driver():
             try:
-                WebDriverWait(self.ancestor.get_driver(), wait_time).until(
-                    expected_conditions.visibility_of_element_located(self.locator)
-                )
+                self.wait_for().visibility_of_element_located(wait_time)
                 return True
             except (NoSuchElementException, TimeoutException):
                 Log.info("Frame '%s' was not found" % self.frame_name)
@@ -39,9 +41,7 @@ class WebFrame(DriverAware):
     def wait_to_disappear(self, wait_time: int=0):
         Log.info("Waiting for the Frame '%s' to disappear. Wait time = %s" % (self.frame_name, str(wait_time)))
         try:
-            WebDriverWait(self.ancestor.get_driver(), wait_time).until(
-                expected_conditions.invisibility_of_element_located(self.locator)
-            )
+            self.wait_for().invisibility_of_element_located(wait_time)
             return True
         except TimeoutException:
             Log.info("Frame '%s' was still found" % self.frame_name)

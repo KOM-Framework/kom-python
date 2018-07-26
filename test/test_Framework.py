@@ -1,3 +1,4 @@
+from kom_framework.src.web.browser import Browser
 from kom_framework.src.web.data_types import Name, Id
 from kom_framework.src.web.data_types.element_types import Input
 from kom_framework.src.web.support.page_factory import find_by
@@ -27,6 +28,10 @@ class TestSomething:
 
     def test_decorator(self):
         print(PageTest.some_variable)
+        asdasd = Browser()
+        asdasd_2 = Browser()
+        asdasd.set_driver('valueee')
+        print(asdasd_2.get_driver())
         assert True
 
     def test_action_element(self):

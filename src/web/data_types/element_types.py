@@ -137,6 +137,9 @@ class Link(KOMElement):
         Log.info("Clicking on the '%s' web link" % self.name)
         super(Link, self).click(**kwargs)
 
+    def get_url(self, url_attribute: str='href') -> str:
+        return self.get_attribute(url_attribute)
+
 
 class CheckBox(KOMElement):
     """

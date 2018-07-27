@@ -77,7 +77,7 @@ class JSBrowserMixin:
 
     def scroll_up(self, pixels: int=300):
         """
-        Scroll the document down to the vertical position:
+        Scroll the document up to the vertical position:
         :param pixels: The coordinate to scroll to, along the x-axis (horizontal), in pixels
         :return:
         """

@@ -91,6 +91,9 @@ class Link(KOMElement):
         Prefix it with lnk_
     """
 
+    def get_url(self, url_attribute: str='href') -> str:
+        return self.get_attribute(url_attribute)
+
 
 class CheckBox(KOMElement):
     """

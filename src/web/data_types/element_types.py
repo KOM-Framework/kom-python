@@ -1,15 +1,13 @@
 import time
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.data_types.kom_element_list import KOMElementList
+from kom_framework.src.web.data_types.element_list_types import AnyList
 from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web.data_types.actions import Action
@@ -25,39 +23,25 @@ class Input(KOMElement):
         KOMElement.__init__(self, page_object, locator, **kwargs)
         self.message_locator = message_locator
 
-    def clear(self, use_action_chain: bool=False):
+    def clear(self):
         Log.info("Clearing %s input field" % self.name)
-        if use_action_chain:
-            element = self.get_element()
-            ActionChains(element.parent).click(element) \
-                .send_keys(Keys.END) \
-                .key_down(Keys.SHIFT) \
-                .send_keys(Keys.HOME) \
-                .key_up(Keys.SHIFT) \
-                .send_keys(Keys.DELETE) \
-                .perform()
-        else:
-            self.execute_action(Action.CLEAR)
+        self.execute_action(Action.CLEAR)
 
     def send_keys(self, value: str):
         Log.info("Sending %s keys to the '%s' input field" % (value, self.name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, value)
 
-    def clear_and_send_keys(self, value: str, use_action_chain: bool=False):
+    def clear_and_send_keys(self, value: str):
         Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self.name))
-        self.clear(use_action_chain)
+        self.clear()
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, value)
 
     def type_keys(self, value: str):
         Log.info("Typing %s keys to the '%s' input field" % (value, self.name))
-        element = self.get_element(expected_conditions.element_to_be_clickable)
+        element = self.wait_for().element_to_be_clickable()
         for ch in value:
             element.send_keys(ch)
             time.sleep(0.1)
-
-    def send_keys_to_invisible_field(self, value: str):
-        Log.info("Sending %s keys '%s' to the invisible text field" % (value, self.name))
-        self.execute_action(Action.SEND_KEYS, presence_of_element_located, value)
 
     def get_content(self) -> str:
         return self.execute_action(Action.GET_ATTRIBUTE, presence_of_element_located, "value")
@@ -72,20 +56,10 @@ class Input(KOMElement):
         return ""
 
 
-class FRInput(Input):
-
-    def get_content(self) -> str:
-        return self.execute_action(Action.TEXT)
-
-
 class TextBlock(KOMElement):
     """
         Prefix it with txt_
     """
-
-    def text(self) -> str:
-        Log.info("Getting text from the '%s' text block" % self.name)
-        return super(TextBlock, self).text()
 
 
 class TextArea(KOMElement):
@@ -93,19 +67,11 @@ class TextArea(KOMElement):
         Prefix it with txa_
     """
 
-    def text(self) -> str:
-        Log.info("Getting text from the '%s' text area" % self.name)
-        return super(TextArea, self).text()
-
 
 class Button(KOMElement):
     """
         Prefix it with btn_
     """
-
-    def click(self, **kwargs):
-        Log.info("Clicking on the '%s' button" % self.name)
-        super(Button, self).click(**kwargs)
 
 
 class PanelItem(KOMElement):
@@ -113,29 +79,17 @@ class PanelItem(KOMElement):
         Prefix with pnl_
     """
 
-    def click(self, **kwargs):
-        Log.info("Clicking on the '%s' panel item" % self.name)
-        super(PanelItem, self).click(**kwargs)
-
 
 class LinkedText(KOMElement):
     """
         Prefix with lkt_
     """
 
-    def text(self):
-        Log.info("Getting text from the '%s' linked text" % self.name)
-        return super(LinkedText, self).text()
-
 
 class Link(KOMElement):
     """
         Prefix it with lnk_
     """
-
-    def click(self, **kwargs):
-        Log.info("Clicking on the '%s' web link" % self.name)
-        super(Link, self).click(**kwargs)
 
     def get_url(self, url_attribute: str='href') -> str:
         return self.get_attribute(url_attribute)
@@ -146,24 +100,21 @@ class CheckBox(KOMElement):
         Prefix with chk_
     """
 
-    def __init__(self, ancestor: DriverAware, locator: Locator, attribute: str= 'value', checked_value: str= 'on', **kwargs):
+    def __init__(self, ancestor: DriverAware, locator: Locator, attribute: str= 'value', checked_value: str= 'on',
+                 **kwargs):
         KOMElement.__init__(self, ancestor, locator, **kwargs)
         self.attribute = attribute
         self.checked_value = checked_value
 
-    def click(self, **kwargs):
-        Log.info("Clicking on the '%s' check box" % self.name)
-        super(CheckBox, self).click(**kwargs)
-
     def check(self, value: bool=True):
         Log.info("Checking the '%s' check box" % self.name)
-        actual_status = super(CheckBox, self).get_attribute(self.attribute)
+        actual_status = self.get_attribute(self.attribute)
         if (value and actual_status != self.checked_value) or (not value and actual_status == self.checked_value):
-            super(CheckBox, self).click()
+            self.click()
 
     def is_selected(self) -> bool:
         Log.info("Check is the '%s' check box is selected" % self.name)
-        actual_status = super(CheckBox, self).get_attribute(self.attribute)
+        actual_status = self.get_attribute(self.attribute)
         if actual_status == self.checked_value:
             return True
         return False
@@ -184,7 +135,7 @@ class MultiSelectTree(KOMElement):
 
     def add_item(self, option_name):
         Log.info("Adding %s item to the %s" % (option_name, self.name))
-        field = self.get_element()
+        field = self.wait_for().presence_of_element_located()
         field.find_element(self._select_area).click()
         options = field.find_elements(self._option_list)
         for option in options:
@@ -195,7 +146,7 @@ class MultiSelectTree(KOMElement):
 
     def get_selected_items(self):
         Log.info("Getting all the added items to the %s" % self.name)
-        field = self.get_element()
+        field = self.wait_for().presence_of_element_located()
         time.sleep(1)
         items = field.find_elements(self._added_item)
         out = [item.text for item in items]
@@ -203,7 +154,7 @@ class MultiSelectTree(KOMElement):
 
     def delete_item(self, item_name):
         Log.info("Deleting %s item to the %s" % (item_name, self.name))
-        field = self.get_element()
+        field = self.wait_for().presence_of_element_located()
         time.sleep(1)
         item_index = self.get_selected_items().index(item_name)
         if item_index:
@@ -244,8 +195,8 @@ class Spinner(KOMElement):
 
     def wait_for_appear_and_disappear(self, wait_time: int=30):
         Log.info('Wait for %s spinner to appear and disappear' % self.name)
-        self.wait_for_visibility(wait_time)
-        return self.wait_while_exists(wait_time)
+        self.wait_for().visibility_of_element_located(wait_time)
+        return self.wait_for().invisibility_of_element_located(wait_time)
 
 
 class Form(KOMElement):
@@ -274,32 +225,28 @@ class SelectExtended(KOMElement):
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
-            self.options_list = KOMElementList(page_object, option_list_locator)
+            self.options_list = AnyList(page_object, option_list_locator)
         if message_locator:
             self.message = TextBlock(page_object, message_locator)
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
-        Select(self.get_element()).select_by_value(value)
+        Select(self.wait_for().presence_of_element_located()).select_by_value(value)
 
     def select_item_by_visible_text(self, value: str):
         Log.info('Selecting %s text in the %s select list' % (value, self.name))
-        Select(self.get_element()).select_by_visible_text(value)
+        Select(self.wait_for().presence_of_element_located()).select_by_visible_text(value)
 
     def first_selected_option(self):
         Log.info('Get first selected option in the %s select list' % self.name)
-        return Select(self.get_element()).first_selected_option
-
-    def click(self, **kwargs):
-        Log.info("Clicking on the '%s' select list" % self.name)
-        super(SelectExtended, self).click(**kwargs)
+        return Select(self.wait_for().presence_of_element_located()).first_selected_option
 
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)
             time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_element()
+        options = self.options_list.wait_for().presence_of_all_elements_located()
         for option in options:
             if option.text == text:
                 option.click()
@@ -312,7 +259,7 @@ class SelectExtended(KOMElement):
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_element()
+        options = self.options_list.wait_for().presence_of_all_elements_located()
         for option in options:
             out.append(option.text)
         return out
@@ -323,7 +270,7 @@ class SelectExtended(KOMElement):
                  % (attribute_name, attribute_value, self.name))
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.get_element()
+        options = self.options_list.wait_for().presence_of_all_elements_located()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:
                 option.click()

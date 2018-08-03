@@ -101,7 +101,7 @@ class WaitElementsMixin(WaitMixin):
     def number_of_elements(self, elements_count: int, wait_time: int=element_load_time):
         Log.info('An expectation for checking that number elements "%s" are present on the DOM of a page.'
                  % self.name)
-        return self.condition(wait_time, lambda driver: len(driver.find_elements(self.locator)) == elements_count)
+        return self.condition(wait_time, lambda driver: len(driver.find_elements(*self.locator)) == elements_count)
 
 
 class WaitBrowserMixin(WaitMixin):

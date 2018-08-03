@@ -57,6 +57,9 @@ class Browser(DriverAware):
     def window_handles(self):
         return self.get_driver().window_handles
 
+    def close(self):
+        self.get_driver().close()
+
     def quit(self):
         if self.get_driver():
             Log.info("Closing the browser")

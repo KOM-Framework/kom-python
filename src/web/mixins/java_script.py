@@ -72,7 +72,7 @@ class JSBrowserMixin:
         :return:
         """
         current_position = self.page_y_offset()
-        script = 'window.scrollTo(0, %s);' % current_position + pixels
+        script = 'window.scrollTo(0, %s);' % str(current_position + pixels)
         return self.execute_script(script)
 
     def scroll_up(self, pixels: int=300):
@@ -82,8 +82,8 @@ class JSBrowserMixin:
         :return:
         """
         current_position = self.page_y_offset()
-        expected_position = current_position - pixels
-        script = 'window.scrollTo(0, %s);' % expected_position if expected_position else 0
+        expected_position = str(current_position - pixels)
+        script = 'window.scrollTo(0, %s);' % expected_position if expected_position else '0'
         return self.execute_script(script)
 
     def clear_local_storage(self):

@@ -194,7 +194,7 @@ class CheckBoxList(KOMElementList):
                 check_box.click()
 
     def get_label_value(self, check_box, attribute_name: str='value'):
-        label_element = check_box.find_element(self.label_locator)
+        label_element = check_box.find_element(*self.label_locator)
         label_attribute_value = label_element.get_attribute(attribute_name)
         return label_attribute_value
 
@@ -223,7 +223,7 @@ class RadioGroup(KOMElementList):
     def check_by_label_value(self, value):
         check_box_list = self.wait_for().presence_of_all_elements_located()
         for check_box in check_box_list:
-            label_element = check_box.find_element(self.label_locator)
+            label_element = check_box.find_element(*self.label_locator)
             label_value = label_element.text
             if label_value == value:
                 label_element.click()

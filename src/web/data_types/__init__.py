@@ -1,3 +1,5 @@
+from collections import Iterable
+
 from selenium.webdriver.common.by import By
 
 from kom_framework import js_waiter_file
@@ -49,7 +51,10 @@ https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-se
 '''
 
 
-class Locator:
+class Locator(Iterable):
+
+    def __iter__(self):
+        pass
 
     def __new__(cls, value):
         pass

@@ -19,20 +19,22 @@ class WebFrame(DriverAware):
     def __init__(self, ancestor):
         self.ancestor = ancestor
 
-    def get_driver(self):
+    @property
+    def driver(self):
         return self.ancestor.find()
 
     def find(self, wait_time: int = 0):
-        return self.wait_for().presence_of_element_located(wait_time)
+        return self.wait_for.presence_of_element_located(wait_time)
 
+    @property
     def wait_for(self) -> WaitElementMixin:
-        return WaitElementMixin(self.get_driver(), self.locator)
+        return WaitElementMixin(self.driver, self.locator)
 
     def exists(self, wait_time: int=0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self.ancestor.get_driver():
+        if self.ancestor.driver:
             try:
-                self.wait_for().visibility_of_element_located(wait_time)
+                self.wait_for.visibility_of_element_located(wait_time)
                 return True
             except (NoSuchElementException, TimeoutException):
                 Log.info("Frame '%s' was not found" % self.frame_name)
@@ -41,7 +43,7 @@ class WebFrame(DriverAware):
     def wait_to_disappear(self, wait_time: int=0):
         Log.info("Waiting for the Frame '%s' to disappear. Wait time = %s" % (self.frame_name, str(wait_time)))
         try:
-            self.wait_for().invisibility_of_element_located(wait_time)
+            self.wait_for.invisibility_of_element_located(wait_time)
             return True
         except TimeoutException:
             Log.info("Frame '%s' was still found" % self.frame_name)
@@ -67,5 +69,5 @@ class WebFrame(DriverAware):
         self.ancestor.quit()
 
     def execute_script(self, script: str, *args):
-        element = self.get_driver()
+        element = self.driver
         element.parent.execute_script(script, element, *args)

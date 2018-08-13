@@ -7,8 +7,8 @@ class DriverAware:
 
     @abstractmethod
     def find(self, **kwargs):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
-    def get_driver(self, **kwargs):
-        pass
+    @property
+    def driver(self):
+        raise NotImplementedError

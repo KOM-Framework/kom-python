@@ -38,7 +38,7 @@ class Input(KOMElement):
 
     def type_keys(self, value: str):
         Log.info("Typing %s keys to the '%s' input field" % (value, self.name))
-        element = self.wait_for().element_to_be_clickable()
+        element = self.wait_for.element_to_be_clickable()
         for ch in value:
             element.send_keys(ch)
             time.sleep(0.1)
@@ -135,7 +135,7 @@ class MultiSelectTree(KOMElement):
 
     def add_item(self, option_name):
         Log.info("Adding %s item to the %s" % (option_name, self.name))
-        field = self.wait_for().presence_of_element_located()
+        field = self.wait_for.presence_of_element_located()
         field.find_element(self._select_area).click()
         options = field.find_elements(self._option_list)
         for option in options:
@@ -146,7 +146,7 @@ class MultiSelectTree(KOMElement):
 
     def get_selected_items(self):
         Log.info("Getting all the added items to the %s" % self.name)
-        field = self.wait_for().presence_of_element_located()
+        field = self.wait_for.presence_of_element_located()
         time.sleep(1)
         items = field.find_elements(self._added_item)
         out = [item.text for item in items]
@@ -154,7 +154,7 @@ class MultiSelectTree(KOMElement):
 
     def delete_item(self, item_name):
         Log.info("Deleting %s item to the %s" % (item_name, self.name))
-        field = self.wait_for().presence_of_element_located()
+        field = self.wait_for.presence_of_element_located()
         time.sleep(1)
         item_index = self.get_selected_items().index(item_name)
         if item_index:
@@ -173,7 +173,7 @@ class IFrame(KOMElement):
     def exists(self, wait_time=5, **kwargs) -> bool:
         Log.info("Checking if %s frame exists" % self.name)
         try:
-            WebDriverWait(self.get_driver(),
+            WebDriverWait(self.driver,
                           wait_time).until(
                 expected_conditions.presence_of_element_located(self.locator))
             return True
@@ -195,8 +195,8 @@ class Spinner(KOMElement):
 
     def wait_for_appear_and_disappear(self, wait_time: int=30):
         Log.info('Wait for %s spinner to appear and disappear' % self.name)
-        self.wait_for().visibility_of_element_located(wait_time)
-        return self.wait_for().invisibility_of_element_located(wait_time)
+        self.wait_for.visibility_of_element_located(wait_time)
+        return self.wait_for.invisibility_of_element_located(wait_time)
 
 
 class Form(KOMElement):
@@ -231,22 +231,22 @@ class SelectExtended(KOMElement):
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
-        Select(self.wait_for().presence_of_element_located()).select_by_value(value)
+        Select(self.wait_for.presence_of_element_located()).select_by_value(value)
 
     def select_item_by_visible_text(self, value: str):
         Log.info('Selecting %s text in the %s select list' % (value, self.name))
-        Select(self.wait_for().presence_of_element_located()).select_by_visible_text(value)
+        Select(self.wait_for.presence_of_element_located()).select_by_visible_text(value)
 
     def first_selected_option(self):
         Log.info('Get first selected option in the %s select list' % self.name)
-        return Select(self.wait_for().presence_of_element_located()).first_selected_option
+        return Select(self.wait_for.presence_of_element_located()).first_selected_option
 
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.execute_action(Action.CLICK)
             time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for().presence_of_all_elements_located()
+        options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.text == text:
                 option.click()
@@ -259,7 +259,7 @@ class SelectExtended(KOMElement):
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for().presence_of_all_elements_located()
+        options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             out.append(option.text)
         return out
@@ -270,7 +270,7 @@ class SelectExtended(KOMElement):
                  % (attribute_name, attribute_value, self.name))
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for().presence_of_all_elements_located()
+        options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:
                 option.click()

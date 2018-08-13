@@ -1,6 +1,6 @@
-from selenium.webdriver.android.webdriver import WebDriver
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.remote.switch_to import SwitchTo
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from kom_framework.src.web.mixins.java_script import JSBrowserMixin
 from kom_framework.src.web.mixins.wait import WaitBrowserMixin
@@ -16,64 +16,68 @@ class Browser(DriverAware):
     def find(self, **kwargs):
         pass
 
-    @staticmethod
-    def get_driver() -> WebDriver:
+    @property
+    def driver(self) -> WebDriver:
         return Browser.__driver
 
-    @staticmethod
-    def set_driver(value):
-        Browser.__driver = value
+    @driver.setter
+    def driver(self, driver):
+        Browser.__driver = driver
 
+    @property
     def wait_for(self) -> WaitBrowserMixin:
-        return WaitBrowserMixin(self.get_driver())
+        return WaitBrowserMixin(self.driver)
 
+    @property
     def switch_to(self) -> SwitchTo:
-        return SwitchTo(self.get_driver())
+        return SwitchTo(self.driver)
 
+    @property
     def alert(self) -> Alert:
-        return Alert(self.get_driver())
+        return Alert(self.driver)
 
+    @property
     def js(self) -> JSBrowserMixin:
-        return JSBrowserMixin(self.get_driver())
+        return JSBrowserMixin(self.driver)
 
     def get(self, url: str, extensions: list=()):
         Log.info("Opening %s url" % url)
-        if not self.get_driver():
+        if not self.driver:
             Log.info("Creating an instance of a Browser.")
-            self.set_driver(Driver(extensions).create_session())
-        self.get_driver().get(url)
+            self.driver = Driver(extensions).create_session()
+        self.driver.get(url)
 
     def refresh(self):
         Log.info("Refreshing the browser")
-        self.get_driver().refresh()
-        self.wait_for().page_is_loaded()
+        self.driver.refresh()
+        self.wait_for.page_is_loaded()
 
     def current_url(self):
-        return self.get_driver().current_url
+        return self.driver.current_url
 
     def delete_all_cookies(self):
-        self.get_driver().delete_all_cookies()
+        self.driver.delete_all_cookies()
 
     def window_handles(self):
-        return self.get_driver().window_handles
+        return self.driver.window_handles
 
     def close(self):
-        self.get_driver().close()
+        self.driver.close()
 
     def quit(self):
-        if self.get_driver():
+        if self.driver:
             Log.info("Closing the browser")
             try:
-                self.get_driver().quit()
+                self.driver.quit()
             except Exception as e:
                 Log.error("Can't quit driver")
                 Log.error(e)
             finally:
-                self.set_driver(None)
+                self.driver = None
 
     def get_browser_log(self):
         Log.info("Getting browser log")
-        logs = self.get_driver().get_log('browser')
+        logs = self.driver.get_log('browser')
         list_logs = list()
         for log_entry in logs:
             log_str = ''

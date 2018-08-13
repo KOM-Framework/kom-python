@@ -31,7 +31,7 @@ class TestSomething:
         asdasd = Browser()
         asdasd_2 = Browser()
         asdasd.set_driver('valueee')
-        print(asdasd_2.get_driver())
+        print(asdasd_2.driver)
         assert True
 
     def test_action_element(self):

@@ -16,11 +16,11 @@ class BaseElement(DriverAware):
     def exists(self, wait_time: int) -> bool:
         pass
 
-    def __init__(self, page_object: DriverAware, locator: Locator, action_element: bool=False):
+    def __init__(self, page_object: DriverAware, locator: Locator, ancestor_index: int=None, action_element: bool=False):
         self._retry_count = 0
         self.__locator = locator
         self.__ancestor = page_object
-        self.__ancestor_index = None
+        self.__ancestor_index = ancestor_index
         self.__name = str(locator)
         self.__action_element = action_element
 
@@ -43,9 +43,3 @@ class BaseElement(DriverAware):
     @property
     def action_element(self):
         return self.__action_element
-
-    def set_ancestor(self, ancestor):
-        self.__ancestor = ancestor
-
-    def set_ancestor_index(self, index: int):
-        self.__ancestor_index = index

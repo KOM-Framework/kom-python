@@ -1,4 +1,5 @@
 import time
+from typing import TypeVar, Generic, List
 
 from selenium.webdriver import ActionChains
 
@@ -14,6 +15,25 @@ class AnyList(KOMElementList):
         Prefix with anl_
     """
     pass
+
+
+T = TypeVar('T')
+
+
+class NewTable(Generic[T]):
+
+    def __init__(self,  structure: T, page_object: DriverAware, locator):
+        self.structure = structure
+        self.__table = KOMElementList(page_object, locator)
+
+    def get_content(self, index=None, wait_time=0) -> List[T]:
+        out = []
+        # if self.__table.exists(wait_time):
+        #     elements = self.__table.wait_for().presence_of_all_elements_located()
+        for index in range(2):
+            structure_object = self.structure(self.__table, index)
+            out.append(structure_object)
+        return out
 
 
 class Table(KOMElementList):

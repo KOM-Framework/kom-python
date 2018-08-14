@@ -50,7 +50,7 @@ class Input(KOMElement):
         if self.message_locator:
             message = AnyType(self.ancestor, self.message_locator)
             if message.exists():
-                return message.text()
+                return message.text
         else:
             raise Exception('Input message locator is not defined')
         return ""
@@ -277,4 +277,4 @@ class SelectExtended(KOMElement):
                 break
 
     def get_message(self) -> str:
-        return self.message.text()
+        return self.message.text

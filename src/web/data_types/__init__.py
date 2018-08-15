@@ -54,55 +54,60 @@ https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-se
 class Locator(Iterable):
 
     def __iter__(self):
-        pass
+        yield self.by
+        yield self.value
 
-    def __new__(cls, value):
-        pass
+    def __init__(self, by, value):
+        self.by = by
+        self.value = value
+
+    def __repr__(self):
+        return "%s: %s" % (self.by, self.value)
 
 
 class Id(Locator):
 
-    def __new__(cls, value):
-        return By.ID, value
+    def __init__(self, value):
+        super().__init__(By.ID, value)
 
 
 class Xpath(Locator):
 
-    def __new__(cls, value):
-        return By.XPATH, value
+    def __init__(self, value):
+        super().__init__(By.XPATH, value)
 
 
 class LinkText(Locator):
 
-    def __new__(cls, value):
-        return By.LINK_TEXT, value
+    def __init__(self, value):
+        super().__init__(By.LINK_TEXT, value)
 
 
 class PartialLinkText(Locator):
 
-    def __new__(cls, value):
-        return By.PARTIAL_LINK_TEXT, value
+    def __init__(self, value):
+        super().__init__(By.PARTIAL_LINK_TEXT, value)
 
 
 class Name(Locator):
 
-    def __new__(cls, value):
-        return By.NAME, value
+    def __init__(self, value):
+        super().__init__(By.NAME, value)
 
 
 class TagName(Locator):
 
-    def __new__(cls, value):
-        return By.TAG_NAME, value
+    def __init__(self, value):
+        super().__init__(By.TAG_NAME, value)
 
 
 class ClassName(Locator):
 
-    def __new__(cls, value):
-        return By.CLASS_NAME, value
+    def __init__(self, value):
+        super().__init__(By.CLASS_NAME, value)
 
 
 class CssSelector(Locator):
 
-    def __new__(cls, value):
-        return By.CSS_SELECTOR, value
+    def __init__(self, value):
+        super().__init__(By.CSS_SELECTOR, value)

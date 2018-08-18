@@ -6,8 +6,9 @@ from kom_framework.src.web.support.web import DriverAware
 
 class BaseElement(DriverAware):
 
-    def get_driver(self, wait_time: int=0):
-        driver = self.ancestor.find(wait_time=wait_time)
+    @property
+    def driver(self):
+        driver = self.ancestor.find()
         if self.ancestor_index is not None:
             return driver[self.ancestor_index]
         return driver
@@ -36,16 +37,18 @@ class BaseElement(DriverAware):
     def ancestor(self):
         return self.__ancestor
 
+    @ancestor.setter
+    def ancestor(self, ancestor):
+        self.__ancestor = ancestor
+
     @property
     def ancestor_index(self):
         return self.__ancestor_index
 
+    @ancestor_index.setter
+    def ancestor_index(self, index: int):
+        self.__ancestor_index = index
+
     @property
     def action_element(self):
         return self.__action_element
-
-    def set_ancestor(self, ancestor):
-        self.__ancestor = ancestor
-
-    def set_ancestor_index(self, index: int):
-        self.__ancestor_index = index

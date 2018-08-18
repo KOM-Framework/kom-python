@@ -1,138 +1,15 @@
-import time
-
 from selenium.webdriver import ActionChains
 
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web import element_load_time
-from ...web.data_types.kom_element_list import KOMElementList, Structure
+from ...web.data_types.kom_element_list import KOMElementList
 
 
 class AnyList(KOMElementList):
     """
         Prefix with anl_
-    """
-    pass
-
-
-class Table(KOMElementList):
-    """
-        Prefix it with tbl_
-    """
-
-    def __init__(self, page_object: DriverAware, locator: Locator, table_structure: Structure, next_page_button=None,
-                 **kwargs):
-        KOMElementList.__init__(self, page_object, locator, **kwargs)
-        self.table_structure = table_structure
-        self.next_page_button = next_page_button
-
-    def next_page(self):
-        if self.next_page_button and self.next_page_button.exists():
-            self.next_page_button.click()
-            return True
-        return False
-
-    def get_content(self, index=None, wait_time=0):
-        Log.info("Getting content of a table: %s" % self.name)
-        out = []
-        if self.exists(wait_time):
-            elements = self.wait_for.presence_of_all_elements_located()
-            out = self.table_structure.init_structure(self, len(elements), index)
-        return out
-
-    def get_row_by_column_value(self, column_name, value, wait_time=element_load_time):
-        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
-        end_time = time.time() + wait_time
-        while True:
-            content = self.get_content()
-            for row in content:
-                if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).text
-                    Log.info("Actual text: %s" % row_value)
-                    if row_value == value:
-                        return row
-            if self.next_page():
-                return self.get_row_by_column_value(column_name, value, wait_time)
-            if time.time() > end_time:
-                break
-        return None
-
-    def get_row_by_column_text_content(self, column_name, value, wait_time=element_load_time):
-        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
-        end_time = time.time() + wait_time
-        while True:
-            content = self.get_content(wait_time=wait_time)
-            for row in content:
-                if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).get_attribute('textContent')
-                    Log.info("Actual text: %s" % row_value)
-                    if row_value == value:
-                        return row
-            if self.next_page():
-                return self.get_row_by_column_value(column_name, value, wait_time)
-            if time.time() > end_time:
-                break
-        return None
-
-    def get_column_values(self, column_name, wait_time=element_load_time):
-        Log.info("Getting column %s values from the table: %s" % (column_name, self.name))
-        column = []
-        end_time = time.time() + wait_time
-        while True:
-            content = self.get_content()
-            if len(content) > 0:
-                for row in content:
-                    column.append(getattr(row, column_name).get_attribute('textContent'))
-                return column
-            if time.time() > end_time:
-                break
-        return None
-
-    def get_row_by_column_pattern(self, column_name, pattern, wait_time=element_load_time):
-        Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self.name))
-        end_time = time.time() + wait_time
-        while True:
-            content = self.get_content()
-            for row in content:
-                if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).text
-                    if pattern in row_value:
-                        return row
-            if self.next_page():
-                return self.get_row_by_column_pattern(column_name, pattern, wait_time)
-            if time.time() > end_time:
-                break
-        return None
-
-    def get_row_by_index(self, index, wait_time=element_load_time):
-        Log.info("Getting row by index %s from the table: %s" % (index, self.name))
-        element = self.get_content(index, wait_time=wait_time)
-        return element
-
-    def get_rows_by_attribute_value(self, column_name, attribute_name, attribute_value, wait_time=element_load_time):
-        Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
-                 % (column_name, attribute_name, attribute_value, self.name))
-        out = list()
-        end_time = time.time() + wait_time
-        while True:
-            content = self.get_content()
-            for row in content:
-                column = getattr(row, column_name)
-                if column.exists():
-                    act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
-                    if act_attr_value == attribute_value:
-                        out.append(row)
-            if self.next_page():
-                return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
-            elif out or time.time() > end_time:
-                break
-        return out
-
-
-class Charts(Table):
-    """
-        Prefix it with chr_
     """
     pass
 

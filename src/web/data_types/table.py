@@ -36,10 +36,13 @@ class Table(Generic[T]):
     def name(self):
         return self.__table.name
 
+    def exists(self, wait_time: int=0):
+        return self.__table.exists(wait_time)
+
     def get_content(self, wait_time: int=0) -> List[T]:
         out = []
-        if self.__table.exists(wait_time):
-            elements = self.__table.wait_for().presence_of_all_elements_located()
+        if self.exists(wait_time):
+            elements = self.__table.wait_for.presence_of_all_elements_located(wait_time)
             for ancestor_index in range(len(elements)):
                 structure_object = self.__structure(self.__table, ancestor_index)
                 out.append(structure_object)
@@ -52,7 +55,7 @@ class Table(Generic[T]):
             content = self.get_content()
             for row in content:
                 if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).text()
+                    row_value = getattr(row, column_name).text
                     Log.info("Actual text: %s" % row_value)
                     if row_value == value:
                         return row
@@ -100,7 +103,7 @@ class Table(Generic[T]):
             content = self.get_content()
             for row in content:
                 if getattr(row, column_name).exists():
-                    row_value = getattr(row, column_name).text()
+                    row_value = getattr(row, column_name).text
                     if pattern in row_value:
                         return row
             if self.next_page():

@@ -12,39 +12,31 @@ from kom_framework.src.web.support.web import DriverAware
 T = TypeVar('T')
 
 
-class Table(Generic[T]):
+class Table(Generic[T], KOMElementList):
     """
         Prefix it with tbl_
     """
 
-    def __init__(self, page_object: DriverAware, locator: Locator,
-                 structure: Callable[[DriverAware, int], T], next_page: Locator=None):
-        self.__table = KOMElementList(page_object, locator)
-        self.__page_object = page_object
+    def __init__(self, ancestor: DriverAware, locator: Locator, structure: Callable[[DriverAware, int], T],
+                 next_page: Locator = None):
+        super().__init__(ancestor, locator)
         self.__structure = structure
         self.__next_page = next_page
 
     def next_page(self):
         if self.__next_page:
-            next_page_button = Button(self.__page_object, self.__next_page)
+            next_page_button = Button(self.ancestor, self.__next_page)
             if next_page_button.exists():
                 next_page_button.click()
                 return True
         return False
 
-    @property
-    def name(self):
-        return self.__table.name
-
-    def exists(self, wait_time: int=0):
-        return self.__table.exists(wait_time)
-
     def get_content(self, wait_time: int=0) -> List[T]:
         out = []
         if self.exists(wait_time):
-            elements = self.__table.wait_for.presence_of_all_elements_located(wait_time)
+            elements = self.wait_for.presence_of_all_elements_located(wait_time)
             for ancestor_index in range(len(elements)):
-                structure_object = self.__structure(self.__table, ancestor_index)
+                structure_object = self.__structure(self, ancestor_index)
                 out.append(structure_object)
         return out
 

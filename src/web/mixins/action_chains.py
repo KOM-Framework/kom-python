@@ -1,15 +1,13 @@
 from kom_framework.src.general import Log
-from selenium.webdriver import ActionChains
 
 from kom_framework.src.web.data_types.base_element import BaseElement
-from kom_framework.src.web.mixins import extract_driver_obj
 from kom_framework.src.web.support.web import DriverAware
 
 
 class ActionChainsMixin:
 
     def __init__(self, driver: DriverAware, element: BaseElement, element_name: str):
-        self.action_chains = ActionChains(extract_driver_obj(driver))
+        self.action_chains = driver.action_chains
         self.element = element
         self.element_name = element_name
 

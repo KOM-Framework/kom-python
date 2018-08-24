@@ -2,17 +2,18 @@ import time
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from kom_framework.src.general import Log
 from kom_framework.src.web import http_request_wait_time
 from kom_framework.src.web.data_types import js_waiter
-from kom_framework.src.web.mixins.action_chains import extract_driver_obj
+from kom_framework.src.web.support.web import DriverAware
 
 
 class JSElementMixin:
 
-    def __init__(self, driver, element, element_name):
-        self.driver = extract_driver_obj(driver)
+    def __init__(self, driver: DriverAware, element: WebElement, element_name: str):
+        self.driver = driver
         self.element = element
         self.element_name = element_name
 

@@ -11,7 +11,7 @@ from kom_framework.src.web import retry_delay
 from kom_framework.src.web.data_types.actions import Action
 from kom_framework.src.web.data_types.base_element import BaseElement
 from kom_framework.src.web.mixins.action_chains import ActionChainsMixin
-from kom_framework.src.web.mixins.java_script import JSElementMixin
+from kom_framework.src.web.mixins.javascript import JSElementMixin
 from kom_framework.src.web.mixins.wait import WaitElementMixin
 
 
@@ -28,11 +28,11 @@ class KOMElement(BaseElement):
 
     @property
     def js(self) -> JSElementMixin:
-        return JSElementMixin(self.driver, self.wait_for.presence_of_element_located(), self.name)
+        return JSElementMixin(self.ancestor, self.wait_for.presence_of_element_located(), self.name)
 
     @property
     def action_chains(self) -> ActionChainsMixin:
-        return ActionChainsMixin(self.driver, self.wait_for.presence_of_element_located(), self.name)
+        return ActionChainsMixin(self.ancestor, self.wait_for.presence_of_element_located(), self.name)
 
     def exists(self, wait_time: int=0) -> bool:
         Log.info("Checking if '%s' element exists" % self.name)

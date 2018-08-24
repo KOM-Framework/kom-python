@@ -1,8 +1,9 @@
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.remote.switch_to import SwitchTo
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
-from kom_framework.src.web.mixins.java_script import JSBrowserMixin
+from kom_framework.src.web.mixins.javascript import JSBrowserMixin
 from kom_framework.src.web.mixins.wait import WaitBrowserMixin
 from kom_framework.src.web.drivers.drivers import Driver
 from kom_framework.src.web.support.web import DriverAware
@@ -16,8 +17,15 @@ class Browser(DriverAware):
     def find(self, **kwargs):
         pass
 
+    def execute_script(self, script: str, element: WebElement, *args):
+        return self.driver.execute_script(script, element, *args)
+
     @property
-    def driver(self) -> WebDriver:
+    def action_chains(self) -> ActionChains:
+        return ActionChains(self.driver)
+
+    @property
+    def driver(self):
         return Browser.__driver
 
     @driver.setter

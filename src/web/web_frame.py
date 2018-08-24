@@ -1,6 +1,8 @@
 from abc import abstractmethod
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver import ActionChains
+from selenium.webdriver.remote.webelement import WebElement
 
 from kom_framework.src.web import page_load_time
 from kom_framework.src.web.mixins.wait import WaitElementMixin
@@ -25,6 +27,13 @@ class WebFrame(DriverAware):
 
     def find(self, wait_time: int = 0):
         return self.wait_for.presence_of_element_located(wait_time)
+
+    @property
+    def action_chains(self) -> ActionChains:
+        return self.ancestor.action_chains
+
+    def execute_script(self, script: str, element: WebElement, *args):
+        self.ancestor.execute_script(script, element, *args)
 
     @property
     def wait_for(self) -> WaitElementMixin:
@@ -67,7 +76,3 @@ class WebFrame(DriverAware):
 
     def quit(self):
         self.ancestor.quit()
-
-    def execute_script(self, script: str, *args):
-        element = self.driver
-        element.parent.execute_script(script, element, *args)

@@ -4,11 +4,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 from kom_framework.src.general import Log
 from kom_framework.src.web import element_load_time, page_load_time
 from kom_framework.src.web.data_types import Locator
+from kom_framework.src.web.support.web import DriverAware
 
 
 class WaitMixin:
 
-    def __init__(self, driver):
+    def __init__(self, driver: DriverAware):
         self.driver = driver
 
     def condition(self, wait_time: int, condition):
@@ -17,7 +18,7 @@ class WaitMixin:
 
 class WaitElementMixin(WaitMixin):
 
-    def __init__(self, driver, element_locator: Locator):
+    def __init__(self, driver: DriverAware, element_locator: Locator):
         super().__init__(driver)
         self.locator = element_locator
         self.name = str(self.locator)
@@ -78,7 +79,7 @@ class WaitElementMixin(WaitMixin):
 
 class WaitElementsMixin(WaitMixin):
 
-    def __init__(self, driver, element_locator: Locator):
+    def __init__(self, driver: DriverAware, element_locator: Locator):
         super().__init__(driver)
         self.locator = element_locator
         self.name = str(self.locator)
@@ -106,7 +107,7 @@ class WaitElementsMixin(WaitMixin):
 
 class WaitBrowserMixin(WaitMixin):
 
-    def __init__(self, driver):
+    def __init__(self, driver: DriverAware):
         super().__init__(driver)
 
     def title_is(self, title: str, wait_time: int=page_load_time):

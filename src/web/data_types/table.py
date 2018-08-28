@@ -130,7 +130,7 @@ class Table(Generic[T], KOMElementList):
         return out
 
 
-class Charts(Table):
+class Charts(Table[T]):
     """
         Prefix it with chr_
     """

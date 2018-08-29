@@ -18,6 +18,7 @@ class WebPage(Browser):
         obj = super(WebPage, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__
         obj.locator = None
+        obj.load_time = page_load_time
         return obj
 
     def find(self, **kwargs):
@@ -35,7 +36,7 @@ class WebPage(Browser):
             if not self.exists():
                 Log.info("Open %s web page" % self.page_name)
                 self.open_actions()
-                assert self.exists(page_load_time), "Page %s cannot be found" % self.page_name
+                assert self.exists(self.load_time), "Page %s cannot be found" % self.page_name
             self.setup_page()
         except WebDriverException as e:
             if "terminated due to SO_TIMEOUT" in e.msg:

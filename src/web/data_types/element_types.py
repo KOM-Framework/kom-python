@@ -1,10 +1,8 @@
 import time
 
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
 
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.data_types.element_list_types import AnyList
@@ -168,17 +166,7 @@ class IFrame(KOMElement):
 
     def switch_to(self):
         Log.info("Switching to iFrame: '%s'" % self.name)
-        self.ancestor.switch_to_frame(self.locator)
-
-    def exists(self, wait_time=5, **kwargs) -> bool:
-        Log.info("Checking if %s frame exists" % self.name)
-        try:
-            WebDriverWait(self.driver,
-                          wait_time).until(
-                expected_conditions.presence_of_element_located(self.locator))
-            return True
-        except TimeoutException:
-            return False
+        self.ancestor.switch_to.frame(self.find())
 
 
 class Image(KOMElement):

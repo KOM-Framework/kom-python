@@ -7,13 +7,14 @@ from kom_framework.src.web.mixins.javascript import JSBrowserMixin
 from kom_framework.src.web.mixins.wait import WaitBrowserMixin
 from kom_framework.src.web.drivers.drivers import Driver
 from kom_framework.src.web.support.web import DriverAware
-from src.utilities.browsermob_proxy import Proxy
 from ..general import Log
 
 
 class Browser(DriverAware):
 
     __driver = None
+    __before_instance = list()
+    __after_instance = list()
 
     def find(self, **kwargs):
         pass
@@ -32,6 +33,14 @@ class Browser(DriverAware):
     @driver.setter
     def driver(self, driver):
         Browser.__driver = driver
+
+    @staticmethod
+    def add_before(func):
+        Browser.__before_instance.append(func)
+
+    @staticmethod
+    def add_after(func):
+        Browser.__after_instance.append(func)
 
     @property
     def wait_for(self) -> WaitBrowserMixin:
@@ -53,8 +62,8 @@ class Browser(DriverAware):
         Log.info("Opening %s url" % url)
         if not self.driver:
             Log.info("Creating an instance of a Browser.")
-            Proxy.create()
-            Proxy.add_to_capabilities()
+            for func in Browser.__before_instance:
+                func()
             self.driver = Driver(extensions).create_session()
         self.driver.get(url)
 
@@ -85,7 +94,8 @@ class Browser(DriverAware):
                 Log.error(e)
             finally:
                 self.driver = None
-                Proxy.close()
+                for func in Browser.__after_instance:
+                    func()
 
     def get_browser_log(self):
         Log.info("Getting browser log")

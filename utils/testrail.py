@@ -110,7 +110,7 @@ class TestRail:
     }
 
     def add_run(self, project_id, suite_id, name, description="", milestone_id="", assignedto_id=1, include_all=True,
-                case_ids=[]):
+                case_ids=()):
         data = {
             "suite_id": suite_id,
             "name": name,
@@ -122,6 +122,13 @@ class TestRail:
         }
         respond = self.client.send_post('add_run/%s' % project_id, data=data)
         return respond['id']
+
+    def update_run_description(self, run_id, description):
+        data = {
+            "description": description
+        }
+        respond = self.client.send_post('/update_run/%s' % run_id, data=data)
+        return respond
 
     def add_result_for_case(self, run_id, case_id, status, comment="", elapsed="", defects="", version=""):
         status = self.STATUSES[status]

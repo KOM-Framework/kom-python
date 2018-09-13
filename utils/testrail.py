@@ -106,7 +106,8 @@ class TestRail:
         "failed": 5,
         "broken": 4,
         "skipped": 2,
-        "pending": 2
+        "pending": 2,
+        'flaky': 6
     }
 
     def add_run(self, project_id, suite_id, name, description="", milestone_id="", assignedto_id=1, include_all=True,
@@ -182,4 +183,8 @@ class TestRail:
 
     def get_cases(self, project_id, suite_id):
         response = self.client.send_get("get_cases/%s&suite_id=%s" % (project_id, suite_id))
+        return response
+
+    def get_results_for_case(self):
+        response = self.client.send_get('get_results_for_case/%s/%s' % (1083, 61185))
         return response

@@ -22,22 +22,21 @@ class KOMElementList(KOMElementBase):
     def exists(self, wait_time: int=0):
         Log.info("Checking if '%s' list of elements exists" % self.name)
         try:
-            self.wait_for.presence_of_all_elements_located(wait_time)
-            return True
+            return self.find()
         except (NoSuchElementException, TimeoutException):
             return False
 
     @property
     def size(self):
-        return len(self.wait_for.presence_of_all_elements_located())
+        return len(self.find())
 
     @property
     def elements_texts(self):
-        return [element.text for element in self.wait_for.presence_of_all_elements_located()]
+        return [element.text for element in self.find()]
 
     def select_first_enabled(self):
         Log.info("Selecting first enabled item in the list '%s'" % self.name)
-        elements = self.wait_for.presence_of_all_elements_located()
+        elements = self.find()
         for item in elements:
             if item.is_enabled():
                 item.click()

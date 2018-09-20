@@ -9,20 +9,20 @@ from ..web import page_load_time
 from selenium.webdriver.support import expected_conditions
 
 
-class WebPage(Browser):
+class PageObject(Browser):
     __metaclass__ = ABCMeta
 
     _retry_count = 0
 
     def __new__(cls, *args, **kwargs):
-        obj = super(WebPage, cls).__new__(cls)
+        obj = super(PageObject, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__
         obj.locator = None
         obj.load_time = page_load_time
         return obj
 
-    def find(self, **kwargs):
-        return self.driver
+    def find(self, wait_time: int = 0):
+        return self.wait_for.condition(wait_time, expected_conditions.presence_of_element_located(self.locator))
 
     @abstractmethod
     def open_actions(self):

@@ -9,13 +9,13 @@ from selenium.webdriver.support.expected_conditions import presence_of_element_l
 from kom_framework.src.general import Log
 from kom_framework.src.web import retry_delay
 from kom_framework.src.web.data_types.actions import Action
-from kom_framework.src.web.data_types.base_element import BaseElement
+from kom_framework.src.web.data_types.base_element import KOMElementBase
 from kom_framework.src.web.mixins.action_chains import ActionChainsMixin
 from kom_framework.src.web.mixins.javascript import JSElementMixin
 from kom_framework.src.web.mixins.wait import WaitElementMixin
 
 
-class KOMElement(BaseElement):
+class KOMElement(KOMElementBase):
 
     __metaclass__ = ABCMeta
 

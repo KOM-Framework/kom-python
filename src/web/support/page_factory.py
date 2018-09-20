@@ -1,17 +1,18 @@
-from kom_framework.src.general import get_obj_key
+from kom_framework.src.web.data_types.base_element import KOMElementBase
+from kom_framework.src.web.support.web import DriverAware
 
 
 class PageFactory:
 
-    instances = {}
-
-    @classmethod
-    def get_instance(cls, key):
-        return cls.instances[key]
-
-    @classmethod
-    def set_instance(cls, key, page_object):
-        cls.instances[key] = page_object
+    @staticmethod
+    def init_elements(instance: DriverAware, ancestor: DriverAware, index: int=None):
+        elements = vars(instance)
+        for element_name in elements:
+            element_object = elements[element_name]
+            if isinstance(element_object, KOMElementBase):
+                element_object.ancestor = ancestor
+                if index is not None:
+                    element_object.ancestor_index = index
 
 
 def find_by(locator):
@@ -22,18 +23,10 @@ def find_by(locator):
 
         class Wrapper(metaclass=WrapperMeta):
             def __new__(cls, *args, **kwargs):
-                key = get_obj_key(class_, args, kwargs)
-                if key not in PageFactory.instances:
-                    page_object = cls.create_object(*args, **kwargs)
-                    PageFactory.set_instance(key, page_object)
-                    return PageFactory.get_instance(key)
-                else:
-                    return cls.create_object(*args, **kwargs)
+                web_object = class_(*args, **kwargs)
+                web_object.locator = locator
+                PageFactory.init_elements(web_object, web_object)
+                return web_object
 
-            @staticmethod
-            def create_object(*args, **kwargs):
-                page_object = class_(*args, **kwargs)
-                page_object.locator = locator
-                return page_object
         return Wrapper
     return real_decorator

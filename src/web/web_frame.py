@@ -10,30 +10,34 @@ from kom_framework.src.web.support.web import DriverAware
 from ..general import Log
 
 
-class WebFrame(DriverAware):
+class Component(DriverAware):
 
     def __new__(cls, *args, **kwargs):
-        obj = super(WebFrame, cls).__new__(cls)
+        obj = super(Component, cls).__new__(cls)
         obj.frame_name = obj.__class__.__name__
         obj.locator = None
         return obj
 
     def __init__(self, ancestor):
-        self.ancestor = ancestor
+        self.__ancestor = ancestor
+
+    @property
+    def ancestor(self):
+        return self.__ancestor
 
     @property
     def driver(self):
-        return self.ancestor.find()
+        return self.__ancestor.find()
 
     def find(self, wait_time: int = 0):
         return self.wait_for.presence_of_element_located(wait_time)
 
     @property
     def action_chains(self) -> ActionChains:
-        return self.ancestor.action_chains
+        return self.__ancestor.action_chains
 
     def execute_script(self, script: str, element: WebElement, *args):
-        self.ancestor.execute_script(script, element, *args)
+        self.__ancestor.execute_script(script, element, *args)
 
     @property
     def wait_for(self) -> WaitElementMixin:
@@ -41,7 +45,7 @@ class WebFrame(DriverAware):
 
     def exists(self, wait_time: int=0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self.ancestor.driver:
+        if self.__ancestor.driver:
             try:
                 self.wait_for.visibility_of_element_located(wait_time)
                 return True
@@ -75,4 +79,4 @@ class WebFrame(DriverAware):
         return self
 
     def quit(self):
-        self.ancestor.quit()
+        self.__ancestor.quit()

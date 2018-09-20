@@ -6,7 +6,6 @@ from selenium.webdriver.support.select import Select
 
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.data_types.element_list_types import AnyList
-from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web.data_types.actions import Action
 from ...web.data_types.kom_element import KOMElement
@@ -17,8 +16,8 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
-    def __init__(self, page_object: DriverAware, locator: Locator, message_locator: Locator=None, **kwargs):
-        KOMElement.__init__(self, page_object, locator, **kwargs)
+    def __init__(self, locator: Locator, message_locator: Locator=None, **kwargs):
+        KOMElement.__init__(self, locator, **kwargs)
         self.message_locator = message_locator
 
     def clear(self):
@@ -46,7 +45,7 @@ class Input(KOMElement):
 
     def get_message(self) -> str:
         if self.message_locator:
-            message = AnyType(self.ancestor, self.message_locator)
+            message = AnyType(self.message_locator)
             if message.exists():
                 return message.text
         else:
@@ -98,9 +97,9 @@ class CheckBox(KOMElement):
         Prefix with chk_
     """
 
-    def __init__(self, ancestor: DriverAware, locator: Locator, attribute: str= 'value', checked_value: str= 'on',
+    def __init__(self, locator: Locator, attribute: str= 'value', checked_value: str= 'on',
                  **kwargs):
-        KOMElement.__init__(self, ancestor, locator, **kwargs)
+        KOMElement.__init__(self, locator, **kwargs)
         self.attribute = attribute
         self.checked_value = checked_value
 
@@ -123,9 +122,9 @@ class MultiSelectTree(KOMElement):
         Prefix with mst_
     """
 
-    def __init__(self, ancestor: DriverAware, locator: Locator, select_area: Locator, option_list: Locator,
+    def __init__(self, locator: Locator, select_area: Locator, option_list: Locator,
                  added_item: Locator, delete_item, **kwargs):
-        KOMElement.__init__(self, ancestor, locator, **kwargs)
+        KOMElement.__init__(self, locator, **kwargs)
         self._select_area = select_area
         self._option_list = option_list
         self._added_item = added_item
@@ -206,16 +205,16 @@ class SelectExtended(KOMElement):
      Prefix it with slc_
     """
 
-    def __init__(self, page_object: DriverAware, link_locator: Locator, option_list_locator: Locator=None,
+    def __init__(self, link_locator: Locator, option_list_locator: Locator=None,
                  message_locator: Locator=None, extent_list_by_click_on_field: bool=True,
                  hide_list_by_click_on_field: bool=False, **kwargs):
-        KOMElement.__init__(self, page_object, link_locator, **kwargs)
+        KOMElement.__init__(self, link_locator, **kwargs)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
-            self.options_list = AnyList(page_object, option_list_locator)
+            self.options_list = AnyList(option_list_locator)
         if message_locator:
-            self.message = TextBlock(page_object, message_locator)
+            self.message = TextBlock(message_locator)
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
@@ -232,8 +231,9 @@ class SelectExtended(KOMElement):
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
-            self.execute_action(Action.CLICK)
+            self.click()
             time.sleep(delay_for_options_to_appear_time)
+        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.text == text:
@@ -247,6 +247,7 @@ class SelectExtended(KOMElement):
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
+        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             out.append(option.text)
@@ -256,8 +257,9 @@ class SelectExtended(KOMElement):
                                          delay_for_options_to_appear_time: int=0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self.name))
-        self.execute_action(Action.CLICK)
+        self.click()
         time.sleep(delay_for_options_to_appear_time)
+        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:

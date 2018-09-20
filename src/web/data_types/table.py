@@ -6,7 +6,7 @@ from kom_framework.src.web import element_load_time
 from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.data_types.element_types import Button
 from kom_framework.src.web.data_types.kom_element_list import KOMElementList
-from kom_framework.src.web.support.web import DriverAware
+from kom_framework.src.web.support.page_factory import PageFactory
 
 
 T = TypeVar('T')
@@ -17,15 +17,15 @@ class Table(Generic[T], KOMElementList):
         Prefix it with tbl_
     """
 
-    def __init__(self, ancestor: DriverAware, locator: Locator, structure: Callable[[DriverAware, int], T],
+    def __init__(self, locator: Locator, structure: Callable[[], T],
                  next_page: Locator = None):
-        super().__init__(ancestor, locator)
+        super().__init__(locator)
         self.__structure = structure
         self.__next_page = next_page
 
     def next_page(self):
         if self.__next_page:
-            next_page_button = Button(self.ancestor, self.__next_page)
+            next_page_button = Button(self.__next_page)
             if next_page_button.exists():
                 next_page_button.click()
                 return True
@@ -36,7 +36,8 @@ class Table(Generic[T], KOMElementList):
         if self.exists(wait_time):
             elements = self.wait_for.presence_of_all_elements_located(wait_time)
             for ancestor_index in range(len(elements)):
-                structure_object = self.__structure(self, ancestor_index)
+                structure_object = self.__structure()
+                PageFactory.init_elements(structure_object, self, ancestor_index)
                 out.append(structure_object)
         return out
 

@@ -1,43 +1,14 @@
 from abc import ABCMeta
 
-from copy import copy
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
-from kom_framework.src.web.data_types.base_element import BaseElement
+from kom_framework.src.web.data_types.base_element import KOMElementBase
 from kom_framework.src.web.mixins.wait import WaitElementsMixin
 from ...general import Log
 
 
-class Structure(dict):
-
-    __getattr__, __setattr__ = dict.get, dict.__setitem__
-
-    def get_copy(self):
-        keys = self.keys()
-        out = dict()
-        for key in keys:
-            out[key] = copy(self[key])
-        return Structure(out)
-
-    def init_structure(self, ancestor, length: int, index: int):
-        out = list()
-        field_names = self.keys()
-        for i in range(length):
-            if index is not None:
-                i = index
-            obj = self.get_copy()
-            for field in field_names:
-                field_object = getattr(obj, field)
-                field_object.set_ancestor(ancestor)
-                field_object.set_ancestor_index(i)
-            if index is not None:
-                return obj
-            out.append(obj)
-        return out
-
-
-class KOMElementList(BaseElement):
+class KOMElementList(KOMElementBase):
 
     __metaclass__ = ABCMeta
 

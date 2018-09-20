@@ -1,12 +1,12 @@
 from kom_framework.src.general import Log
 
-from kom_framework.src.web.data_types.base_element import BaseElement
+from kom_framework.src.web.data_types.base_element import KOMElementBase
 from kom_framework.src.web.support.web import DriverAware
 
 
 class ActionChainsMixin:
 
-    def __init__(self, driver: DriverAware, element: BaseElement, element_name: str):
+    def __init__(self, driver: DriverAware, element: KOMElementBase, element_name: str):
         self.action_chains = driver.action_chains
         self.element = element
         self.element_name = element_name
@@ -35,7 +35,7 @@ class ActionChainsMixin:
         Log.info('Double-clicks an "%s" element.' % self.element_name)
         return self.action_chains.double_click(self.element)
 
-    def drag_and_drop(self, destination: BaseElement):
+    def drag_and_drop(self, destination: KOMElementBase):
         Log.info('Holds down the left mouse button on the source "%s" element'
                  'then moves to the "%s" target element and releases the mouse button.'
                  % (self.element_name, destination.name))

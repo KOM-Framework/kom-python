@@ -1,7 +1,6 @@
 from selenium.webdriver import ActionChains
 
 from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.support.web import DriverAware
 from ...general import Log
 from ...web import element_load_time
 from ...web.data_types.kom_element_list import KOMElementList
@@ -35,10 +34,10 @@ class BarChart(KOMElementList):
     """
         Prefix with mn_
     """
-    def __init__(self, page_object: DriverAware, locator: Locator, tooltip_locator: Locator=None, **kwargs):
-        KOMElementList.__init__(self, page_object, locator, **kwargs)
+    def __init__(self, locator: Locator, tooltip_locator: Locator=None, **kwargs):
+        KOMElementList.__init__(self, locator, **kwargs)
         if tooltip_locator:
-            self.tooltip = KOMElementList(page_object, tooltip_locator)
+            self.tooltip = KOMElementList(tooltip_locator)
 
     def get_tooltip_lines_text(self) -> list:
         out = list()
@@ -56,8 +55,8 @@ class BarChart(KOMElementList):
 
 class CheckBoxList(KOMElementList):
 
-    def __init__(self, page_object, locator: Locator, label_locator: Locator, **kwargs):
-        KOMElementList.__init__(self, page_object, locator, **kwargs)
+    def __init__(self, locator: Locator, label_locator: Locator, **kwargs):
+        KOMElementList.__init__(self, locator, **kwargs)
         self.label_locator = label_locator
 
     @staticmethod
@@ -93,8 +92,8 @@ class CheckBoxList(KOMElementList):
 
 class RadioGroup(KOMElementList):
 
-    def __init__(self, page_object, group_locator: Locator, label_locator: Locator, **kwargs):
-        KOMElementList.__init__(self, page_object, group_locator, **kwargs)
+    def __init__(self, group_locator: Locator, label_locator: Locator, **kwargs):
+        KOMElementList.__init__(self, group_locator, **kwargs)
         self.label_locator = label_locator
 
     def check_by_label_value(self, value):

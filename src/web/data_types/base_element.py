@@ -7,15 +7,15 @@ from kom_framework.src.web.data_types import Locator
 from kom_framework.src.web.support.web import DriverAware
 
 
-class BaseElement(DriverAware):
+class KOMElementBase(DriverAware):
 
-    def __init__(self, ancestor: DriverAware, locator: Locator, ancestor_index: int=None, action_element: bool=False):
+    def __init__(self, locator: Locator, action_element: bool=False):
         self._retry_count = 0
         self.__locator = locator
-        self.__ancestor = ancestor
-        self.__ancestor_index = ancestor_index
         self.__name = str(locator)
         self.__action_element = action_element
+        self.__ancestor = None
+        self.__ancestor_index = None
 
     @property
     def driver(self):
@@ -46,9 +46,17 @@ class BaseElement(DriverAware):
     def ancestor(self):
         return self.__ancestor
 
+    @ancestor.setter
+    def ancestor(self, value: DriverAware):
+        self.__ancestor = value
+
     @property
     def ancestor_index(self):
         return self.__ancestor_index
+
+    @ancestor_index.setter
+    def ancestor_index(self, value):
+        self.__ancestor_index = value
 
     @property
     def action_element(self):

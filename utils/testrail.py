@@ -190,5 +190,5 @@ class TestRail:
         return response
 
     def close_run(self, run_id):
-        response = self.client.send_get('close_run/%s' % run_id)
+        response = self.client.send_post('close_run/%s' % run_id, data={})
         return response

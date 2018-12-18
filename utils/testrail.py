@@ -188,3 +188,7 @@ class TestRail:
     def get_results_for_case(self):
         response = self.client.send_get('get_results_for_case/%s/%s' % (1083, 61185))
         return response
+
+    def close_run(self, run_id):
+        response = self.client.send_get('close_run/%s' % run_id)
+        return response

@@ -3,33 +3,43 @@ import requests
 from ..general import Log
 
 
-class HTTP:
+def add_http_trace(f):
 
-    @classmethod
-    def __send_request(cls, request_type, **kwargs):
-        Log.info('Sending %s request to %s url' % (request_type, kwargs['url']))
-        url = kwargs.pop('url')
-        method = getattr(requests, request_type)
-        respond = method(url, kwargs)
+    def get_name(name):
+        return name.split(' ')[1].split('_')[1].upper()
+
+    def wrapper(*args, **kwargs):
+        Log.info('Sending %s request' % get_name(str(f)))
+        Log.info('Request args: %s' % str(args))
+        Log.info('Request kwargs: %s' % str(kwargs))
+        respond = f(*args, **kwargs)
         Log.info('Respond status: %s' % respond.status_code)
         Log.info('Respond text: %s' % respond.text)
         return respond
+    return wrapper
+
+
+class HTTP:
 
     @classmethod
+    @add_http_trace
     def send_get_request(cls, url, headers=None):
-        return cls.__send_request('get', url=url, headers=headers)
+        return requests.get(url, headers=headers)
 
     @classmethod
+    @add_http_trace
     def send_post_request(cls, url, data=None, files=None, headers=None, json=None):
-        return cls.__send_request('post', url=url, data=data, files=files, headers=headers, json=json)
+        return requests.post(url, data=data, json=json, headers=headers, files=files)
 
     @classmethod
+    @add_http_trace
     def send_put_request(cls, url, data=None, json=None, headers=None):
-        return cls.__send_request('put', url=url, data=data, headers=headers, json=json)
+        return requests.put(url, data=data, json=json, headers=headers)
 
     @classmethod
+    @add_http_trace
     def send_delete_request(cls, url, headers=None):
-        return cls.__send_request('delete', url=url, headers=headers)
+        return requests.delete(url, headers=headers)
 
     @staticmethod
     def send_get_requests(api_list):

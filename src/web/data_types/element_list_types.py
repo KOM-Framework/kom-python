@@ -91,6 +91,9 @@ class CheckBoxList(KOMElementList):
 
 
 class RadioGroup(KOMElementList):
+    """
+        Prefix with rdg_
+    """
 
     def __init__(self, group_locator: Locator, label_locator: Locator, **kwargs):
         KOMElementList.__init__(self, group_locator, **kwargs)

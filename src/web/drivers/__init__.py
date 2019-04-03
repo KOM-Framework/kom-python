@@ -1,4 +1,4 @@
-from kom_framework import env_file_content
+from kom_framework import kom_config
 
-capabilities = env_file_content['driver_configurations']
+capabilities = kom_config['driver_configurations']
 capabilities['loggingPrefs'] = {'browser': 'ALL'}

@@ -1,16 +1,16 @@
-from ... import env_file_content
+from ... import kom_config
 
 # Selenium web driver configuration
-element_load_time = env_file_content['element_load_time']
-iframe_load_time = env_file_content['iframe_load_time']
-http_request_wait_time = env_file_content['http_request_wait_time']
-page_load_time = env_file_content['page_load_time']
-retry_delay = env_file_content['retry_delay']
+element_load_time = kom_config['element_load_time']
+iframe_load_time = kom_config['iframe_load_time']
+http_request_wait_time = kom_config['http_request_wait_time']
+page_load_time = kom_config['page_load_time']
+retry_delay = kom_config['retry_delay']
 
 # Selenium Hub configurations
-remote_execution = env_file_content['remote_execution'] == "True"
-hub_ip = env_file_content['hub_ip']
-hub_port = env_file_content['hub_port']
+remote_execution = kom_config['remote_execution'] == "True"
+hub_ip = kom_config['hub_ip']
+hub_port = kom_config['hub_port']
 
 # Execution configurations
-multi_application_mode = env_file_content['multi_application_mode'] == "True"
+multi_application_mode = kom_config['multi_application_mode'] == "True"

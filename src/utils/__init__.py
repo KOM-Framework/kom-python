@@ -1,5 +1,5 @@
-from kom_framework import env_file_content
+from kom_framework import kom_config
 
-proxy_ip = env_file_content['proxy_ip']
-proxy_port = env_file_content['proxy_port']
-video_recording = env_file_content['video_recording'] == "True"
+proxy_ip = kom_config['proxy_ip']
+proxy_port = kom_config['proxy_port']
+video_recording = kom_config['video_recording'] == "True"

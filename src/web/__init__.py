@@ -8,9 +8,6 @@ page_load_time = kom_config['page_load_time']
 retry_delay = kom_config['retry_delay']
 
 # Selenium Hub configurations
-remote_execution = kom_config['remote_execution'] == "True"
+remote_execution = kom_config['remote_execution']
 hub_ip = kom_config['hub_ip']
 hub_port = kom_config['hub_port']
-
-# Execution configurations
-multi_application_mode = kom_config['multi_application_mode'] == "True"

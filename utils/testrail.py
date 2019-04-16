@@ -131,6 +131,22 @@ class TestRail:
         respond = self.client.send_post('/update_run/%s' % run_id, data=data)
         return respond
 
+    def get_plan(self, plan_id):
+        respond = self.client.send_get('/get_plan/%s' % plan_id)
+        return respond
+
+    def get_plan_entry_id_by_run_id(self, plan_id, run_id):
+        plan_context = self.get_plan(plan_id)
+        for entry in plan_context['entries']:
+            for run in entry['runs']:
+                if run['id'] == int(run_id):
+                    return entry['id']
+        return None
+
+    def update_plan_entry(self, plan_id, entry_id, data):
+        response = self.client.send_post('/update_plan_entry/%s/%s' % (plan_id, entry_id), data)
+        return response
+
     def add_result_for_case(self, run_id, case_id, status, comment="", elapsed="", defects="", version=""):
         status = self.STATUSES[status]
         data = {

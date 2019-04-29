@@ -10,7 +10,7 @@ def add_http_trace(f):
 
     def wrapper(*args, **kwargs):
         Log.info('Sending %s request' % get_name(str(f)))
-        Log.info('Request args: %s' % str(args))
+        Log.info('Request args: %s' % str(args[1:]))
         Log.info('Request kwargs: %s' % str(kwargs))
         respond = f(*args, **kwargs)
         Log.info('Respond status: %s' % respond.status_code)

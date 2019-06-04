@@ -17,12 +17,19 @@ class PageObject(Browser):
     def __new__(cls, *args, **kwargs):
         obj = super(PageObject, cls).__new__(cls)
         obj.page_name = obj.__class__.__name__
+        obj.__session_key = f'{obj.page_name}<{str(args)}><{str(kwargs)}>'
         obj.locator = None
         obj.load_time = page_load_time
         return obj
 
     def find(self, wait_time: int = 0):
         return self.wait_for.condition(wait_time, expected_conditions.presence_of_element_located(self.locator))
+
+    def get_session_key(self):
+        return self.__session_key
+
+    def set_session_key(self, key):
+        self.__session_key = key
 
     @abstractmethod
     def open_actions(self):
@@ -42,7 +49,6 @@ class PageObject(Browser):
             if "terminated due to SO_TIMEOUT" in e.msg:
                 if self._retry_count <= 1:
                     self._retry_count += 1
-                    self.driver = None
                     Log.error('Something went wrong. Retrying to open the page')
                     self.open()
                 else:

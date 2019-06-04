@@ -1,23 +1,24 @@
+from abc import ABC
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.remote.switch_to import SwitchTo
 from selenium.webdriver.remote.webelement import WebElement
 
+from kom_framework.src.web.drivers.driver_manager import DriverManager
 from kom_framework.src.web.mixins.javascript import JSBrowserMixin
 from kom_framework.src.web.mixins.wait import WaitBrowserMixin
-from kom_framework.src.web.drivers.drivers import Driver
 from kom_framework.src.web.support.web import DriverAware
 from ..general import Log
 
 
-class Browser(DriverAware):
+class Browser(DriverAware, ABC):
 
-    __driver = None
-    __before_instance = list()
-    __after_instance = list()
-
-    def find(self, **kwargs):
-        pass
+    def __new__(cls, *args, **kwargs):
+        obj = super(Browser, cls).__new__(cls)
+        obj.__before_instance = list()
+        obj.__after_instance = list()
+        return obj
 
     def execute_script(self, script: str, element: WebElement, *args):
         return self.driver.execute_script(script, element, *args)
@@ -28,19 +29,13 @@ class Browser(DriverAware):
 
     @property
     def driver(self):
-        return Browser.__driver
+        return DriverManager.get_session(self)
 
-    @driver.setter
-    def driver(self, driver):
-        Browser.__driver = driver
+    def add_before(self, func):
+        self.__before_instance.append(func)
 
-    @staticmethod
-    def add_before(func):
-        Browser.__before_instance.append(func)
-
-    @staticmethod
-    def add_after(func):
-        Browser.__after_instance.append(func)
+    def add_after(self, func):
+        self.__after_instance.append(func)
 
     @property
     def wait_for(self) -> WaitBrowserMixin:
@@ -58,13 +53,13 @@ class Browser(DriverAware):
     def js(self) -> JSBrowserMixin:
         return JSBrowserMixin(self.driver)
 
-    def get(self, url: str, extensions: list=()):
+    def get(self, url: str, extensions: list = ()):
         Log.info("Opening %s url" % url)
         if not self.driver:
             Log.info("Creating an instance of a Browser.")
-            for func in Browser.__before_instance:
+            for func in self.__before_instance:
                 func()
-            self.driver = Driver(extensions).create_session()
+            DriverManager.create_session(self, extensions)
         self.driver.get(url)
 
     def refresh(self):
@@ -84,6 +79,9 @@ class Browser(DriverAware):
     def close(self):
         self.driver.close()
 
+    def __del__(self):
+        self.quit()
+
     def quit(self):
         if self.driver:
             Log.info("Closing the browser")
@@ -93,8 +91,8 @@ class Browser(DriverAware):
                 Log.error("Can't quit driver")
                 Log.error(e)
             finally:
-                self.driver = None
-                for func in Browser.__after_instance:
+                DriverManager.destroy_session(self)
+                for func in self.__after_instance:
                     func()
 
     def get_browser_log(self):

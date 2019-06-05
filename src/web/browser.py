@@ -79,9 +79,6 @@ class Browser(DriverAware, ABC):
     def close(self):
         self.driver.close()
 
-    def __del__(self):
-        self.quit()
-
     def quit(self):
         if self.driver:
             Log.info("Closing the browser")

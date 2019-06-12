@@ -38,6 +38,11 @@ class HTTP:
 
     @classmethod
     @add_http_trace
+    def send_patch_request(cls, url, data, json, headers):
+        return requests.patch(url, data=data, json=json, headers=headers)
+
+    @classmethod
+    @add_http_trace
     def send_delete_request(cls, url, headers=None):
         return requests.delete(url, headers=headers)
 

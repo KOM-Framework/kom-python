@@ -27,4 +27,7 @@ class DriverManager:
 
     @classmethod
     def destroy_session(cls, page_object):
-        del cls.sessions[cls.__get_session_key(page_object)]
+        if kom_config['multi_application_mode'] == 'True':
+            del cls.sessions[cls.__get_session_key(page_object)]
+        else:
+            del cls.sessions[next(iter(cls.sessions))]

@@ -1,3 +1,4 @@
+from kom_framework import kom_config
 from kom_framework.src.web.drivers.drivers import Driver
 
 
@@ -11,9 +12,11 @@ class DriverManager:
 
     @classmethod
     def get_session(cls, page_object):
-        session_key = cls.__get_session_key(page_object)
-        if session_key in cls.sessions.keys():
-            return cls.sessions[session_key]
+        if kom_config['multi_application_mode'] == 'True':
+            session_key = cls.__get_session_key(page_object)
+            return cls.sessions.get(session_key, None)
+        elif cls.sessions.keys():
+            return cls.sessions[next(iter(cls.sessions))]
         return None
 
     @classmethod

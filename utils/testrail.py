@@ -134,16 +134,17 @@ class TestRail:
         response = self.client.send_post('add_plan/%s' % project_id, data=data)
         return response
 
-    def add_plan_entry(self, plan_id, suite_id, name, description="", milestone_id="", assigned_to_id=1,
-                       include_all=True, case_ids=()):
+    def add_plan_entry(self, plan_id, suite_id, name, description="", assigned_to_id=1,
+                       include_all=True, case_ids=(), config_ids=(), runs=()):
         data = {
             "suite_id": suite_id,
             "name": name,
+            "description": description,
             "assignedto_id": assigned_to_id,
             "include_all": include_all,
             "case_ids": case_ids,
-            "config_ids": description,
-            "runs": milestone_id
+            "config_ids": config_ids,
+            "runs": runs
         }
         response = self.client.send_post(f'add_plan_entry/{plan_id}', data=data)
         return response

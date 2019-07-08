@@ -124,6 +124,30 @@ class TestRail:
         respond = self.client.send_post('add_run/%s' % project_id, data=data)
         return respond['id']
 
+    def add_plan(self, project_id, name, description, milestone_id, entries):
+        data = {
+            "name": name,
+            "description": description,
+            "milestone_id": milestone_id,
+            "entries": entries
+        }
+        response = self.client.send_post('add_plan/%s' % project_id, data=data)
+        return response
+
+    def add_plan_entry(self, plan_id, suite_id, name, description="", milestone_id="", assigned_to_id=1,
+                       include_all=True, case_ids=()):
+        data = {
+            "suite_id": suite_id,
+            "name": name,
+            "assignedto_id": assigned_to_id,
+            "include_all": include_all,
+            "case_ids": case_ids,
+            "config_ids": description,
+            "runs": milestone_id
+        }
+        response = self.client.send_post(f'add_plan_entry/{plan_id}', data=data)
+        return response
+
     def update_run_description(self, run_id, description):
         data = {
             "description": description
@@ -134,6 +158,10 @@ class TestRail:
     def get_plan(self, plan_id):
         respond = self.client.send_get('/get_plan/%s' % plan_id)
         return respond
+
+    def get_opened_plans(self, project_id):
+        response = self.client.send_get(f'get_plans/{project_id}&is_completed=0')
+        return response
 
     def get_plan_entry_id_by_run_id(self, plan_id, run_id):
         plan_context = self.get_plan(plan_id)

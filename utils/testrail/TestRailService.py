@@ -1,0 +1,145 @@
+from enum import Enum
+
+from kom_framework.utils.testrail.APIClient import APIClient
+
+
+class TestCaseStatuses(Enum):
+    PASSED = 1
+    FAILED = 5
+    BROKEN = 4
+    SKIPPED = 2
+    PENDING = 2
+    FLAKY = 6
+
+
+class TestRailService(APIClient):
+    def __init__(self, base_url, user, password):
+        super().__init__(base_url)
+        self.user = user
+        self.password = password
+
+    def add_run(self, project_id: str, suite_id: str, name: str, description: str = '', milestone_id: str = '',
+                assigned_to_id: int = 1, include_all: bool = True, case_ids: list = ()):
+        data = {
+            'suite_id': suite_id,
+            'name': name,
+            'assignedto_id': assigned_to_id,
+            'include_all': include_all,
+            'case_ids': case_ids,
+            'description': description,
+            'milestone_id': milestone_id
+        }
+        response = self.send_post(f'add_run/{project_id}', data=data)
+        return response
+
+    def add_plan(self, project_id: str, name: str, description: str, milestone_id: str, entries: list):
+        data = {
+            'name': name,
+            'description': description,
+            'milestone_id': milestone_id,
+            'entries': entries
+        }
+        response = self.send_post(f'add_plan/{project_id}', data=data)
+        return response
+
+    def add_plan_entry(self, plan_id: str, suite_id: str, name: str, description: str = '', assigned_to_id: int = 1,
+                       include_all: bool = True, case_ids: list = (), config_ids: list = (), runs: list = ()):
+        data = {
+            'suite_id': suite_id,
+            'name': name,
+            'description': description,
+            'assignedto_id': assigned_to_id,
+            'include_all': include_all,
+            'case_ids': case_ids,
+            'config_ids': config_ids,
+            'runs': runs
+        }
+        response = self.send_post(f'add_plan_entry/{plan_id}', data=data)
+        return response
+
+    def update_run_description(self, run_id: str, description: str):
+        data = {
+            'description': description
+        }
+        response = self.send_post(f'/update_run/{run_id}', data=data)
+        return response
+
+    def get_plan(self, plan_id):
+        response = self.send_get(f'/get_plan/{plan_id}')
+        return response
+
+    def get_opened_plans(self, project_id: str):
+        response = self.send_get(f'get_plans/{project_id}&is_completed=0')
+        return response
+
+    def get_plan_entry_by_run_id(self, plan_id: str, run_id: str):
+        plan_context = self.get_plan(plan_id)
+        for entry in plan_context['entries']:
+            for run in entry['runs']:
+                if run['id'] == int(run_id):
+                    return entry
+        return None
+
+    def update_plan_entry(self, plan_id: str, entry_id: str, data: dict = ()):
+        response = self.send_post(f'/update_plan_entry/{plan_id}/{entry_id}', data)
+        return response
+
+    def add_result_for_case(self, run_id: str, case_id: str, status: TestCaseStatuses,
+                            comment: str = '', elapsed: str = '', defects='', version=''):
+        data = {
+            'status_id': status,
+            'comment': comment,
+            'elapsed': elapsed,
+            'defects': defects,
+            'version': version
+        }
+        response = self.send_post('add_result_for_case/%s/%s' % (run_id, case_id), data=data)
+        return response
+
+    def get_case(self, case_id: str):
+        return self.send_get(f'get_case/{case_id}')
+
+    def updated_case(self, case_id: str, data: dict):
+        return self.send_post(f'update_case/{case_id}', data=data)
+
+    def delete_run(self, run_id: str):
+        return self.send_post(f'delete_run/{run_id}', data={})
+
+    def get_user_by_email(self, email: str):
+        response = self.send_get(f'get_user_by_email&email={email}')
+        return response
+
+    def get_tests(self, run_id: str):
+        response = self.send_get(f'get_tests/{run_id}')
+        return response
+
+    def get_run(self, run_id: str):
+        response = self.send_get(f'get_run/{run_id}')
+        return response
+
+    def get_configs(self, run: dict):
+        config_response = self.send_get(f'get_configs/{run["project_id"]}')
+        out = dict()
+        for config_run_id in run['config_ids']:
+            for config_group in config_response:
+                for config in config_group['configs']:
+                    if config['id'] == config_run_id:
+                        out[config_group['name']] = config['name']
+                        break
+        return out
+
+    def get_milestones(self, project_id: str):
+        response = self.send_get(f'get_milestones/{project_id}')
+        return response
+
+    def get_suite(self, suite_id: str):
+        response = self.send_get(f'get_suite/{suite_id}')
+        return response
+
+    def get_cases(self, project_id: str, suite_id: str):
+        response = self.send_get(f'get_cases/{project_id}&suite_id={suite_id}')
+        return response
+
+    def close_run(self, run_id: str):
+        response = self.send_post(f'close_run/{run_id}', data={})
+        return response

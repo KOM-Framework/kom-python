@@ -4,12 +4,13 @@ from kom_framework.src.web.support.web import DriverAware
 
 class PageFactory:
 
-    @staticmethod
-    def init_elements(instance: DriverAware, ancestor: DriverAware, index: int=None):
+    @classmethod
+    def init_elements(cls, instance: DriverAware, ancestor: DriverAware, index: int = None):
         elements = vars(instance)
         for element_name in elements:
             element_object = elements[element_name]
             if isinstance(element_object, KOMElementBase):
+                cls.init_elements(element_object, ancestor, index)
                 element_object.ancestor = ancestor
                 if index is not None:
                     element_object.ancestor_index = index
@@ -29,4 +30,5 @@ def find_by(locator):
                 return web_object
 
         return Wrapper
+
     return real_decorator

@@ -214,10 +214,8 @@ class SelectExtended(KOMElement):
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
             self.options_list = AnyList(option_list_locator)
-            self.options_list.ancestor = self.ancestor
         if message_locator:
             self.message = TextBlock(message_locator)
-            self.message.ancestor = self.ancestor
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))

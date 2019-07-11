@@ -20,14 +20,13 @@ class Table(Generic[T], KOMElementList):
                  next_page: Locator = None):
         super().__init__(locator)
         self.__structure = structure
-        self.__next_page = next_page
+        if next_page:
+            self.__next_page = Button(next_page)
 
     def next_page(self):
-        if self.__next_page:
-            next_page_button = Button(self.__next_page)
-            next_page_button.ancestor = self.ancestor
-            if next_page_button.exists():
-                next_page_button.click()
+        if '__next_page' in vars(self):
+            if self.__next_page.exists():
+                self.__next_page.click()
                 return True
         return False
 

@@ -16,7 +16,7 @@ class Input(KOMElement):
       Prefix it with inp_
     """
 
-    def __init__(self, locator: Locator, message_locator: Locator=None, **kwargs):
+    def __init__(self, locator: Locator, message_locator: Locator = None, **kwargs):
         KOMElement.__init__(self, locator, **kwargs)
         self.message_locator = message_locator
 
@@ -46,6 +46,7 @@ class Input(KOMElement):
     def get_message(self) -> str:
         if self.message_locator:
             message = AnyType(self.message_locator)
+            message.ancestor = self.ancestor
             if message.exists():
                 return message.text
         else:
@@ -88,7 +89,7 @@ class Link(KOMElement):
         Prefix it with lnk_
     """
 
-    def get_url(self, url_attribute: str='href') -> str:
+    def get_url(self, url_attribute: str = 'href') -> str:
         return self.get_attribute(url_attribute)
 
 
@@ -97,13 +98,13 @@ class CheckBox(KOMElement):
         Prefix with chk_
     """
 
-    def __init__(self, locator: Locator, attribute: str= 'value', checked_value: str= 'on',
+    def __init__(self, locator: Locator, attribute: str = 'value', checked_value: str = 'on',
                  **kwargs):
         KOMElement.__init__(self, locator, **kwargs)
         self.attribute = attribute
         self.checked_value = checked_value
 
-    def check(self, value: bool=True):
+    def check(self, value: bool = True):
         Log.info("Checking the '%s' check box" % self.name)
         actual_status = self.get_attribute(self.attribute)
         if (value and actual_status != self.checked_value) or (not value and actual_status == self.checked_value):
@@ -180,7 +181,7 @@ class Spinner(KOMElement):
       Prefix it with spn_
     """
 
-    def wait_for_appear_and_disappear(self, wait_time: int=30):
+    def wait_for_appear_and_disappear(self, wait_time: int = 30):
         Log.info('Wait for %s spinner to appear and disappear' % self.name)
         self.wait_for.visibility_of_element_located(wait_time)
         return self.wait_for.invisibility_of_element_located(wait_time)
@@ -205,16 +206,18 @@ class SelectExtended(KOMElement):
      Prefix it with slc_
     """
 
-    def __init__(self, link_locator: Locator, option_list_locator: Locator=None,
-                 message_locator: Locator=None, extent_list_by_click_on_field: bool=True,
-                 hide_list_by_click_on_field: bool=False, **kwargs):
+    def __init__(self, link_locator: Locator, option_list_locator: Locator = None,
+                 message_locator: Locator = None, extent_list_by_click_on_field: bool = True,
+                 hide_list_by_click_on_field: bool = False, **kwargs):
         KOMElement.__init__(self, link_locator, **kwargs)
         self.extent_list_by_click_on_field = extent_list_by_click_on_field
         self.hide_list_by_click_on_field = hide_list_by_click_on_field
         if option_list_locator:
             self.options_list = AnyList(option_list_locator)
+            self.options_list.ancestor = self.ancestor
         if message_locator:
             self.message = TextBlock(message_locator)
+            self.message.ancestor = self.ancestor
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
@@ -228,12 +231,11 @@ class SelectExtended(KOMElement):
         Log.info('Get first selected option in the %s select list' % self.name)
         return Select(self.wait_for.presence_of_element_located()).first_selected_option
 
-    def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int=0.5):
+    def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int = 0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.click()
             time.sleep(delay_for_options_to_appear_time)
-        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.text == text:
@@ -242,24 +244,22 @@ class SelectExtended(KOMElement):
         if self.hide_list_by_click_on_field:
             self.execute_action(Action.CLICK)
 
-    def get_options_list(self, delay_for_options_to_appear_time: int=0.5):
+    def get_options_list(self, delay_for_options_to_appear_time: int = 0.5):
         Log.info("Getting all options list from the '%s' select list" % self.name)
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
-        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             out.append(option.text)
         return out
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
-                                         delay_for_options_to_appear_time: int=0.5):
+                                         delay_for_options_to_appear_time: int = 0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self.name))
         self.click()
         time.sleep(delay_for_options_to_appear_time)
-        self.options_list.ancestor = self.ancestor
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:

@@ -51,7 +51,7 @@ class TestRailHelper:
         return None
 
     def get_test_rail_run(self):
-        run_id = os.environ.get('test_rail_run_id', 440)
+        run_id = os.environ.get('test_rail_run_id', None)
         if not run_id:
             suite_id = os.environ.get('test_rail_suite_id', None)
             if suite_id:

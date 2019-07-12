@@ -1,6 +1,6 @@
 from enum import Enum
 
-from kom_framework.utils.testrail.APIClient import APIClient
+from kom_framework.utils.testrail.api_client import APIClient
 
 
 class TestCaseStatuses(Enum):
@@ -87,7 +87,7 @@ class TestRailService(APIClient):
     def add_result_for_case(self, run_id: str, case_id: str, status: TestCaseStatuses,
                             comment: str = '', elapsed: str = '', defects='', version=''):
         data = {
-            'status_id': status,
+            'status_id': status.value,
             'comment': comment,
             'elapsed': elapsed,
             'defects': defects,

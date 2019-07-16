@@ -48,7 +48,7 @@ class JSBrowserMixin:
         self.driver = driver
 
     def execute_script(self, script, *args):
-        return self.driver.get_driver().execute_script(script, *args)
+        return self.driver.execute_script(script, *args)
 
     def page_y_offset(self):
         return self.execute_script('return window.pageYOffset;')

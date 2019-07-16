@@ -42,15 +42,15 @@ class Browser(DriverAware, ABC):
 
     @property
     def switch_to(self) -> SwitchTo:
-        return SwitchTo(self)
+        return SwitchTo(self.get_driver())
 
     @property
     def alert(self) -> Alert:
-        return Alert(self)
+        return Alert(self.get_driver())
 
     @property
     def js(self) -> JSBrowserMixin:
-        return JSBrowserMixin(self)
+        return JSBrowserMixin(self.get_driver())
 
     def get(self, url: str, extensions: list = ()):
         Log.info("Opening %s url" % url)

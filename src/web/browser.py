@@ -21,14 +21,13 @@ class Browser(DriverAware, ABC):
         return obj
 
     def execute_script(self, script: str, element: WebElement, *args):
-        return self.driver.execute_script(script, element, *args)
+        return self.get_driver().execute_script(script, element, *args)
 
     @property
     def action_chains(self) -> ActionChains:
-        return ActionChains(self.driver)
+        return ActionChains(self.get_driver())
 
-    @property
-    def driver(self):
+    def get_driver(self, wait_time: int = 0):
         return DriverManager.get_session(self)
 
     def add_before(self, func):
@@ -39,51 +38,51 @@ class Browser(DriverAware, ABC):
 
     @property
     def wait_for(self) -> WaitBrowserMixin:
-        return WaitBrowserMixin(self.driver)
+        return WaitBrowserMixin(self)
 
     @property
     def switch_to(self) -> SwitchTo:
-        return SwitchTo(self.driver)
+        return SwitchTo(self)
 
     @property
     def alert(self) -> Alert:
-        return Alert(self.driver)
+        return Alert(self)
 
     @property
     def js(self) -> JSBrowserMixin:
-        return JSBrowserMixin(self.driver)
+        return JSBrowserMixin(self)
 
     def get(self, url: str, extensions: list = ()):
         Log.info("Opening %s url" % url)
-        if not self.driver:
+        if not self.get_driver():
             Log.info("Creating an instance of a Browser.")
             for func in self.__before_instance:
                 func()
             DriverManager.create_session(self, extensions)
-        self.driver.get(url)
+        self.get_driver().get(url)
 
     def refresh(self):
         Log.info("Refreshing the browser")
-        self.driver.refresh()
+        self.get_driver().refresh()
         self.wait_for.page_is_loaded()
 
     def current_url(self):
-        return self.driver.current_url
+        return self.get_driver().current_url
 
     def delete_all_cookies(self):
-        self.driver.delete_all_cookies()
+        self.get_driver().delete_all_cookies()
 
     def window_handles(self):
-        return self.driver.window_handles
+        return self.get_driver().window_handles
 
     def close(self):
-        self.driver.close()
+        self.get_driver().close()
 
     def quit(self):
-        if self.driver:
+        if self.get_driver():
             Log.info("Closing the browser")
             try:
-                self.driver.quit()
+                self.get_driver().quit()
             except Exception as e:
                 Log.error("Can't quit driver")
                 Log.error(e)
@@ -94,7 +93,7 @@ class Browser(DriverAware, ABC):
 
     def get_browser_log(self):
         Log.info("Getting browser log")
-        logs = self.driver.get_log('browser')
+        logs = self.get_driver().get_log('browser')
         list_logs = list()
         for log_entry in logs:
             log_str = ''

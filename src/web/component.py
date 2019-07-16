@@ -25,9 +25,8 @@ class Component(DriverAware):
     def ancestor(self):
         return self.__ancestor
 
-    @property
-    def driver(self):
-        return self.__ancestor.find()
+    def get_driver(self, wait_time: int = 0):
+        return self.__ancestor.find(wait_time)
 
     def find(self, wait_time: int = 0):
         return self.wait_for.presence_of_element_located(wait_time)
@@ -41,11 +40,11 @@ class Component(DriverAware):
 
     @property
     def wait_for(self) -> WaitElementMixin:
-        return WaitElementMixin(self.driver, self.locator)
+        return WaitElementMixin(self, self.locator)
 
-    def exists(self, wait_time: int=0) -> bool:
+    def exists(self, wait_time: int = 0) -> bool:
         Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
-        if self.__ancestor.driver:
+        if self.__ancestor.get_driver():
             try:
                 self.wait_for.visibility_of_element_located(wait_time)
                 return True

@@ -17,7 +17,7 @@ class KOMElementList(KOMElementBase):
 
     @property
     def wait_for(self) -> WaitElementsMixin:
-        return WaitElementsMixin(self.driver, self.locator)
+        return WaitElementsMixin(self, self.locator)
 
     def exists(self, wait_time: int=0):
         Log.info("Checking if '%s' list of elements exists" % self.name)

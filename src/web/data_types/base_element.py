@@ -17,9 +17,8 @@ class KOMElementBase(DriverAware):
         self.__ancestor = None
         self.__ancestor_index = None
 
-    @property
-    def driver(self):
-        driver = self.ancestor.find()
+    def get_driver(self, wait_time: int = 0):
+        driver = self.ancestor.find(wait_time)
         if self.ancestor_index is not None:
             return driver[self.ancestor_index]
         return driver

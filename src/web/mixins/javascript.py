@@ -1,7 +1,6 @@
 import time
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from kom_framework.src.general import Log
@@ -45,11 +44,11 @@ class JSElementMixin:
 
 class JSBrowserMixin:
 
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver: DriverAware):
         self.driver = driver
 
     def execute_script(self, script, *args):
-        return self.driver.execute_script(script, *args)
+        return self.driver.get_driver().execute_script(script, *args)
 
     def page_y_offset(self):
         return self.execute_script('return window.pageYOffset;')

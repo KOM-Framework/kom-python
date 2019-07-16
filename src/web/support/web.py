@@ -12,8 +12,8 @@ class DriverAware:
     def find(self, **kwargs):
         raise NotImplementedError
 
-    @property
-    def driver(self):
+    @abstractmethod
+    def get_driver(self, wait_time: int = 0):
         raise NotImplementedError
 
     @property

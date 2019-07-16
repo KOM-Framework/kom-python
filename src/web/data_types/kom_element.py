@@ -24,7 +24,7 @@ class KOMElement(KOMElementBase):
 
     @property
     def wait_for(self) -> WaitElementMixin:
-        return WaitElementMixin(self.driver, self.locator)
+        return WaitElementMixin(self, self.locator)
 
     @property
     def js(self) -> JSElementMixin:

@@ -60,9 +60,9 @@ class PageObject(Browser):
         self.quit()
         return self.open()
 
-    def exists(self, wait_time: int=0) -> bool:
+    def exists(self, wait_time: int = 0) -> bool:
         Log.info("Page '%s' existence verification. Wait time = %s" % (self.page_name, str(wait_time)))
-        if self.driver:
+        if self.get_driver():
             try:
                 self.wait_for.condition(wait_time, expected_conditions.visibility_of_element_located(self.locator))
                 return True
@@ -70,10 +70,10 @@ class PageObject(Browser):
                 Log.info("Page '%s' was not found" % self.page_name)
         return False
 
-    def can_be_focused(self, wait_time: int=page_load_time):
+    def can_be_focused(self, wait_time: int = page_load_time):
         self.wait_for.condition(wait_time, expected_conditions.element_to_be_clickable(self.locator))
 
-    def wait_while_text_exists(self, text: str, wait_time: int=30):
+    def wait_while_text_exists(self, text: str, wait_time: int = 30):
         Log.info("Waiting for the '%s' text to disappear" % text)
         try:
             self.wait_for.condition(wait_time, expected_conditions.text_to_be_present_in_element(CssSelector('*'),
@@ -81,7 +81,7 @@ class PageObject(Browser):
         except (NoSuchElementException, TimeoutException):
             Log.info("Text '%s' still visible within %s seconds" % (text, wait_time))
 
-    def wait_for_text_exists(self, text: str, wait_time: int=30) -> bool:
+    def wait_for_text_exists(self, text: str, wait_time: int = 30) -> bool:
         Log.info("Waiting for the '%s' text to appear" % text)
         try:
             self.wait_for.condition(wait_time, expected_conditions.text_to_be_present_in_element(CssSelector('*'),

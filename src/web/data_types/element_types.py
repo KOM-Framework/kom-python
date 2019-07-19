@@ -18,7 +18,8 @@ class Input(KOMElement):
 
     def __init__(self, locator: Locator, message_locator: Locator = None, **kwargs):
         KOMElement.__init__(self, locator, **kwargs)
-        self.message_locator = message_locator
+        if message_locator:
+            self.message = AnyType(message_locator)
 
     def clear(self):
         Log.info("Clearing %s input field" % self.name)
@@ -44,14 +45,12 @@ class Input(KOMElement):
         return self.execute_action(Action.GET_ATTRIBUTE, presence_of_element_located, "value")
 
     def get_message(self) -> str:
-        if self.message_locator:
-            message = AnyType(self.message_locator)
-            message.ancestor = self.ancestor
-            if message.exists():
-                return message.text
+        if 'message' in dir(self):
+            if self.message.exists():
+                return self.message.text
+            return ''
         else:
             raise Exception('Input message locator is not defined')
-        return ""
 
 
 class TextBlock(KOMElement):

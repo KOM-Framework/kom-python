@@ -136,6 +136,10 @@ class TestRailService(APIClient):
         response = self.send_get(f'get_suite/{suite_id}')
         return response
 
+    def get_suites(self, project_id: str):
+        response = self.send_get(f'get_suites/{project_id}')
+        return response
+
     def get_cases(self, project_id: str, suite_id: str):
         response = self.send_get(f'get_cases/{project_id}&suite_id={suite_id}')
         return response

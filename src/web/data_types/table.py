@@ -109,6 +109,23 @@ class Table(Generic[T], KOMElementList):
         rows = self.get_content(wait_time=wait_time)
         return rows[index]
 
+    def get_row_index_by_column_values(self, column_name: str, values: list, wait_time: int = element_load_time) -> T:
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, values, self.name))
+        end_time = time.time() + wait_time
+        while True:
+            content = self.get_content()
+            for i in range(len(content)):
+                if getattr(content[i], column_name).exists():
+                    row_value = getattr(content[i], column_name).text
+                    Log.info("Actual text: %s" % row_value)
+                    if row_value in values:
+                        return i
+            if self.next_page():
+                return self.get_row_index_by_column_values(column_name, values, wait_time)
+            if time.time() > end_time:
+                break
+        return None
+
     def get_rows_by_attribute_value(self, column_name: str, attribute_name: str, attribute_value: str,
                                     wait_time: int = element_load_time) -> T:
         Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"

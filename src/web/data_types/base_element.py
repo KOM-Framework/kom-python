@@ -9,7 +9,7 @@ from kom_framework.src.web.support.web import DriverAware
 
 class KOMElementBase(DriverAware):
 
-    def __init__(self, locator: Locator, action_element: bool=False):
+    def __init__(self, locator: Locator, action_element: bool = False):
         self._retry_count = 0
         self.__locator = locator
         self.__name = str(locator)

@@ -1,6 +1,5 @@
 from abc import ABCMeta
 
-
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 from kom_framework.src.web.data_types.base_element import KOMElementBase
@@ -9,20 +8,19 @@ from ...general import Log
 
 
 class KOMElementList(KOMElementBase):
-
     __metaclass__ = ABCMeta
 
-    def find(self, wait_time: int=0):
+    def find(self, wait_time: int = 0):
         return self.wait_for.presence_of_all_elements_located(wait_time)
 
     @property
     def wait_for(self) -> WaitElementsMixin:
         return WaitElementsMixin(self, self.locator)
 
-    def exists(self, wait_time: int=0):
+    def exists(self, wait_time: int = 0):
         Log.info("Checking if '%s' list of elements exists" % self.name)
         try:
-            return self.find()
+            return self.find(wait_time)
         except (NoSuchElementException, TimeoutException):
             return False
 

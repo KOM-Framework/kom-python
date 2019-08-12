@@ -16,10 +16,9 @@ from kom_framework.src.web.mixins.wait import WaitElementMixin
 
 
 class KOMElement(KOMElementBase):
-
     __metaclass__ = ABCMeta
 
-    def find(self, wait_time: int=0, **kwargs):
+    def find(self, wait_time: int = 0, **kwargs):
         return self.wait_for.presence_of_element_located(wait_time)
 
     @property
@@ -34,7 +33,7 @@ class KOMElement(KOMElementBase):
     def action_chains(self) -> ActionChainsMixin:
         return ActionChainsMixin(self.ancestor, self.wait_for.presence_of_element_located(), self.name)
 
-    def exists(self, wait_time: int=0) -> bool:
+    def exists(self, wait_time: int = 0) -> bool:
         Log.info("Checking if '%s' element exists" % self.name)
         try:
             self.wait_for.presence_of_element_located(wait_time)
@@ -42,7 +41,7 @@ class KOMElement(KOMElementBase):
         except (NoSuchElementException, TimeoutException):
             return False
 
-    def execute_action(self, action, element_condition: expected_conditions=presence_of_element_located, *args):
+    def execute_action(self, action, element_condition: expected_conditions = presence_of_element_located, *args):
         try:
             obj = getattr(self.wait_for.condition(wait_time=0, condition=element_condition(self.locator)), action)
             if isinstance(obj, str):
@@ -75,7 +74,7 @@ class KOMElement(KOMElementBase):
         return self.__class__.__name__
 
     # Native WebElement methods
-    def click(self, element_condition: expected_conditions=element_to_be_clickable):
+    def click(self, element_condition: expected_conditions = element_to_be_clickable):
         Log.info('Clicking on the "%s" "%s"' % (self.name, self.type))
         self.execute_action(Action.CLICK, element_condition)
 

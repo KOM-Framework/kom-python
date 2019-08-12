@@ -34,7 +34,8 @@ class BarChart(KOMElementList):
     """
         Prefix with mn_
     """
-    def __init__(self, locator: Locator, tooltip_locator: Locator=None, **kwargs):
+
+    def __init__(self, locator: Locator, tooltip_locator: Locator = None, **kwargs):
         KOMElementList.__init__(self, locator, **kwargs)
         if tooltip_locator:
             self.tooltip = KOMElementList(tooltip_locator)
@@ -69,12 +70,12 @@ class CheckBoxList(KOMElementList):
             if self.is_checked(check_box):
                 check_box.click()
 
-    def get_label_value(self, check_box, attribute_name: str='value'):
+    def get_label_value(self, check_box, attribute_name: str = 'value'):
         label_element = check_box.find_element(*self.label_locator)
         label_attribute_value = label_element.get_attribute(attribute_name)
         return label_attribute_value
 
-    def check_by_attribute_values(self, attribute_name: str, values: list=()):
+    def check_by_attribute_values(self, attribute_name: str, values: list = ()):
         check_box_list = self.wait_for.presence_of_all_elements_located()
         for check_box in check_box_list:
             label_attribute_value = self.get_label_value(check_box, attribute_name)

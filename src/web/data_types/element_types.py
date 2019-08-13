@@ -34,12 +34,12 @@ class Input(KOMElement):
         self.clear()
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, value)
 
-    def type_keys(self, value: str):
+    def type_keys(self, value: str, type_delay: float = 0.1):
         Log.info("Typing %s keys to the '%s' input field" % (value, self.name))
         element = self.wait_for.element_to_be_clickable()
         for ch in value:
             element.send_keys(ch)
-            time.sleep(0.1)
+            time.sleep(type_delay)
 
     def get_content(self) -> str:
         return self.execute_action(Action.GET_ATTRIBUTE, presence_of_element_located, "value")

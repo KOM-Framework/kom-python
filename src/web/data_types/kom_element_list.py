@@ -18,7 +18,7 @@ class KOMElementList(KOMElementBase):
         return WaitElementsMixin(self, self.locator)
 
     def exists(self, wait_time: int = 0):
-        Log.info("Checking if '%s' list of elements exists" % self.name)
+        Log.debug("Checking if '%s' list of elements exists" % self.name)
         try:
             return self.find(wait_time)
         except (NoSuchElementException, TimeoutException):
@@ -33,7 +33,7 @@ class KOMElementList(KOMElementBase):
         return [element.text for element in self.find()]
 
     def select_first_enabled(self):
-        Log.info("Selecting first enabled item in the list '%s'" % self.name)
+        Log.debug("Selecting first enabled item in the list '%s'" % self.name)
         elements = self.find()
         for item in elements:
             if item.is_enabled():

@@ -43,13 +43,13 @@ class Component(DriverAware):
         return WaitElementMixin(self, self.locator)
 
     def exists(self, wait_time: int = 0) -> bool:
-        Log.info("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
+        Log.debug("Frame '%s' existence verification. Wait time = %s" % (self.frame_name, str(wait_time)))
         if self.__ancestor.get_driver():
             try:
                 self.wait_for.visibility_of_element_located(wait_time)
                 return True
             except (NoSuchElementException, TimeoutException):
-                Log.info("Frame '%s' was not found" % self.frame_name)
+                Log.debug("Frame '%s' was not found" % self.frame_name)
         return False
 
     @abstractmethod
@@ -61,7 +61,7 @@ class Component(DriverAware):
 
     def open(self):
         if not self.exists():
-            Log.info("Open %s web frame" % self.frame_name)
+            Log.debug("Open %s web frame" % self.frame_name)
             self.open_actions()
             assert self.exists(page_load_time), "Frame %s cannot be found" % self.frame_name
         if "setup_frame" in dir(self):

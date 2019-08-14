@@ -69,7 +69,7 @@ class TestRailHelper:
             else:
                 return None
         self.update_run_description(run_id, self.get_test_rail_run_description())
-        Log.info('TestRail run ID: "%s"' % run_id)
+        Log.debug('TestRail run ID: "%s"' % run_id)
         return self.service.get_run(run_id)
 
     def get_test_ids(self, test_case):

@@ -34,7 +34,7 @@ class KOMElement(KOMElementBase):
         return ActionChainsMixin(self.ancestor, self.wait_for.presence_of_element_located(), self.name)
 
     def exists(self, wait_time: int = 0) -> bool:
-        Log.info("Checking if '%s' element exists" % self.name)
+        Log.debug("Checking if '%s' element exists" % self.name)
         try:
             self.wait_for.presence_of_element_located(wait_time)
             return True
@@ -75,23 +75,23 @@ class KOMElement(KOMElementBase):
 
     # Native WebElement methods
     def click(self, element_condition: expected_conditions = element_to_be_clickable):
-        Log.info('Clicking on the "%s" "%s"' % (self.name, self.type))
+        Log.debug('Clicking on the "%s" "%s"' % (self.name, self.type))
         self.execute_action(Action.CLICK, element_condition)
 
     def get_attribute(self, name: str):
-        Log.info('Getting attribute value from "%s" "%s"' % (self.name, self.type))
+        Log.debug('Getting attribute value from "%s" "%s"' % (self.name, self.type))
         return self.execute_action(Action.GET_ATTRIBUTE, presence_of_element_located, name)
 
     @property
     def text(self) -> str:
-        Log.info('Getting text from "%s" "%s"' % (self.name, self.type))
+        Log.debug('Getting text from "%s" "%s"' % (self.name, self.type))
         return self.execute_action(Action.TEXT)
 
     def is_displayed(self) -> bool:
         return self.execute_action(Action.IS_DISPLAYED)
 
     def type_keys(self, key):
-        Log.info('Typing keys into "%s" "%s"' % (self.name, self.type))
+        Log.debug('Typing keys into "%s" "%s"' % (self.name, self.type))
         self.execute_action(Action.SEND_KEYS, presence_of_element_located, key)
 
     def is_enabled(self) -> bool:

@@ -53,16 +53,16 @@ class Browser(DriverAware, ABC):
         return JSBrowserMixin(self.get_driver())
 
     def get(self, url: str, extensions: list = ()):
-        Log.info("Opening %s url" % url)
+        Log.debug("Opening %s url" % url)
         if not self.get_driver():
-            Log.info("Creating an instance of a Browser.")
+            Log.debug("Creating an instance of a Browser.")
             for func in self.__before_instance:
                 func()
             DriverManager.create_session(self, extensions)
         self.get_driver().get(url)
 
     def refresh(self):
-        Log.info("Refreshing the browser")
+        Log.debug("Refreshing the browser")
         self.get_driver().refresh()
         self.wait_for.page_is_loaded()
 
@@ -80,7 +80,7 @@ class Browser(DriverAware, ABC):
 
     def quit(self):
         if self.get_driver():
-            Log.info("Closing the browser")
+            Log.debug("Closing the browser")
             try:
                 self.get_driver().quit()
             except Exception as e:
@@ -92,7 +92,7 @@ class Browser(DriverAware, ABC):
                     func()
 
     def get_browser_log(self):
-        Log.info("Getting browser log")
+        Log.debug("Getting browser log")
         logs = self.get_driver().get_log('browser')
         list_logs = list()
         for log_entry in logs:

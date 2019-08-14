@@ -24,31 +24,44 @@ def singleton(class_):
 
 class Log:
 
-    log_entries = list()
-
-    def __init__(self, folder=None):
-        if folder:
-            datetime_format = "%Y%m%d-%H%M%S"
-            filename = os.path.join(folder, datetime.fromtimestamp(time.time()).strftime(datetime_format) + '.log')
-            file_handler = logging.FileHandler(filename)
-            file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s\t %(message)s"))
-            logging.getLogger().addHandler(file_handler)
+    filename = None
+    logger = logging.getLogger("KOM")
 
     @classmethod
-    def append_log(cls, message):
-        cls.log_entries.append("%s - %s" % (str(datetime.now()), message))
+    def get_logger(cls):
+        if len(cls.logger.handlers) == 0:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+            handler.setLevel(logging.DEBUG)
+            cls.logger.addHandler(handler)
+            cls.logger.setLevel(logging.DEBUG)
+
+            cls.filename = os.path.join(os.path.join(os.getcwd(), f"test{os.sep}logs{os.sep}"),
+                                        datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S") + '.log')
+            if not os.path.exists(os.path.dirname(cls.filename)):
+                os.makedirs(os.path.dirname(cls.filename))
+            fh = logging.FileHandler(cls.filename)
+            fh.setLevel(logging.DEBUG)
+            formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
+            fh.setFormatter(formatter)
+            cls.logger.addHandler(fh)
+        return cls.logger
 
     @classmethod
     def info(cls, message):
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
-        cls.append_log(message)
-        logging.info(message)
+        cls.get_logger().info(message)
+
+    @classmethod
+    def debug(cls, message):
+        cls.get_logger().debug(message)
 
     @classmethod
     def error(cls, message):
-        logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(message)s')
-        cls.append_log(message)
-        logging.error(message)
+        cls.get_logger().error(message)
+
+    @classmethod
+    def warning(cls, message):
+        cls.get_logger().warning(message)
 
 
 class JSONReader:

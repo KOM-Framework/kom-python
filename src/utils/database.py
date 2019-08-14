@@ -10,7 +10,7 @@ class MySql:
 
     @staticmethod
     def execute_query(environment_configuration, query, wait_time=0):
-        Log.info('Sending "%s" query to the "%s" database' % (query, environment_configuration['database']))
+        Log.debug('Sending "%s" query to the "%s" database' % (query, environment_configuration['database']))
         start_time = datetime.now()
         rtn = []
         while True:
@@ -22,7 +22,7 @@ class MySql:
                 break
             conn.close()
             time.sleep(0.1)
-        Log.info("Execution time = %s" % str(datetime.now() - start_time))
+        Log.debug("Execution time = %s" % str(datetime.now() - start_time))
         while row:
             rtn.append(row)
             row = cursor.fetchone()
@@ -36,7 +36,7 @@ class MySql:
 
     @staticmethod
     def bulk_insert(environment_configuration, queries):
-        Log.info('Using bulk insert into the database')
+        Log.debug('Using bulk insert into the database')
         out = list()
         conn = connect(user=environment_configuration['user'], password=environment_configuration['password'], host=environment_configuration['server'], database=environment_configuration['database'])
         cursor = conn.cursor()
@@ -72,10 +72,10 @@ class MySQLTable:
         query = "SELECT %s FROM %s WHERE %s" % (column_name, self.table_name, condition)
         value = MySql.execute_query(self.environment, query, wait_time)
         if not value:
-            Log.info("SQl result is None")
+            Log.debug("SQl result is None")
             return None
         else:
-            Log.info("SQl result: %s" % value[0][0])
+            Log.debug("SQl result: %s" % value[0][0])
             return value[0][0]
 
     def select_values(self, column_name, condition=None, wait_time=1):
@@ -85,7 +85,7 @@ class MySQLTable:
         values = MySql.execute_query(self.environment, query, wait_time)
         if values:
             values = [i[0] for i in values]
-        Log.info("SQl result: %s" % values)
+        Log.debug("SQl result: %s" % values)
         return values
 
     def prepare_queries_for_insert_from_dict(self, data):

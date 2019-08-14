@@ -12,8 +12,7 @@ class TestRailHelper:
         self.service = TestRailService(base_url, user, password)
         self.project_id = project_id
 
-    def get_plan_id(self):
-        plan_name = f'Nightly Execution Plan for {datetime.now().strftime("%Y-%m-%d")}'
+    def get_plan_id(self, plan_name=f'Nightly Execution Plan for {datetime.now().strftime("%Y-%m-%d")}'):
         plans = self.service.get_opened_plans(self.project_id)
         plan_names = [plan['name'] for plan in plans]
         if plan_name in plan_names:

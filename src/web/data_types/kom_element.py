@@ -85,7 +85,9 @@ class KOMElement(KOMElementBase):
     @property
     def text(self) -> str:
         Log.debug('Getting text from "%s" "%s"' % (self.name, self.type))
-        return self.execute_action(Action.TEXT)
+        text = self.execute_action(Action.TEXT)
+        Log.debug('Text from "%s" "%s" is "%s"' % (self.name, self.type, text))
+        return text
 
     def is_displayed(self) -> bool:
         return self.execute_action(Action.IS_DISPLAYED)

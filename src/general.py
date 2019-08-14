@@ -79,7 +79,7 @@ class JSONReader:
             return out_data
 
     @staticmethod
-    def get_data(section, key=None, index=0, file="../../thirdshelf/resources/Config.json"):
+    def get_data(section, key=None, index=0, file=""):
         out = JSONReader.get_data_from_json(file, section, index, key)
         if key == 'logo_image':
             root = os.path.dirname(__file__)

@@ -1,5 +1,3 @@
-from enum import Enum
-
 from kom_framework.utils.testrail.api_client import APIClient
 
 

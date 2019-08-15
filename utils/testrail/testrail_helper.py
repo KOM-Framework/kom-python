@@ -49,27 +49,18 @@ class TestRailHelper:
                 return run['id']
         return None
 
-    def get_test_rail_run(self):
-        run_id = os.environ.get('test_rail_run_id', None)
-        if not run_id:
-            suite_id = os.environ.get('test_rail_suite_id', None)
-            if suite_id:
-                cases_list_ids = [case['id'] for case in self.service.get_cases(self.project_id, suite_id)
-                                  if case['custom_execution_type'] == 2]
-                suite_name = f'{self.service.get_suite(suite_id)["name"]}' \
-                    f' - {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
-                assign_to_id = self.service.get_user_by_email(email='oleh@thirdshelf.com')['id']
-                plan_id = self.get_plan_id()
-                plan_entry = self.service.add_plan_entry(plan_id, suite_id, suite_name,
-                                                         self.get_test_rail_run_description(), assign_to_id,
-                                                         False, cases_list_ids)
-                run_id = str(self.get_run_id_by_name(suite_name, plan_entry))
-                os.environ['test_rail_run_id'] = run_id  # For parallel execution
-            else:
-                return None
-        self.update_run_description(run_id, self.get_test_rail_run_description())
-        Log.debug('TestRail run ID: "%s"' % run_id)
-        return self.service.get_run(run_id)
+    def add_test_run_into_test_plan(self, suite_id, suite_name, user_email, config_ids):
+        cases_list_ids = [case['id'] for case in self.service.get_cases(self.project_id, suite_id)
+                          if case['custom_execution_type'] == 2]
+
+        assign_to_id = self.service.get_user_by_email(email=user_email)['id']
+        plan_id = self.get_plan_id()
+        plan_entry = self.service.add_plan_entry(plan_id, suite_id, suite_name,
+                                                 self.get_test_rail_run_description(), assign_to_id,
+                                                 False, cases_list_ids, config_ids)
+        run_id = str(self.get_run_id_by_name(suite_name, plan_entry))
+        os.environ['test_rail_run_id'] = run_id  # For parallel execution
+        return run_id
 
     def get_test_ids(self, test_case):
         marker = test_case.get_closest_marker('test_id')
@@ -91,10 +82,7 @@ class TestRailHelper:
         elif str_result == 'pending':
             return TestCaseStatuses.PENDING
 
-    def send_logs_to_test_rail(self, run_id, call, item, outcome):
-        comment = '\n'.join(Log.log_entries)
-        if call.excinfo:
-            comment += '\n'+str(item.repr_failure(call.excinfo))
+    def send_logs_to_test_rail(self, run_id, item, outcome):
         test_case_ids = self.get_test_ids(item)
         if test_case_ids:
             for test_id in test_case_ids:
@@ -104,7 +92,7 @@ class TestRailHelper:
                         if item.execution_count > 1 and actual_result == 'passed':
                             actual_result = 'flaky'
                     self.service.add_result_for_case(run_id, test_id,
-                                                     self.get_result_from_string(actual_result), comment)
+                                                     self.get_result_from_string(actual_result))
                 except APIError:
                     continue
 
@@ -118,3 +106,16 @@ class TestRailHelper:
                  if test_id not in test_cases_ids]
             else:
                 items.remove(test_case)
+
+    def get_config_ids(self, configs: dict):
+        out = list()
+        config_groups = self.service.get_configs(self.project_id)
+        for k, v in configs.items():
+            for group in config_groups:
+                if group['name'] == k:
+                    for config in group['configs']:
+                        if config['name'] == v:
+                            out.append(config['id'])
+                            break
+                    break
+        return out

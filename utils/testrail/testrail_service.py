@@ -116,7 +116,7 @@ class TestRailService(APIClient):
         response = self.send_get(f'get_cases/{project_id}&suite_id={suite_id}')
         return response
 
-    def get_configs(self, run: dict):
+    def get_configs_names(self, run: dict):
         config_response = self.send_get(f'get_configs/{run["project_id"]}')
         out = dict()
         for config_run_id in run['config_ids']:
@@ -126,6 +126,9 @@ class TestRailService(APIClient):
                         out[config_group['name']] = config['name']
                         break
         return out
+
+    def get_configs(self, project_id: str):
+        return self.send_get(f'get_configs/{project_id}')
 
     def get_milestones(self, project_id: str):
         response = self.send_get(f'get_milestones/{project_id}')

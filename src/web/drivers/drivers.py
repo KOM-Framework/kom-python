@@ -23,7 +23,7 @@ class Driver:
 
     def get_remove_session(self):
         driver_type = self.get_driver_type(capabilities['browserName'])
-        driver_capabilities = {**driver_type.get_capabilities(self.extensions), **capabilities}
+        driver_capabilities = driver_type.get_capabilities(self.extensions)
         driver = webdriver.Remote(
             command_executor=self.hub_link,
             desired_capabilities=driver_capabilities)
@@ -31,7 +31,7 @@ class Driver:
 
     def get_local_session(self):
         driver_type = self.get_driver_type(capabilities['browserName'])
-        driver_capabilities = {**driver_type.get_capabilities(self.extensions), **capabilities}
+        driver_capabilities = driver_type.get_capabilities(self.extensions)
         return driver_type.get_session(driver_capabilities)
 
     def create_session(self):
@@ -78,16 +78,12 @@ class FireFox(Driver):
     @classmethod
     def get_capabilities(cls, extensions=None):
         firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
-        firefox_capabilities['loggingPrefs'] = {'browser': 'ALL'}
+        firefox_capabilities["marionette"] = False
         return firefox_capabilities
 
     @classmethod
-    def get_session(cls):
+    def get_session(cls, driver_capabilities):
         from webdriver_manager.firefox import GeckoDriverManager
-        driver_capabilities = {**cls.get_capabilities(), **capabilities}
-        driver_capabilities.pop('browserSize')
-        driver_capabilities.pop('version')
-        driver_capabilities.pop('platform')
         if 'enableVNC' in driver_capabilities:
             driver_capabilities.pop('enableVNC')
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),

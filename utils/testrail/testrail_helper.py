@@ -23,10 +23,9 @@ class TestRailHelper:
             return created_plan['id']
 
     def get_test_rail_run_description(self):
-        description_start_time = "Execution start time - '%s' \n" % datetime.now()
-        description_allure_link = 'Allure results link - %sallure/' % os.environ.get(
-            'BUILD_URL')
-        description = description_start_time + "\n" + description_allure_link
+        description_start_time = f'Execution start time - "{datetime.now()}" \n'
+        description_allure_link = f'Allure results link - {os.environ.get("ALLURE_REPORT_URL")}'
+        description = f'{description_start_time}\n{description_allure_link}'
         return description
 
     def update_run_description(self, run_id, description):
@@ -92,12 +91,14 @@ class TestRailHelper:
         if test_case_ids:
             for test_id in test_case_ids:
                 try:
-                    actual_result = outcome.get_result().outcome
+                    actual_result = outcome.get_result()
+                    actual_outcome = actual_result.outcome
                     if hasattr(item, 'execution_count'):
-                        if item.execution_count > 1 and actual_result == 'passed':
-                            actual_result = 'flaky'
-                    self.service.add_result_for_case(run_id, test_id,
-                                                     self.get_result_from_string(actual_result))
+                        if item.execution_count > 1 and actual_outcome == 'passed':
+                            actual_outcome = 'flaky'
+                    self.service.add_result_for_case(run_id=run_id, case_id=test_id,
+                                                     status=self.get_result_from_string(actual_outcome),
+                                                     comment=actual_result.capstderr)
                 except APIError:
                     continue
 

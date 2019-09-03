@@ -9,6 +9,7 @@ from kom_framework.src.web.drivers.driver_manager import DriverManager
 from kom_framework.src.web.mixins.javascript import JSBrowserMixin
 from kom_framework.src.web.mixins.wait import WaitBrowserMixin
 from kom_framework.src.web.support.web import DriverAware
+from kom_framework import kom_config
 from ..general import Log
 
 
@@ -55,7 +56,7 @@ class Browser(DriverAware, ABC):
     def get(self, url: str, extensions: list = ()):
         Log.debug("Opening %s url" % url)
         if not self.get_driver():
-            Log.debug("Creating an instance of a Browser.")
+            Log.debug(f"Creating an instance of a {kom_config['driver_configurations']['browserName']} Browser.")
             for func in self.__before_instance:
                 func()
             DriverManager.create_session(self, extensions)

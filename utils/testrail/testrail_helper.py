@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from kom_framework.src.general import Log
 from kom_framework.utils.testrail.api_client import APIError
 from kom_framework.utils.testrail.testrail_service import TestRailService, TestCaseStatuses
 
@@ -99,7 +100,8 @@ class TestRailHelper:
                     self.service.add_result_for_case(run_id=run_id, case_id=test_id,
                                                      status=self.get_result_from_string(actual_outcome),
                                                      comment=actual_result.capstderr)
-                except APIError:
+                except APIError as e:
+                    Log.info(e)
                     continue
 
     def filter_collected_tests_by_run_id(self, run_id, items):

@@ -16,6 +16,8 @@ class Driver:
     def get_driver_type(browser_name):
         if browser_name == 'firefox':
             return FireFox
+        elif browser_name == 'opera':
+            return Opera
         elif browser_name == 'internet explorer':
             return InternetExplorer
         else:
@@ -105,3 +107,14 @@ class InternetExplorer(Driver):
         driver = webdriver.Ie(executable_path=IEDriverManager(version="3.9.0", os_type="win32").install(),
                               capabilities=driver_capabilities)
         return driver
+
+
+class Opera(Driver):
+
+    @classmethod
+    def get_capabilities(cls, extensions=None):
+        return DesiredCapabilities.OPERA
+
+    @classmethod
+    def get_session(cls, driver_capabilities):
+        raise Exception('Not IMPLEMENTED FOR LOCAL EXECUTION')

@@ -32,6 +32,14 @@ class KOMElementList(KOMElementBase):
     def elements_texts(self):
         return [element.text for element in self.find()]
 
+    def select_by_text(self, text: str):
+        elements = self.find()
+        for element in elements:
+            element_text = element.text
+            if element_text == text:
+                element.click()
+                break
+
     def select_first_enabled(self):
         Log.debug("Selecting first enabled item in the list '%s'" % self.name)
         elements = self.find()

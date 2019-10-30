@@ -22,20 +22,20 @@ class Input(KOMElement):
             self.message = AnyType(message_locator)
 
     def clear(self):
-        Log.debug("Clearing %s input field" % self.name)
+        Log.info("Clearing %s input field" % self.name)
         self.execute_action(Action.CLEAR)
 
     def send_keys(self, value: str):
-        Log.debug("Sending %s keys to the '%s' input field" % (value, self.name))
+        Log.info("Sending %s keys to the '%s' input field" % (value, self.name))
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, value)
 
     def clear_and_send_keys(self, value: str):
-        Log.debug("Clearing and sending %s keys to the '%s' input field" % (value, self.name))
+        Log.info("Clearing and sending %s keys to the '%s' input field" % (value, self.name))
         self.clear()
         self.execute_action(Action.SEND_KEYS, expected_conditions.element_to_be_clickable, value)
 
     def type_keys(self, value: str, type_delay: float = 0.1):
-        Log.debug("Typing %s keys to the '%s' input field" % (value, self.name))
+        Log.info("Typing %s keys to the '%s' input field" % (value, self.name))
         element = self.wait_for.element_to_be_clickable()
         for ch in value:
             element.send_keys(ch)
@@ -104,13 +104,13 @@ class CheckBox(KOMElement):
         self.checked_value = checked_value
 
     def check(self, value: bool = True):
-        Log.debug("Checking the '%s' check box" % self.name)
+        Log.info("Checking the '%s' check box" % self.name)
         actual_status = self.get_attribute(self.attribute)
         if (value and actual_status != self.checked_value) or (not value and actual_status == self.checked_value):
             self.click()
 
     def is_selected(self) -> bool:
-        Log.debug("Check is the '%s' check box is selected" % self.name)
+        Log.info("Check is the '%s' check box is selected" % self.name)
         actual_status = self.get_attribute(self.attribute)
         if actual_status == self.checked_value:
             return True
@@ -131,7 +131,7 @@ class MultiSelectTree(KOMElement):
         self._delete_item = delete_item
 
     def add_item(self, option_name):
-        Log.debug("Adding %s item to the %s" % (option_name, self.name))
+        Log.info("Adding %s item to the %s" % (option_name, self.name))
         field = self.wait_for.presence_of_element_located()
         field.find_element(self._select_area).click()
         options = field.find_elements(self._option_list)
@@ -142,7 +142,7 @@ class MultiSelectTree(KOMElement):
         field.find_element(self._select_area).click()
 
     def get_selected_items(self):
-        Log.debug("Getting all the added items to the %s" % self.name)
+        Log.info("Getting all the added items to the %s" % self.name)
         field = self.wait_for.presence_of_element_located()
         time.sleep(1)
         items = field.find_elements(self._added_item)
@@ -150,7 +150,7 @@ class MultiSelectTree(KOMElement):
         return out
 
     def delete_item(self, item_name):
-        Log.debug("Deleting %s item to the %s" % (item_name, self.name))
+        Log.info("Deleting %s item to the %s" % (item_name, self.name))
         field = self.wait_for.presence_of_element_located()
         time.sleep(1)
         item_index = self.get_selected_items().index(item_name)
@@ -164,7 +164,7 @@ class IFrame(KOMElement):
     """
 
     def switch_to(self):
-        Log.debug("Switching to iFrame: '%s'" % self.name)
+        Log.info("Switching to iFrame: '%s'" % self.name)
         self.ancestor.switch_to.frame(self.find())
 
 
@@ -181,7 +181,7 @@ class Spinner(KOMElement):
     """
 
     def wait_for_appear_and_disappear(self, wait_time: int = 30):
-        Log.debug('Wait for %s spinner to appear and disappear' % self.name)
+        Log.info('Wait for %s spinner to appear and disappear' % self.name)
         self.wait_for.visibility_of_element_located(wait_time)
         return self.wait_for.invisibility_of_element_located(wait_time)
 
@@ -217,19 +217,19 @@ class SelectExtended(KOMElement):
             self.message = TextBlock(message_locator)
 
     def select_item_by_value(self, value: str):
-        Log.debug('Selecting %s value in the %s select list' % (value, self.name))
+        Log.info('Selecting %s value in the %s select list' % (value, self.name))
         Select(self.wait_for.presence_of_element_located()).select_by_value(value)
 
     def select_item_by_visible_text(self, value: str):
-        Log.debug('Selecting %s text in the %s select list' % (value, self.name))
+        Log.info('Selecting %s text in the %s select list' % (value, self.name))
         Select(self.wait_for.presence_of_element_located()).select_by_visible_text(value)
 
     def first_selected_option(self):
-        Log.debug('Get first selected option in the %s select list' % self.name)
+        Log.info('Get first selected option in the %s select list' % self.name)
         return Select(self.wait_for.presence_of_element_located()).first_selected_option
 
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int = 0.5):
-        Log.debug("Selecting %s in the '%s' select list" % (text, self.name))
+        Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
             self.click()
             time.sleep(delay_for_options_to_appear_time)
@@ -242,7 +242,7 @@ class SelectExtended(KOMElement):
             self.execute_action(Action.CLICK)
 
     def get_options_list(self, delay_for_options_to_appear_time: int = 0.5):
-        Log.debug("Getting all options list from the '%s' select list" % self.name)
+        Log.info("Getting all options list from the '%s' select list" % self.name)
         out = list()
         self.execute_action(Action.CLICK)
         time.sleep(delay_for_options_to_appear_time)
@@ -253,7 +253,7 @@ class SelectExtended(KOMElement):
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
                                          delay_for_options_to_appear_time: int = 0.5):
-        Log.debug("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
+        Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self.name))
         self.click()
         time.sleep(delay_for_options_to_appear_time)

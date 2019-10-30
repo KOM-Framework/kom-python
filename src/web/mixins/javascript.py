@@ -20,7 +20,7 @@ class JSElementMixin:
         return self.driver.execute_script(script, self.element, *args)
 
     def inject_waiter(self):
-        Log.debug("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.element_name)
+        Log.info("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.element_name)
         self.execute(js_waiter)
 
     def wait_until_http_requests_are_finished(self, wait_time: int=http_request_wait_time):
@@ -34,11 +34,11 @@ class JSElementMixin:
             self.execute("window.openHTTPs=0")
 
     def scroll_into_view(self):
-        Log.debug("Scrolling to '%s' element by JavaScript" % self.element_name)
+        Log.info("Scrolling to '%s' element by JavaScript" % self.element_name)
         self.execute("arguments[0].scrollIntoView();")
 
     def click(self):
-        Log.debug("Clicking on '%s' element by JavaScript" % self.element_name)
+        Log.info("Clicking on '%s' element by JavaScript" % self.element_name)
         self.execute("arguments[0].click();")
 
 

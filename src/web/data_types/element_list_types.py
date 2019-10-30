@@ -19,14 +19,14 @@ class Menu(KOMElementList):
     """
 
     def select_menu_section_by_name(self, section_name: str) -> bool:
-        Log.debug("Selecting '%s' section in '%s' menu" % (section_name, self.name))
+        Log.info("Selecting '%s' section in '%s' menu" % (section_name, self.name))
         sections = self.wait_for.presence_of_all_elements_located()
         for section in sections:
             if section.text == section_name:
                 section.click()
-                Log.debug("Selected '%s' section in '%s' menu" % (section_name, self.name))
+                Log.info("Selected '%s' section in '%s' menu" % (section_name, self.name))
                 return True
-        Log.debug("Selecting '%s' section in '%s' menu failed" % (section_name, self.name))
+        Log.info("Selecting '%s' section in '%s' menu failed" % (section_name, self.name))
         return False
 
 

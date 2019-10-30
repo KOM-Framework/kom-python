@@ -41,14 +41,14 @@ class Table(Generic[T], KOMElementList):
         return out
 
     def get_row_by_column_value(self, column_name: str, value: str, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content()
             for row in content:
                 if getattr(row, column_name).exists():
                     row_value = getattr(row, column_name).text
-                    Log.debug("Actual text: %s" % row_value)
+                    Log.info("Actual text: %s" % row_value)
                     if row_value == value:
                         return row
             if self.next_page():
@@ -58,14 +58,14 @@ class Table(Generic[T], KOMElementList):
         return None
 
     def get_row_by_column_text_content(self, column_name: str, value: str, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, value, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content(wait_time=wait_time)
             for row in content:
                 if getattr(row, column_name).exists():
                     row_value = getattr(row, column_name).get_attribute('textContent')
-                    Log.debug("Actual text: %s" % row_value)
+                    Log.info("Actual text: %s" % row_value)
                     if row_value == value:
                         return row
             if self.next_page():
@@ -75,7 +75,7 @@ class Table(Generic[T], KOMElementList):
         return None
 
     def get_column_values(self, column_name: str, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting column %s values from the table: %s" % (column_name, self.name))
+        Log.info("Getting column %s values from the table: %s" % (column_name, self.name))
         column = []
         end_time = time.time() + wait_time
         while True:
@@ -89,7 +89,7 @@ class Table(Generic[T], KOMElementList):
         return None
 
     def get_row_by_column_pattern(self, column_name: str, pattern: str, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self.name))
+        Log.info("Getting row by column %s with pattern %s from the table: %s" % (column_name, pattern, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content()
@@ -105,19 +105,19 @@ class Table(Generic[T], KOMElementList):
         return None
 
     def get_row_by_index(self, index: int, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting row by index %s from the table: %s" % (index, self.name))
+        Log.info("Getting row by index %s from the table: %s" % (index, self.name))
         rows = self.get_content(wait_time=wait_time)
         return rows[index]
 
     def get_row_index_by_column_values(self, column_name: str, values: list, wait_time: int = element_load_time) -> T:
-        Log.debug("Getting row by column %s with value %s from the table: %s" % (column_name, values, self.name))
+        Log.info("Getting row by column %s with value %s from the table: %s" % (column_name, values, self.name))
         end_time = time.time() + wait_time
         while True:
             content = self.get_content()
             for i in range(len(content)):
                 if getattr(content[i], column_name).exists():
                     row_value = getattr(content[i], column_name).text
-                    Log.debug("Actual text: %s" % row_value)
+                    Log.info("Actual text: %s" % row_value)
                     if row_value in values:
                         return i
             if self.next_page():
@@ -128,7 +128,7 @@ class Table(Generic[T], KOMElementList):
 
     def get_rows_by_attribute_value(self, column_name: str, attribute_name: str, attribute_value: str,
                                     wait_time: int = element_load_time) -> T:
-        Log.debug("Getting rows by column %s by attribute %s and value %s from the table: %s"
+        Log.info("Getting rows by column %s by attribute %s and value %s from the table: %s"
                  % (column_name, attribute_name, attribute_value, self.name))
         out = list()
         end_time = time.time() + wait_time

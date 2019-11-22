@@ -265,3 +265,17 @@ class SelectExtended(KOMElement):
 
     def get_message(self) -> str:
         return self.message.text
+
+    def get_option_attribute_value_by_text(self, option_text: str, attribute_name: str,
+                                           delay_for_options_to_appear_time: int = 0.5):
+        Log.info(f"Getting options's {option_text} attribute {attribute_name} value in the '%s' select list")
+        if self.extent_list_by_click_on_field:
+            self.click()
+            time.sleep(delay_for_options_to_appear_time)
+        options = self.options_list.wait_for.presence_of_all_elements_located()
+        for option in options:
+            if option.text == option_text:
+                actual_value = option.get_attribute(attribute_name)
+                return actual_value
+        if self.hide_list_by_click_on_field:
+            self.execute_action(Action.CLICK)

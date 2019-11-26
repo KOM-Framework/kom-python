@@ -104,7 +104,7 @@ class TestRailService(APIClient):
         return self.send_post(f"delete_run/{run_id}", data={})
 
     def get_attachments_for_test(self, test_id):
-        response = self.client.send_get(f'get_attachments_for_test/{test_id}')
+        response = self.send_get(f'get_attachments_for_test/{test_id}')
         return response
 
     def get_case(self, case_id: str):
@@ -140,6 +140,13 @@ class TestRailService(APIClient):
         response = self.send_get(f'/get_plan/{plan_id}')
         return response
 
+    def get_plans(self, project_id: str, filters: str = None):
+        url = f'/get_plans/{project_id}'
+        if filters:
+            url += f'&{filters}'
+        response = self.send_get(url)
+        return response
+
     def get_plan_entry_by_run_id(self, plan_id: str, run_id: str):
         plan_context = self.get_plan(plan_id)
         for entry in plan_context['entries']:
@@ -154,6 +161,13 @@ class TestRailService(APIClient):
 
     def get_run(self, run_id: str):
         response = self.send_get(f'get_run/{run_id}')
+        return response
+
+    def get_runs(self, project_id: str, filters: str):
+        url = f'get_runs/{project_id}'
+        if filters:
+            url += f'&{filters}'
+        response = self.send_get(url)
         return response
 
     def get_suite(self, suite_id: str):
@@ -184,4 +198,8 @@ class TestRailService(APIClient):
             'description': description
         }
         response = self.send_post(f'/update_run/{run_id}', data=data)
+        return response
+
+    def close_plan(self, plan_id: str):
+        response = self.send_post(f'/close_plan/{plan_id}', data={})
         return response

@@ -23,7 +23,8 @@ class TestRailHelper:
             created_plan = self.service.add_plan(self.project_id, plan_name, '', '', [])
             return created_plan['id']
 
-    def get_test_rail_run_description(self):
+    @staticmethod
+    def get_test_rail_run_description():
         description_start_time = f'Execution start time - "{datetime.now()}" \n'
         description_allure_link = f'Allure results link - {os.environ.get("ALLURE_REPORT_URL")}'
         description = f'{description_start_time}\n{description_allure_link}'
@@ -127,3 +128,17 @@ class TestRailHelper:
                             break
                     break
         return out
+
+    def get_plans(self, filters: str = None):
+        response = self.service.get_plans(self.project_id, filters)
+        return response
+
+    def close_plan(self, plan_id: str):
+        return self.service.close_plan(plan_id)
+
+    def get_runs(self, filters: str = None):
+        response = self.service.get_runs(self.project_id, filters)
+        return response
+
+    def close_run(self, run_id: str):
+        return self.service.close_run(run_id)

@@ -89,3 +89,7 @@ class JSBrowserMixin:
     def clear_local_storage(self):
         script = 'window.localStorage.clear();'
         return self.execute_script(script)
+
+    def remove_item_from_local_storage(self, item: str):
+        script = f'window.localStorage.removeItem("{item}");'
+        return self.execute_script(script)

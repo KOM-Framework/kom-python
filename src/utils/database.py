@@ -88,6 +88,14 @@ class MySQLTable:
         Log.info("SQl result: %s" % values)
         return values
 
+    def select_values_by_a_custom_condition(self, column_name, condition, wait_time=1):
+        query = "SELECT %s FROM %s %s" % (column_name, self.table_name, condition)
+        values = MySql.execute_query(self.environment, query, wait_time)
+        if values:
+            values = [i[0] for i in values]
+        Log.info("SQl result: %s" % values)
+        return values
+
     def prepare_queries_for_insert_from_dict(self, data):
         out_queries = list()
         for row in data:

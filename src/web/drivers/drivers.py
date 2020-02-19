@@ -63,6 +63,8 @@ class Chrome(Driver):
                 'password_manager_enabled': False
             }
         })
+        if 'mobile_emulation' in capabilities.keys() and capabilities['mobile_emulation']:
+            chrome_options.add_experimental_option('mobileEmulation', capabilities['mobile_emulation'])
         chrome_capabilities = chrome_options.to_capabilities()
         chrome_capabilities['loggingPrefs'] = {'browser': 'ALL'}
         return chrome_capabilities

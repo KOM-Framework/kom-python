@@ -9,7 +9,8 @@
     "browserSize": "1920x1080",
     "browserName": "chrome",
     "platform": "ANY",
-    "version": ""
+    "version": "",
+    "mobile_emulation": {}
   },
 
   "remote_execution": "False",

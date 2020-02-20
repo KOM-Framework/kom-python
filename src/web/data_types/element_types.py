@@ -249,6 +249,7 @@ class SelectExtended(KOMElement):
         options = self.options_list.wait_for.presence_of_all_elements_located()
         for option in options:
             out.append(option.text)
+        self.execute_action(Action.CLICK)
         return out
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,

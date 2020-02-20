@@ -37,6 +37,9 @@ class JSElementMixin:
         Log.info("Scrolling to '%s' element by JavaScript" % self.element_name)
         self.execute("arguments[0].scrollIntoView();")
 
+    def scroll_by(self, x: int, y: int):
+        self.execute(f"window.scrollBy({x}, {y});")
+
     def click(self):
         Log.info("Clicking on '%s' element by JavaScript" % self.element_name)
         self.execute("arguments[0].click();")

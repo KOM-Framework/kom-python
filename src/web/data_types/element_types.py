@@ -1,5 +1,6 @@
 import time
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.select import Select
@@ -216,6 +217,27 @@ class SelectExtended(KOMElement):
         if message_locator:
             self.message = TextBlock(message_locator)
 
+    def get_options(self):
+        try:
+            return self.options_list.wait_for.presence_of_all_elements_located(0)
+        except TimeoutException:
+            return []
+
+    def is_expanded(self):
+        if self.get_options():
+            return True
+        return False
+
+    def expand(self, delay_for_options_to_appear_time: int = 0.5):
+        if not self.is_expanded():
+            self.click()
+            time.sleep(delay_for_options_to_appear_time)
+
+    def collapse(self, delay_for_options_to_disappear_time: int = 0.5):
+        if self.is_expanded():
+            self.click()
+            time.sleep(delay_for_options_to_disappear_time)
+
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
         Select(self.wait_for.presence_of_element_located()).select_by_value(value)
@@ -231,34 +253,31 @@ class SelectExtended(KOMElement):
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int = 0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))
         if self.extent_list_by_click_on_field:
-            self.click()
-            time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for.presence_of_all_elements_located()
+            self.expand(delay_for_options_to_appear_time)
+        options = self.get_options()
         for option in options:
             if option.text == text:
                 option.click()
                 break
         if self.hide_list_by_click_on_field:
-            self.execute_action(Action.CLICK)
+            self.collapse(delay_for_options_to_appear_time)
 
     def get_options_list(self, delay_for_options_to_appear_time: int = 0.5):
         Log.info("Getting all options list from the '%s' select list" % self.name)
         out = list()
-        self.execute_action(Action.CLICK)
-        time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for.presence_of_all_elements_located()
+        self.expand(delay_for_options_to_appear_time)
+        options = self.get_options()
         for option in options:
             out.append(option.text)
-        self.execute_action(Action.CLICK)
+        self.collapse(delay_for_options_to_appear_time)
         return out
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
                                          delay_for_options_to_appear_time: int = 0.5):
         Log.info("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
                  % (attribute_name, attribute_value, self.name))
-        self.click()
-        time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for.presence_of_all_elements_located()
+        self.expand(delay_for_options_to_appear_time)
+        options = self.get_options()
         for option in options:
             if option.get_attribute(attribute_name) == attribute_value:
                 option.click()
@@ -271,12 +290,11 @@ class SelectExtended(KOMElement):
                                            delay_for_options_to_appear_time: int = 0.5):
         Log.info(f"Getting options's {option_text} attribute {attribute_name} value in the '%s' select list")
         if self.extent_list_by_click_on_field:
-            self.click()
-            time.sleep(delay_for_options_to_appear_time)
-        options = self.options_list.wait_for.presence_of_all_elements_located()
+            self.expand(delay_for_options_to_appear_time)
+        options = self.get_options()
         for option in options:
             if option.text == option_text:
                 actual_value = option.get_attribute(attribute_name)
                 return actual_value
         if self.hide_list_by_click_on_field:
-            self.execute_action(Action.CLICK)
+            self.collapse(delay_for_options_to_appear_time)

@@ -269,7 +269,8 @@ class SelectExtended(KOMElement):
         options = self.get_options()
         for option in options:
             out.append(option.text)
-        self.collapse(delay_for_options_to_appear_time)
+        if self.hide_list_by_click_on_field:
+            self.collapse(delay_for_options_to_appear_time)
         return out
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,

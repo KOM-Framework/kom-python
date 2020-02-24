@@ -84,9 +84,8 @@ class Browser(DriverAware, ABC):
             Log.info("Closing the browser")
             try:
                 self.get_driver().quit()
-            except Exception as e:
-                Log.error("Can't quit driver")
-                Log.error(e)
+            except Exception:
+                pass
             finally:
                 DriverManager.destroy_session(self)
                 for func in self.__after_instance:

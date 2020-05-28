@@ -82,6 +82,10 @@ class KOMElement(KOMElementBase):
         Log.info('Getting attribute value from "%s" "%s"' % (self.name, self.type))
         return self.execute_action(Action.GET_ATTRIBUTE, presence_of_element_located, name)
 
+    def get_css_value(self, name: str):
+        Log.info('Getting attribute value from "%s" "%s" css property' % (self.name, self.type))
+        return self.execute_action(Action.VALUE_OF_CSS_PROPERTY, presence_of_element_located, name)
+
     @property
     def text(self) -> str:
         Log.info('Getting text from "%s" "%s"' % (self.name, self.type))

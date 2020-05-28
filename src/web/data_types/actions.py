@@ -17,3 +17,4 @@ class Action:
     SIZE = 'size'
     LOCATION = 'location'
     RECT = 'rect'
+    VALUE_OF_CSS_PROPERTY = 'value_of_css_property'

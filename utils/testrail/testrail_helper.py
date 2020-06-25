@@ -49,9 +49,7 @@ class TestRailHelper:
                 return run['id']
         return None
 
-    def add_test_run_into_test_plan(self, suite_id, suite_name, user_email, config_ids):
-        cases_list_ids = [case['id'] for case in self.service.get_cases(self.project_id, suite_id)
-                          if case['custom_execution_type'] == 2]
+    def add_test_run_into_test_plan(self, suite_id, cases_list_ids, suite_name, user_email, config_ids):
         runs = [
             {
                 "include_all": False,

@@ -117,3 +117,7 @@ class MySQLTable:
         queries = self.prepare_queries_for_insert_from_dict(data)
         ids = MySql.bulk_insert(self.environment, queries)
         return ids
+
+    def delete_all_data(self):
+        query = f'DELETE FROM {self.table_name}'
+        return MySql.execute_query(self.environment, query)

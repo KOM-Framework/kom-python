@@ -54,6 +54,7 @@ class Chrome(Driver):
     def get_capabilities(cls, extensions=None):
         from selenium.webdriver.chrome.webdriver import Options as ChromeOptions
         chrome_options = ChromeOptions()
+        chrome_options.add_argument('--allow-running-insecure-content')  # Move to a config?
         if extensions:
             for extension in extensions:
                 chrome_options.add_extension(extension)

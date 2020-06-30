@@ -24,7 +24,7 @@ class Table(Generic[T], KOMElementList):
             self.__next_page = Button(next_page)
 
     def next_page(self):
-        if '__next_page' in vars(self):
+        if '_Table__next_page' in vars(self).keys():
             if self.__next_page.exists():
                 self.__next_page.click()
                 return True

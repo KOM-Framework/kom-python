@@ -23,7 +23,7 @@ class JSElementMixin:
         Log.info("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.element_name)
         self.execute(js_waiter)
 
-    def wait_until_http_requests_are_finished(self, wait_time: int=http_request_wait_time):
+    def wait_until_http_requests_are_finished(self, wait_time: int = http_request_wait_time):
         try:
             end_time = time.time() + wait_time
             while True:
@@ -56,7 +56,7 @@ class JSBrowserMixin:
     def page_y_offset(self):
         return self.execute_script('return window.pageYOffset;')
 
-    def wait_while_scrolling(self, wait_time: int=5):
+    def wait_while_scrolling(self, wait_time: int = 5):
         end_time = time.time() + wait_time
         initial_pos = self.page_y_offset()
         time.sleep(0.1)
@@ -68,7 +68,7 @@ class JSBrowserMixin:
                 initial_pos = current_pos
                 time.sleep(0.1)
 
-    def scroll_down(self, pixels: int=300):
+    def scroll_down(self, pixels: int = 300):
         """
         Scroll the document down to the vertical position:
         :param pixels: The coordinate to scroll to, along the x-axis (horizontal), in pixels
@@ -78,7 +78,7 @@ class JSBrowserMixin:
         script = 'window.scrollTo(0, %s);' % str(current_position + pixels)
         return self.execute_script(script)
 
-    def scroll_up(self, pixels: int=300):
+    def scroll_up(self, pixels: int = 300):
         """
         Scroll the document up to the vertical position:
         :param pixels: The coordinate to scroll to, along the x-axis (horizontal), in pixels
@@ -95,4 +95,8 @@ class JSBrowserMixin:
 
     def remove_item_from_local_storage(self, item: str):
         script = f'window.localStorage.removeItem("{item}");'
+        return self.execute_script(script)
+
+    def get_local_storage_value_by_key(self, key: str):
+        script = f'return window.localStorage.getItem("{key}");'
         return self.execute_script(script)

@@ -70,6 +70,16 @@ class PageObject(Browser):
                 Log.info("Page '%s' was not found" % self.page_name)
         return False
 
+    def disappears(self, wait_time: int = 0) -> bool:
+        Log.info("Page '%s' disappearance verification. Wait time = %s" % (self.page_name, str(wait_time)))
+        if self.get_driver():
+            try:
+                self.wait_for.condition(wait_time, expected_conditions.invisibility_of_element_located(self.locator))
+                return True
+            except (NoSuchElementException, TimeoutException):
+                Log.info("Page '%s' disappeared" % self.page_name)
+        return False
+
     def can_be_focused(self, wait_time: int = page_load_time):
         self.wait_for.condition(wait_time, expected_conditions.element_to_be_clickable(self.locator))
 

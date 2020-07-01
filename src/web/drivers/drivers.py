@@ -82,9 +82,11 @@ class FireFox(Driver):
 
     @classmethod
     def get_capabilities(cls, extensions=None):
-        firefox_capabilities = DesiredCapabilities.FIREFOX.copy()
-        firefox_capabilities["marionette"] = False
-        return firefox_capabilities
+        from selenium.webdriver.firefox.webdriver import Options as FirefoxOptions
+        options = FirefoxOptions()
+        options.set_preference("security.mixed_content.block_active_content", False)
+        options.set_preference("security.mixed_content.block_display_content", False)
+        return options.to_capabilities()
 
     @classmethod
     def get_session(cls, driver_capabilities):

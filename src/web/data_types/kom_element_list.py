@@ -33,6 +33,7 @@ class KOMElementList(KOMElementBase):
         return [element.text for element in self.find()]
 
     def select_by_text(self, text: str):
+        Log.info(f"Selecting item by text {text} in the list '%s'" % self.name)
         elements = self.find()
         for element in elements:
             element_text = element.text

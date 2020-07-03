@@ -100,3 +100,8 @@ class JSBrowserMixin:
     def get_local_storage_value_by_key(self, key: str):
         script = f'return window.localStorage.getItem("{key}");'
         return self.execute_script(script)
+
+    def set_local_storage_value_by_key(self, key: str, value: str):
+        Log.info(f'Setting local storage item: {key}, {value}')
+        script = f'window.localStorage.setItem("{key}", {value});'
+        self.execute_script(script)

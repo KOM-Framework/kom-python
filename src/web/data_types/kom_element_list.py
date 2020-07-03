@@ -38,7 +38,8 @@ class KOMElementList(KOMElementBase):
             element_text = element.text
             if element_text == text:
                 element.click()
-                break
+                return True
+        raise Exception(f'Unable to find requested text {text} to select')
 
     def select_first_enabled(self):
         Log.info("Selecting first enabled item in the list '%s'" % self.name)
@@ -46,4 +47,5 @@ class KOMElementList(KOMElementBase):
         for item in elements:
             if item.is_enabled():
                 item.click()
-                break
+                return True
+        raise Exception(f'Unable to find enabled element to select')

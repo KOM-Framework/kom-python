@@ -76,8 +76,11 @@ class PageObject(Browser):
             try:
                 self.wait_for.condition(wait_time, expected_conditions.invisibility_of_element_located(self.locator))
                 return True
-            except (NoSuchElementException, TimeoutException):
-                Log.info("Page '%s' disappeared" % self.page_name)
+            except (NoSuchElementException, TimeoutException, WebDriverException) as e:
+                if e.msg == 'TypeError: can\'t access dead object':
+                    # FF workaround https://github.com/mozilla/geckodriver/issues/614
+                    return True
+                Log.info("Page '%s' did not disappear" % self.page_name)
         return False
 
     def can_be_focused(self, wait_time: int = page_load_time):

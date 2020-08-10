@@ -7,14 +7,14 @@
 
   "driver_configurations": {
     "browserSize": "1920x1080",
-    "browserName": "chrome",
+    "browserName": "mac",
     "platform": "ANY",
     "version": ""
   },
 
-  "remote_execution": "False",
-  "hub_ip": "0.0.0.0",
-  "hub_port": 4444,
+  "remote_execution": "True",
+  "hub_ip": "localhost",
+  "hub_port": 4622,
 
   "video_recording": "False",
   "proxy_ip": "localhost",

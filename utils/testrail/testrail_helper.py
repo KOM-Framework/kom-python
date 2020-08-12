@@ -48,13 +48,11 @@ class TestRailHelper:
                 return run['id']
         return None
 
-    def add_test_run_into_test_plan(self, suite_id, suite_name, user_email, config_ids):
-        cases_list_ids = [case['id'] for case in self.service.get_cases(self.project_id, suite_id)
-                          if case['custom_execution_type'] == 2]
+    def add_test_run_into_test_plan(self, suite_id, test_cases, suite_name, user_email, config_ids):
         runs = [
             {
                 "include_all": False,
-                "case_ids": cases_list_ids,
+                "case_ids": test_cases,
                 "config_ids": config_ids
             }
         ]
@@ -62,7 +60,7 @@ class TestRailHelper:
         plan_id = self.get_plan_id()
         plan_entry = self.service.add_plan_entry(plan_id, suite_id, suite_name,
                                                  self.get_test_rail_run_description(), assign_to_id,
-                                                 False, cases_list_ids, config_ids, runs)
+                                                 False, test_cases, config_ids, runs)
         run_id = str(self.get_run_id_by_name(suite_name, plan_entry))
         os.environ['test_rail_run_id'] = run_id  # For parallel execution
         return run_id

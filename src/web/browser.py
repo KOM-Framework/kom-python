@@ -5,12 +5,12 @@ from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.remote.switch_to import SwitchTo
 from selenium.webdriver.remote.webelement import WebElement
 
-from kom_framework.src.web.drivers.driver_manager import DriverManager
-from kom_framework.src.web.mixins.javascript import JSBrowserMixin
-from kom_framework.src.web.mixins.wait import WaitBrowserMixin
-from kom_framework.src.web.support.web import DriverAware
 from kom_framework import kom_config
+from .drivers.driver_manager import DriverManager
 from ..general import Log
+from ..mixins.javascript import JSBrowserMixin
+from ..mixins.wait import WaitBrowserMixin
+from ..support.driver_aware import DriverAware
 
 
 class Browser(DriverAware, ABC):
@@ -56,7 +56,7 @@ class Browser(DriverAware, ABC):
     def get(self, url: str, extensions: list = ()):
         Log.debug("Opening %s url" % url)
         if not self.get_driver():
-            Log.debug(f"Creating an instance of a {kom_config['driver_configurations']['browserName']} Browser.")
+            Log.debug(f"Creating an instance of a {kom_config['web_driver_configurations']['browserName']} Browser.")
             for func in self.__before_instance:
                 func()
             DriverManager.create_session(self, extensions)

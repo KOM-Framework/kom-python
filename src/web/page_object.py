@@ -2,9 +2,9 @@ from abc import ABCMeta, abstractmethod
 
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
 
-from kom_framework.src.web.browser import Browser
-from kom_framework.src.web.data_types import CssSelector
+from .browser import Browser
 from ..general import Log
+from ..support.locators import CssSelector
 from ..web import page_load_time
 from selenium.webdriver.support import expected_conditions
 

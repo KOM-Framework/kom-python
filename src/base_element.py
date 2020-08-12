@@ -3,8 +3,8 @@ from abc import abstractmethod
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
-from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.support.web import DriverAware
+from kom_framework.src.support.driver_aware import DriverAware
+from kom_framework.src.support.locators import Locator
 
 
 class KOMElementBase(DriverAware):

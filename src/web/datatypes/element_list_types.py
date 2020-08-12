@@ -1,9 +1,9 @@
 from selenium.webdriver import ActionChains
 
-from kom_framework.src.web.data_types import Locator
 from ...general import Log
+from ...support.locators import Locator
 from ...web import element_load_time
-from ...web.data_types.kom_element_list import KOMElementList
+from ...web.datatypes.kom_element_list import KOMElementList
 
 
 class AnyList(KOMElementList):

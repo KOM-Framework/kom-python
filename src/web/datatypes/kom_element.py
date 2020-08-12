@@ -6,13 +6,13 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located, element_to_be_clickable
 
+from kom_framework.src.base_element import KOMElementBase
 from kom_framework.src.general import Log
+from kom_framework.src.mixins.action_chains import ActionChainsMixin
+from kom_framework.src.mixins.javascript import JSElementMixin
+from kom_framework.src.mixins.wait import WaitElementMixin
 from kom_framework.src.web import retry_delay
-from kom_framework.src.web.data_types.actions import Action
-from kom_framework.src.web.data_types.base_element import KOMElementBase
-from kom_framework.src.web.mixins.action_chains import ActionChainsMixin
-from kom_framework.src.web.mixins.javascript import JSElementMixin
-from kom_framework.src.web.mixins.wait import WaitElementMixin
+from kom_framework.src.web.datatypes.actions import Action
 
 
 class KOMElement(KOMElementBase):
@@ -98,3 +98,7 @@ class KOMElement(KOMElementBase):
 
     def is_enabled(self) -> bool:
         return self.execute_action(Action.IS_ENABLED)
+
+    def get_css_value(self, name: str):
+        return self.execute_action(Action.VALUE_OF_CSS_PROPERTY, presence_of_element_located, name)
+

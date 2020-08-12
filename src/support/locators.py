@@ -1,14 +1,4 @@
-from collections import Iterable
-
-from selenium.webdriver.common.by import By
-
-from kom_framework import js_waiter_file
-
-with open(js_waiter_file, 'r') as content:
-    js_waiter = content.read()
-
-
-'''
+"""
 https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-selenium-identifiers
 
 +----------+----------------------------+--------+-----------------+
@@ -48,7 +38,10 @@ https://stackoverflow.com/questions/45028747/suggested-naming-conventions-for-se
 | Complex  | Toolbar                    | tlb    | tlbActions      |
 | Complex  | TreeView                   | tre    | treOrganization |
 +----------+----------------------------+--------+-----------------+
-'''
+"""
+from typing import Iterable
+
+from selenium.webdriver.common.by import By
 
 
 class Locator(Iterable):

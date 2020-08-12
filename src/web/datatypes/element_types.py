@@ -4,11 +4,11 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.select import Select
 
-from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.data_types.element_list_types import AnyList
+from .element_list_types import AnyList
 from ...general import Log
-from ...web.data_types.actions import Action
-from ...web.data_types.kom_element import KOMElement
+from ...support.locators import Locator
+from ...web.datatypes.actions import Action
+from ...web.datatypes.kom_element import KOMElement
 
 
 class Input(KOMElement):
@@ -253,8 +253,8 @@ class SelectExtended(KOMElement):
 
     def select_option_by_attribute_value(self, attribute_name: str, attribute_value: str,
                                          delay_for_options_to_appear_time: int = 0.5):
-        Log.debug("Selecting option by attribute '%s' with value '%s' in the '%s' select list"
-                 % (attribute_name, attribute_value, self.name))
+        Log.debug(f"Selecting option by attribute '{attribute_name}' with value '{attribute_value}' "
+                  f"in the '{self.name}' select list")
         self.click()
         time.sleep(delay_for_options_to_appear_time)
         options = self.options_list.wait_for.presence_of_all_elements_located()

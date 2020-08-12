@@ -6,7 +6,7 @@ from selenium.webdriver.remote.switch_to import SwitchTo
 from selenium.webdriver.remote.webelement import WebElement
 
 from kom_framework import kom_config
-from .drivers.driver_manager import DriverManager
+from ..drivers.driver_manager import DriverManager
 from ..general import Log
 from ..mixins.javascript import JSBrowserMixin
 from ..mixins.wait import WaitBrowserMixin

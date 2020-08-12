@@ -1,8 +1,8 @@
 from selenium import webdriver
 
 from .web_drivers import Chrome, InternetExplorer, Opera, FireFox
-from ...web.drivers import capabilities
-from ...web import hub_ip, remote_execution, hub_port
+from kom_framework.src.drivers import capabilities
+from kom_framework.src.web import hub_ip, remote_execution, hub_port
 
 
 class Driver:

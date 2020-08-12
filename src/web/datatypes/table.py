@@ -146,6 +146,25 @@ class Table(Generic[T], KOMElementList):
                 break
         return out
 
+    def get_row_by_attribute_value(self, column_name: str, attribute_name: str, attribute_value: str,
+                                   wait_time: int = element_load_time) -> T:
+        Log.debug("Getting row by column %s attribute %s and value %s from the table: %s"
+                  % (column_name, attribute_name, attribute_value, self.name))
+        end_time = time.time() + wait_time
+        while True:
+            content = self.get_content()
+            for row in content:
+                column = getattr(row, column_name)
+                if column.exists():
+                    act_attr_value = getattr(row, column_name).get_attribute(attribute_name)
+                    if act_attr_value == attribute_value:
+                        return row
+            if self.next_page():
+                return self.get_rows_by_attribute_value(column_name, attribute_name, attribute_value, wait_time)
+            elif time.time() > end_time:
+                break
+        return None
+
 
 class Charts(Table[T]):
     """

@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
-from kom_framework.src.web.drivers import capabilities
+from kom_framework.src.drivers import capabilities
 
 
 class Chrome:

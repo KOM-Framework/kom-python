@@ -104,7 +104,7 @@ class TestRailService(APIClient):
         return self.send_post(f"delete_run/{run_id}", data={})
 
     def get_attachments_for_test(self, test_id):
-        response = self.client.send_get(f'get_attachments_for_test/{test_id}')
+        response = self.send_get(f'get_attachments_for_test/{test_id}')
         return response
 
     def get_case(self, case_id: str):

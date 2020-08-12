@@ -1,11 +1,12 @@
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 
+from kom_framework.src.drivers.window_drivers import AppiumDriver
 from kom_framework.src.general import Log
 from kom_framework.src.mixins.actions import Actions
 from kom_framework.src.mixins.wait import WaitElementMixin
 from kom_framework.src.support.driver_aware import DriverAware
-from kom_framework.src.web.drivers.window_drivers import AppiumDriver
+from kom_framework.src.web import appium_platform
 
 
 class WindowObject(DriverAware):
@@ -42,7 +43,7 @@ class WindowObject(DriverAware):
 
     def get_driver(self, wait_time: int = 0):
         if not self.session:
-            Log.debug(f"Creating an instance of Appium For Mac driver.")  # TODO: Move driver name to a config
+            Log.debug(f"Creating an instance of a {appium_platform} driver.")  # TODO: Move driver name to a config
             self.session = AppiumDriver.get_remote_session()
         return self.session
 

@@ -2,9 +2,9 @@ from abc import ABCMeta
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
-from kom_framework.src.web.data_types.base_element import KOMElementBase
-from kom_framework.src.web.mixins.wait import WaitElementsMixin
+from ...base_element import KOMElementBase
 from ...general import Log
+from ...mixins.wait import WaitElementsMixin
 
 
 class KOMElementList(KOMElementBase):

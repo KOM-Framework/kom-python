@@ -5,9 +5,9 @@ from selenium.webdriver.support.expected_conditions import *
 from selenium.webdriver.support.wait import WebDriverWait, POLL_FREQUENCY
 
 from kom_framework.src.general import Log
+from kom_framework.src.support.driver_aware import DriverAware
+from kom_framework.src.support.locators import Locator
 from kom_framework.src.web import element_load_time, page_load_time
-from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.support.web import DriverAware
 
 
 class WaitMixin:

@@ -1,54 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
-from ...web.drivers import capabilities
-from ...web import hub_ip, remote_execution, hub_port
+from kom_framework.src.drivers import capabilities
 
 
-class Driver:
-
-    def __init__(self, extensions=None):
-        self.extensions = extensions
-
-    hub_link = 'http://%s:%s/wd/hub' % (hub_ip, hub_port)
-
-    @staticmethod
-    def get_driver_type(browser_name):
-        if browser_name == 'firefox':
-            return FireFox
-        elif browser_name == 'opera':
-            return Opera
-        elif browser_name == 'internet explorer':
-            return InternetExplorer
-        else:
-            return Chrome
-
-    def get_remove_session(self):
-        driver_type = self.get_driver_type(capabilities['browserName'])
-        driver_capabilities = driver_type.get_capabilities(self.extensions)
-        driver = webdriver.Remote(
-            command_executor=self.hub_link,
-            desired_capabilities=driver_capabilities)
-        return driver
-
-    def get_local_session(self):
-        driver_type = self.get_driver_type(capabilities['browserName'])
-        driver_capabilities = driver_type.get_capabilities(self.extensions)
-        return driver_type.get_session(driver_capabilities)
-
-    def create_session(self):
-        if remote_execution:
-            driver = self.get_remove_session()
-        else:
-            driver = self.get_local_session()
-        width = int(capabilities['browserSize'].split('x')[0])
-        height = int(capabilities['browserSize'].split('x')[1])
-        driver.set_window_size(width, height)
-        driver.set_window_position(0, 0)
-        return driver
-
-
-class Chrome(Driver):
+class Chrome:
 
     @classmethod
     def get_capabilities(cls, extensions=None):
@@ -78,7 +34,7 @@ class Chrome(Driver):
         return driver
 
 
-class FireFox(Driver):
+class FireFox:
 
     @classmethod
     def get_capabilities(cls, extensions=None):
@@ -98,7 +54,7 @@ class FireFox(Driver):
         return driver
 
 
-class InternetExplorer(Driver):
+class InternetExplorer:
 
     @classmethod
     def get_capabilities(cls, extensions=None):
@@ -114,7 +70,7 @@ class InternetExplorer(Driver):
         return driver
 
 
-class Opera(Driver):
+class Opera:
 
     @classmethod
     def get_capabilities(cls, extensions=None):

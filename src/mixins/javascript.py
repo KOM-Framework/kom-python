@@ -4,9 +4,9 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 
 from kom_framework.src.general import Log
+from kom_framework.src.support.driver_aware import DriverAware
 from kom_framework.src.web import http_request_wait_time
-from kom_framework.src.web.data_types import js_waiter
-from kom_framework.src.web.support.web import DriverAware
+from kom_framework import js_waiter_file
 
 
 class JSElementMixin:
@@ -20,8 +20,10 @@ class JSElementMixin:
         return self.driver.execute_script(script, self.element, *args)
 
     def inject_waiter(self):
-        Log.info("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.element_name)
-        self.execute(js_waiter)
+        Log.debug("Injecting JavaScrip HTTP requests waiter into '%s' element" % self.element_name)
+        with open(js_waiter_file, 'r') as content:
+            js_waiter = content.read()
+            self.execute(js_waiter)
 
     def wait_until_http_requests_are_finished(self, wait_time: int = http_request_wait_time):
         try:

@@ -1,12 +1,12 @@
 import time
 from typing import TypeVar, Generic, Callable, List
 
+from kom_framework.src.desk.datatypes import Button
 from kom_framework.src.general import Log
+from kom_framework.src.support.locators import Locator
+from kom_framework.src.web.page_factory import PageFactory
 from kom_framework.src.web import element_load_time
-from kom_framework.src.web.data_types import Locator
-from kom_framework.src.web.data_types.element_types import Button
-from kom_framework.src.web.data_types.kom_element_list import KOMElementList
-from kom_framework.src.web.support.page_factory import PageFactory
+from kom_framework.src.web.datatypes.kom_element_list import KOMElementList
 
 T = TypeVar('T')
 
@@ -146,9 +146,9 @@ class Table(Generic[T], KOMElementList):
         return None
 
     def get_rows_by_attribute_value(self, column_name: str, attribute_name: str, attribute_value: str,
-                                    wait_time: int = element_load_time) -> List[T]:
-        Log.debug("Getting rows by column %s attribute %s and value %s from the table: %s"
-                  % (column_name, attribute_name, attribute_value, self.name))
+                                    wait_time: int = element_load_time) -> T:
+        Log.debug(f"Getting rows by column {column_name} by attribute {attribute_name} and value {attribute_value} "
+                  f"from the table: {self.name}")
         out = list()
         end_time = time.time() + wait_time
         while True:

@@ -1,13 +1,16 @@
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
-from kom_framework.src.web.mixins.wait import WaitElementsMixin, NoSuchElementException
-from kom_framework.src.web.support.page_factory import PageFactory
-from kom_framework.src.web.support.web import DriverAware
+from kom_framework.src.mixins.wait import WaitElementsMixin
+from kom_framework.src.support.driver_aware import DriverAware
+from kom_framework.src.web.page_factory import PageFactory
 
 
 class Components(DriverAware):
+
+    def get_driver(self, wait_time: int = 0):
+        return self.__ancestor.find()
 
     def __new__(cls, *args, **kwargs):
         obj = super(Components, cls).__new__(cls)
@@ -22,10 +25,6 @@ class Components(DriverAware):
     def ancestor(self):
         return self.__ancestor
 
-    @property
-    def driver(self):
-        return self.__ancestor.find()
-
     def find(self, wait_time: int = 0):
         return self.wait_for.presence_of_all_elements_located(wait_time)
 
@@ -38,15 +37,15 @@ class Components(DriverAware):
 
     @property
     def wait_for(self) -> WaitElementsMixin:
-        return WaitElementsMixin(self.driver, self.locator)
+        return WaitElementsMixin(self.get_driver(), self.locator)
 
-    def exists(self, wait_time: int=0):
+    def exists(self, wait_time: int = 0):
         try:
             return self.find(wait_time)
         except (NoSuchElementException, TimeoutException):
             return False
 
-    def get_content(self, wait_time: int=0):
+    def get_content(self, wait_time: int = 0):
         out = []
         if self.exists(wait_time):
             elements = self.find()

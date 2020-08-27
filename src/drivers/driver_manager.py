@@ -1,5 +1,5 @@
 from kom_framework import kom_config
-from kom_framework.src.web.drivers.drivers import Driver
+from kom_framework.src.drivers.drivers import Driver
 
 
 class DriverManager:

@@ -164,9 +164,9 @@ class IFrame(KOMElement):
         Prefix with ifr_
     """
 
-    def switch_to(self):
+    def switch_to(self, wait_time: int = 5):
         Log.info("Switching to iFrame: '%s'" % self.name)
-        self.ancestor.switch_to.frame(self.find())
+        self.ancestor.switch_to.frame(self.find(wait_time))
 
 
 class Image(KOMElement):

@@ -17,7 +17,8 @@ class EmailReader:
             return email_message_instance.get_payload()
 
     @staticmethod
-    def read_email(user_email, user_password, imap, to_filter=None, wait_time=0, expected_subject=None, expected_email_count=1):
+    def read_email(user_email, user_password, imap, to_filter=None, wait_time=0, expected_subject=None,
+                   expected_email_count=1, unseen=True):
         mail = imaplib.IMAP4_SSL(imap)
         mail.login(user_email, user_password)
         if to_filter is None:
@@ -26,6 +27,8 @@ class EmailReader:
             custom_filter = '(TO "%s")' % to_filter
         if expected_subject is not None:
             custom_filter = '%s (SUBJECT "%s")' % (custom_filter, expected_subject)
+        if unseen:
+            custom_filter += ' (UNSEEN)'
         start_time = datetime.now()
         out = []
         while True:

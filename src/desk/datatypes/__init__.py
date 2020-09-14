@@ -7,7 +7,7 @@ from kom_framework.src.support.locators import Xpath
 
 class Button(KOMElementBase):
 
-    def exists(self, wait_time: int) -> bool:
+    def exists(self, wait_time: int = 0) -> bool:
         try:
             self.wait_for.visibility_of_element_located(wait_time)
             return True

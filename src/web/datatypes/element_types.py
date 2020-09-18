@@ -240,15 +240,15 @@ class SelectExtended(KOMElement):
 
     def select_item_by_value(self, value: str):
         Log.info('Selecting %s value in the %s select list' % (value, self.name))
-        Select(self.wait_for.presence_of_element_located()).select_by_value(value)
+        Select(self.find()).select_by_value(value)
 
     def select_item_by_visible_text(self, value: str):
         Log.info('Selecting %s text in the %s select list' % (value, self.name))
-        Select(self.wait_for.presence_of_element_located()).select_by_visible_text(value)
+        Select(self.find()).select_by_visible_text(value)
 
     def first_selected_option(self):
         Log.info('Get first selected option in the %s select list' % self.name)
-        return Select(self.wait_for.presence_of_element_located()).first_selected_option
+        return Select(self.find()).first_selected_option.text
 
     def select_item_by_text(self, text: str, delay_for_options_to_appear_time: int = 0.5):
         Log.info("Selecting %s in the '%s' select list" % (text, self.name))

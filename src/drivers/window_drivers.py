@@ -1,5 +1,3 @@
-from appium import webdriver
-
 from kom_framework.src.web import appium_remote, appium_port, appium_cookies, appium_platform
 
 
@@ -25,6 +23,7 @@ class AppiumDriver:
     @classmethod
     def get_remote_session(cls):
         capabilities = AppiumForMac.get_capabilities()
+        from appium import webdriver
         driver = webdriver.Remote(
             command_executor=cls.hub_link,
             desired_capabilities=capabilities)

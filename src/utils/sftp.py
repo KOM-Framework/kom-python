@@ -7,6 +7,7 @@ class SFTP:
         self.server = sftp_server_config['host_address']
         self.username = sftp_server_config['user_name']
         self.private_key = sftp_server_config['key_path']
+        self.sftp_folder = sftp_server_config['sftp_folder']
         self.connection_opts = CnOpts()
         self.connection_opts.hostkeys = None
         self.__connection: Connection = None

@@ -111,8 +111,15 @@ class TestRailService(APIClient):
         return self.send_get(f'get_case/{case_id}')
 
     def get_cases(self, project_id: str, suite_id: str):
-        response = self.send_get(f'get_cases/{project_id}&suite_id={suite_id}')
-        return response
+        all_cases = []
+        response = True
+        step = 250
+        i = 0
+        while response:
+            response = self.send_get(f'get_cases/{project_id}&suite_id={suite_id}&limit={step}&offset={step*i}')
+            all_cases.extend(response)
+            i += 1
+        return all_cases
 
     def get_configs_names(self, run: dict):
         config_response = self.send_get(f'get_configs/{run["project_id"]}')

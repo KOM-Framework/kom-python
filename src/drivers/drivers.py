@@ -3,6 +3,7 @@ from selenium import webdriver
 from .web_drivers import Chrome, InternetExplorer, Opera, FireFox
 from kom_framework.src.drivers import capabilities
 from kom_framework.src.web import hub_ip, remote_execution, hub_port
+from ..general import Log
 
 
 class Driver:
@@ -23,18 +24,21 @@ class Driver:
         else:
             return Chrome
 
-    def get_remote_session(self):
+    def get_driver_capabilities(self):
         driver_type = self.get_driver_type(capabilities['browserName'])
         driver_capabilities = driver_type.get_capabilities(self.extensions)
+        driver_capabilities['version'] = capabilities['version']
+        return driver_capabilities
+
+    def get_remote_session(self):
         driver = webdriver.Remote(
             command_executor=self.hub_link,
-            desired_capabilities=driver_capabilities)
+            desired_capabilities=self.get_driver_capabilities())
         return driver
 
     def get_local_session(self):
         driver_type = self.get_driver_type(capabilities['browserName'])
-        driver_capabilities = driver_type.get_capabilities(self.extensions)
-        return driver_type.get_session(driver_capabilities)
+        return driver_type.get_session(self.get_driver_capabilities())
 
     def create_session(self):
         if remote_execution:
@@ -45,7 +49,6 @@ class Driver:
         height = int(capabilities['browserSize'].split('x')[1])
         driver.set_window_size(width, height)
         driver.set_window_position(0, 0)
+        Log.info(f'Created driver session for {driver.capabilities["browserName"]} '
+                 f'v{driver.capabilities["browserVersion"]} browser')
         return driver
-
-
-

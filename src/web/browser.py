@@ -56,7 +56,6 @@ class Browser(DriverAware, ABC):
     def get(self, url: str, extensions: list = ()):
         Log.info("Opening %s url" % url)
         if not self.get_driver():
-            Log.debug(f"Creating an instance of a {kom_config['web_driver_configurations']['browserName']} Browser.")
             for func in self.__before_instance:
                 func()
             DriverManager.create_session(self, extensions)

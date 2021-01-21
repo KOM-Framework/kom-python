@@ -53,6 +53,7 @@ class JSBrowserMixin:
         self.driver = driver
 
     def execute_script(self, script, *args):
+        Log.info(f'Executing JS Script: {script}')
         return self.driver.execute_script(script, *args)
 
     def page_y_offset(self):
